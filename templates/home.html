@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load static media_filters %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <!-- === Programs Row (Top Banner) === -->
+    {% if programs %}
+    <div class="mb-5">
+        {% for program in programs %}
+        <div class="card mb-4 border-0 shadow-lg rounded-4 overflow-hidden">
+
+            {% if program.image %}
+            <img src="{{ program.image.url }}" class="img-fluid" style="max-height:300px; object-fit:cover;">
+            {% endif %}
+
+            <div class="card-body text-center p-4" style="background: linear-gradient(90deg, #FFD600, #FF6F00, #E10600);">
+                <h3 class="fw-bold mb-2 text-white">{{ program.title }}</h3>
+                <p class="fs-5 text-white">{{ program.description }}</p>
+
+                {% if program.day or program.time %}
+                <div class="mt-2">
+                    <span class="badge rounded-pill px-4 py-2" style="background-color:#6A00F4; color:#fff;">
+                        {{ program.day }} {{ program.time }}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- === Latest Update === -->
+    {% if latest_update %}
+    <div class="card mb-4 border-0 shadow-lg rounded-4 overflow-hidden">
+        <div style="height:6px; background: linear-gradient(90deg, #E10600, #FFD600, #6A00F4);"></div>
+        <div class="card-body p-4">
+            <h4 class="card-title fw-bold mb-3" style="color:#E10600;">
+                {{ latest_update.title }}
+            </h4>
+            <p class="card-text fs-5">{{ latest_update.body|linebreaks }}</p>
+            <div class="mt-3 text-end">
+                <span class="badge rounded-pill px-3 py-2" style="background-color:#FFD600; color:#000;">
+                    {{ latest_update.created_at|date:"d M Y" }}
+                </span>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- === Media Section === -->
+    {% if media_items %}
+    <div class="mt-5">
+        <h3 class="fw-bold mb-3 text-center">Media</h3>
+        <div class="row g-4">
+            {% for media in media_items %}
+            <div class="col-md-6">
+                <div class="card shadow-sm rounded-4 overflow-hidden">
+                    <div class="card-body text-center p-3">
+                        <h5 class="card-title">{{ media.title }}</h5>
+
+                        {% if media.media_type == "video" %}
+                            {% if media.media_url %}
+                                <!-- Embed YouTube iframe -->
+                                <div class="ratio ratio-16x9">
+                                    <iframe src="{{ media.media_url|youtube_embed }}" 
+                                            title="{{ media.title }}" frameborder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                            allowfullscreen>
+                                    </iframe>
+                                </div>
+                            {% elif media.upload_file %}
+                                <!-- Direct video file -->
+                                <video controls style="width:100%; max-height:300px; border-radius:12px;">
+                                    <source src="{{ media.upload_file.url }}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            {% else %}
+                                <p class="text-muted">No video available.</p>
+                            {% endif %}
+
+                        {% elif media.media_type == "audio" %}
+                            {% if media.upload_file %}
+                                <audio controls style="width:100%;">
+                                    <source src="{{ media.upload_file.url }}" type="audio/mpeg">
+                                    Your browser does not support the audio tag.
+                                </audio>
+                            {% else %}
+                                <p class="text-muted">No audio available.</p>
+                            {% endif %}
+
+                        {% else %}
+                            <p class="text-muted">Unsupported media type.</p>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

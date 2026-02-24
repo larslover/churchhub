@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Updates{% endblock %}
+
+{% block content %}
+<h2>Church Updates</h2>
+
+{% for update in updates %}
+<div class="card mb-3">
+    <div class="card-body">
+        <h5>{{ update.title }}</h5>
+        <p>{{ update.body|linebreaks }}</p>
+        <small class="text-muted">
+            {{ update.created_at|date:"d M Y" }}
+        </small>
+    </div>
+</div>
+{% empty %}
+<p>No updates yet.</p>
+{% endfor %}
+
+{% endblock %}
