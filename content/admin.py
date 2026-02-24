@@ -1,11 +1,16 @@
 from django.contrib import admin
 from .models import Media, Program, Update
 
+from django.contrib import admin
+from .models import Media, Program, Update
+
 @admin.register(Media)
 class MediaAdmin(admin.ModelAdmin):
-    list_display = ("title", "media_type", "is_published")  # only real fields
-    list_filter = ("media_type", "is_published")            # only real fields
+    list_display = ("title", "media_type", "is_published", "thumbnail_preview")  # add thumbnail_preview
+    list_filter = ("media_type", "is_published")
     search_fields = ("title",)
+
+    readonly_fields = ("thumbnail_preview",)  # if you want the preview in the edit form
 
 @admin.register(Program)
 class ProgramAdmin(admin.ModelAdmin):

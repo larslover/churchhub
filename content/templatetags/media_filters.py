@@ -1,34 +1,29 @@
 from django import template
-from urllib.parse import urlparse, parse_qs
+import re
+import logging
 
 register = template.Library()
 
+# Configure logger for this module
+logger = logging.getLogger(__name__)
+
 @register.filter
-def youtube_embed(url):
+def youtube_embed(value):
     """
-    Convert standard YouTube URL to embed format.
-    Handles:
-    - https://youtu.be/VIDEO_ID
-    - https://www.youtube.com/watch?v=VIDEO_ID
-    - Already embed URLs
+    Converts a regular YouTube URL to an embeddable URL.
+    Example: https://www.youtube.com/watch?v=aqz-KE-bpKQ
+             -> https://www.youtube.com/embed/aqz-KE-bpKQ
     """
-    if not url:
+    if not value:
+        logger.warning("youtube_embed called with empty value")
         return ""
     
-    # Already an embed URL
-    if "youtube.com/embed/" in url:
-        return url
+    # Regex to capture the video ID
+    video_id = re.findall(r"(?:v=|youtu\.be/)([\w-]+)", value)
+    if video_id:
+        embed_url = f"https://www.youtube.com/embed/{video_id[0]}"
+        logger.info(f"youtube_embed: original='{value}' embed='{embed_url}'")
+        return embed_url
 
-    # Short URL format
-    if "youtu.be" in url:
-        video_id = url.split("/")[-1].split("?")[0]  # Remove any params like ?t=123
-        return f"https://www.youtube.com/embed/{video_id}"
-
-    # Standard URL format
-    if "youtube.com/watch" in url:
-        query = urlparse(url).query
-        video_id_list = parse_qs(query).get("v")
-        if video_id_list:
-            return f"https://www.youtube.com/embed/{video_id_list[0]}"
-
-    return url
+    logger.warning(f"youtube_embed: could not parse URL '{value}'")
+    return ""

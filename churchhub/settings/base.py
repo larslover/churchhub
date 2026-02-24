@@ -5,7 +5,22 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 AUTH_USER_MODEL = "accounts.User"
 SECRET_KEY = "replace-this-in-prod"
-
+# churchhub/healthapp/settings/base.py
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",

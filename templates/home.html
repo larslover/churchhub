@@ -10,15 +10,12 @@
     <div class="mb-5">
         {% for program in programs %}
         <div class="card mb-4 border-0 shadow-lg rounded-4 overflow-hidden">
-
             {% if program.image %}
-            <img src="{{ program.image.url }}" class="img-fluid" style="max-height:300px; object-fit:cover;">
+            <img src="{{ program.image.url }}" class="img-fluid w-100" style="height:auto;">
             {% endif %}
-
             <div class="card-body text-center p-4" style="background: linear-gradient(90deg, #FFD600, #FF6F00, #E10600);">
                 <h3 class="fw-bold mb-2 text-white">{{ program.title }}</h3>
                 <p class="fs-5 text-white">{{ program.description }}</p>
-
                 {% if program.day or program.time %}
                 <div class="mt-2">
                     <span class="badge rounded-pill px-4 py-2" style="background-color:#6A00F4; color:#fff;">
@@ -53,46 +50,52 @@
     <!-- === Media Section === -->
     {% if media_items %}
     <div class="mt-5">
-        <h3 class="fw-bold mb-3 text-center">Media</h3>
+ 
         <div class="row g-4">
             {% for media in media_items %}
             <div class="col-md-6">
-                <div class="card shadow-sm rounded-4 overflow-hidden">
-                    <div class="card-body text-center p-3">
-                        <h5 class="card-title">{{ media.title }}</h5>
+                <div class="card mb-4 border-0 shadow-lg rounded-4 overflow-hidden">
 
-                        {% if media.media_type == "video" %}
+                    <!-- Gradient header for media type -->
+                    <div class="card-body text-center p-4" 
+                         style="background: {% if media.media_type|lower == 'video' %}linear-gradient(90deg, #FF6F00, #E10600, #FFD600){% else %}linear-gradient(90deg, #6A00F4, #FFD600, #FF6F00){% endif %};">
+                        <h5 class="fw-bold text-white mb-3">{{ media.title }}</h5>
+
+                        {% if media.media_type|lower == "video" %}
                             {% if media.media_url %}
-                                <!-- Embed YouTube iframe -->
-                                <div class="ratio ratio-16x9">
-                                    <iframe src="{{ media.media_url|youtube_embed }}" 
-                                            title="{{ media.title }}" frameborder="0"
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                <div class="ratio ratio-16x9 mb-3">
+                                    <iframe src="{{ media.media_url|youtube_embed }}" frameborder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                             allowfullscreen>
                                     </iframe>
                                 </div>
+                                <p class="text-white small mt-1">
+                                    <a href="{{ media.media_url }}" target="_blank" style="color:#FFD600;">
+                                        Open on YouTube if video doesn’t play
+                                    </a>
+                                </p>
                             {% elif media.upload_file %}
-                                <!-- Direct video file -->
                                 <video controls style="width:100%; max-height:300px; border-radius:12px;">
                                     <source src="{{ media.upload_file.url }}" type="video/mp4">
                                     Your browser does not support the video tag.
                                 </video>
                             {% else %}
-                                <p class="text-muted">No video available.</p>
+                                <p class="text-white">No video available.</p>
                             {% endif %}
 
-                        {% elif media.media_type == "audio" %}
-                            {% if media.upload_file %}
-                                <audio controls style="width:100%;">
+                        {% elif media.media_type|lower == "audio" %}
+                            <audio controls style="width:100%;">
+                                {% if media.upload_file %}
                                     <source src="{{ media.upload_file.url }}" type="audio/mpeg">
-                                    Your browser does not support the audio tag.
-                                </audio>
-                            {% else %}
-                                <p class="text-muted">No audio available.</p>
-                            {% endif %}
+                                {% else %}
+                                    <!-- Fallback test audio -->
+                                    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+                                {% endif %}
+                                Your browser does not support the audio element.
+                            </audio>
 
                         {% else %}
-                            <p class="text-muted">Unsupported media type.</p>
+                            <p class="text-white">Unsupported media type.</p>
                         {% endif %}
 
                     </div>
