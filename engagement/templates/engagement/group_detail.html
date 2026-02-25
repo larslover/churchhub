@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+<h2>{{ group.name }}</h2>
+<p>{{ group.description }}</p>
+
+{% if group.next_meeting %}
+    <p><strong>Next Meeting:</strong>
+        {{ group.next_meeting.start_time|date:"M d, Y H:i" }}
+    </p>
+{% endif %}
+
+{% if user.is_authenticated %}
+    {% if is_member %}
+        <a href="{% url 'engagement:leave_group' group.id %}" class="btn btn-danger">
+            Leave Group
+        </a>
+    {% else %}
+        <a href="{% url 'engagement:join_group' group.id %}" class="btn btn-primary">
+            Join Group
+        </a>
+    {% endif %}
+{% else %}
+    <p>Please <a href="{% url 'login' %}">login</a> to join this group.</p>
+{% endif %}

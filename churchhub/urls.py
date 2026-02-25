@@ -7,11 +7,15 @@ from django.conf.urls.static import static
 urlpatterns = [
     path("admin/", admin.site.urls),
 
-    # Include content URLs under /content/
+    # 🔐 Add Django built-in auth URLs
+    path("accounts/", include("django.contrib.auth.urls")),
+
+    # Include content URLs
     path("content/", include("content.urls")),
 
-    # Set home page at root /
-    path("", include("content.urls")),  # home() should be in content.urls with path ""
+    # Home at root
+    path("", include("content.urls")),
+    path("groups/", include("engagement.urls")),
 ]
 
 # Serve media files during development

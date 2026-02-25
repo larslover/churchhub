@@ -68,9 +68,13 @@ class Media(models.Model):
                 return f"https://www.youtube.com/embed/{video_id[0]}"
         return self.media_url  # fallback: return original URL
 
+    from django.utils.html import format_html
+
     def thumbnail_preview(self):
-        """For Django admin list display."""
-        if self.thumbnail:
-            return mark_safe(f'<img src="{self.thumbnail.url}" style="width:60px; height:auto;" />')
+        if self.image:
+            return format_html(
+                '<img src="{}" style="width:60px; height:auto;" />',
+                self.image.url
+            )
         return ""
     thumbnail_preview.short_description = "Thumbnail"

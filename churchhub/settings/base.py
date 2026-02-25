@@ -58,8 +58,12 @@ TEMPLATES = [
             "django.template.context_processors.debug",
             "django.template.context_processors.request",
             "django.contrib.auth.context_processors.auth",
+            "engagement.context_processors.next_meeting",
+             "engagement.context_processors.user_groups",
             "django.contrib.messages.context_processors.messages",
               "content.context_processors.global_updates",  # add this
+              "engagement.context_processors.user_groups",
+                "engagement.context_processors.pending_invitations",
         ]},
     },
 ]
@@ -76,3 +80,6 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
+# Redirect after login/logout
+LOGIN_REDIRECT_URL = "/"    # after login, go to home
+LOGOUT_REDIRECT_URL = "/"   # after logout, go to home

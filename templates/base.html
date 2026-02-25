@@ -3,11 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-
-    <!-- Makes layout mobile-first -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Android address bar color -->
     <meta name="theme-color" content="#E10600">
 
     <title>{% block title %}Kingdom Light Church{% endblock %}</title>
@@ -24,83 +20,83 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
     <style>
-        html, body {
-            height: 100%;
-        }
-
+        html, body { height: 100%; }
         body {
             padding-top: 75px;
-            background-color: #FFF8E1;
+            background-color: #FFF8E1; /* warm cream */
             font-family: 'Segoe UI', sans-serif;
-
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
-
+    
         /* Navbar */
         .navbar {
-            background: linear-gradient(90deg, #E10600, #FF6F00);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            background-color: #D7263D; /* deep red, flat */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
-
         .navbar-brand span {
-            color: #ffffff;
+            color: #F4F1DE; /* off-white, funky contrast */
             font-size: 1.2rem;
             letter-spacing: 0.5px;
         }
-
         .nav-link {
-            color: #ffffff !important;
+            color: #F4F1DE !important;
             font-weight: 500;
         }
-
         .nav-link:hover {
-            color: #FFD600 !important;
+            color: #FF9F1C !important; /* warm orange accent */
         }
-
-        /* Main content grows */
-        main {
-            flex: 1;
-        }
-
+    
+        main { flex: 1; }
+    
         /* Footer */
         .footer {
             padding: 25px 0;
             text-align: center;
-            background: linear-gradient(90deg, #6A00F4, #E10600);
-            color: white;
+            background-color: #4A4E69; /* muted purple/blue */
+            color: #F4F1DE;
             font-weight: 500;
         }
-
+    
         /* Buttons */
         .btn-primary {
-            background-color: #E10600;
+            background-color: #FF9F1C; /* warm orange */
             border: none;
+            color: #fff;
         }
-
         .btn-primary:hover {
-            background-color: #C40000;
+            background-color: #FFBF69; /* lighter orange accent */
+        }
+    
+        /* Group cards */
+        .card {
+            background-color: #F4F1DE; /* off-white card */
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+    
+        .rounded-circle {
+            border: 2px solid #D7263D; /* subtle border for images */
         }
     </style>
-
     {% block extra_head %}{% endblock %}
 </head>
-
 <body>
 
     <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
 
-          <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
-            <img src="{% static 'images/klclogo.png' %}" 
-                 alt="KLC Logo" 
-                 height="42"
-                 width="42"
-                 class="me-2 rounded-circle">
-            <span class="fw-bold">Kingdom Light Church</span>
-        </a>
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+                <img src="{% static 'images/klclogo.png' %}" alt="KLC Logo" height="42" width="42" class="me-2 rounded-circle">
+                <span class="fw-bold">Kingdom Light Church</span>
+            </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -108,10 +104,93 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'home' %}">Home</a>
+                  
+
+                    {% if user.is_authenticated %}
+                        {% if user.is_superuser %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
+                            </li>
+                        {% endif %}
+
+                        {% if user.is_authenticated %}
+
+                        {% for group in user_groups %}
+                        <li class="nav-item d-flex align-items-center">
+                            <a class="nav-link text-warning"
+                               href="{% url 'engagement:group_detail' group.id %}">
+                                {{ group.name }}
+                            </a>
+                    
+                            {% if user == group.leader and group.group_type == "small" %}
+                                <a href="{% url 'engagement:invite_members' group.id %}"
+                                   class="btn btn-sm btn-outline-light ms-2 rounded-pill">
+                                    Invite
+                                </a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                    {% endif %}
+                    {% if pending_invites_count > 0 %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link position-relative" href="#"
+                           role="button"
+                           data-bs-toggle="dropdown">
+                            🔔
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark">
+                                {{ pending_invites_count }}
+                            </span>
+                        </a>
+                    
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            {% for invite in pending_invites %}
+                            <li class="dropdown-item">
+                                <div class="mb-1">
+                                    Invitation to <strong>{{ invite.group.name }}</strong>
+                                </div>
+                    
+                                <form method="post"
+                                      action="{% url 'engagement:respond_invite' invite.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit"
+                                            name="action"
+                                            value="accept"
+                                            class="btn btn-sm btn-success me-1">
+                                        Accept
+                                    </button>
+                    
+                                    <button type="submit"
+                                            name="action"
+                                            value="decline"
+                                            class="btn btn-sm btn-danger">
+                                        Decline
+                                    </button>
+                                </form>
+                            </li>
+                            {% endfor %}
+                        </ul>
                     </li>
-                   
+                    {% endif %}
+                        <li class="nav-item d-flex align-items-center">
+                            <form method="post" action="{% url 'logout' %}" class="d-inline m-0 p-0">
+                                {% csrf_token %}
+                                <button type="submit"
+                                        class="btn btn-link nav-link m-0 p-0"
+                                        style="border:none; background:none; color:white;">
+                                    Logout
+                                </button>
+                            </form>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'engagement:group_list' %}">
+                                Groups
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
 
@@ -121,11 +200,17 @@
     <!-- MAIN CONTENT -->
     <main class="container mt-4">
         {% block content %}{% endblock %}
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-info">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
     </main>
 
     <!-- FOOTER -->
     <footer class="footer">
-        &copy; {{ now.year }} Kingdom Light Church. All rights reserved.
+        &copy; {% now "Y" %} Kingdom Light Church. All rights reserved.
     </footer>
 
     <!-- Bootstrap JS -->
@@ -136,12 +221,8 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function () {
                 navigator.serviceWorker.register("{% static 'js/service-worker.js' %}")
-                    .then(function (registration) {
-                        console.log("Service Worker registered:", registration.scope);
-                    })
-                    .catch(function (error) {
-                        console.log("Service Worker failed:", error);
-                    });
+                    .then(reg => console.log("Service Worker registered:", reg.scope))
+                    .catch(err => console.log("Service Worker failed:", err));
             });
         }
     </script>

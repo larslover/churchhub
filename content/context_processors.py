@@ -8,3 +8,5 @@ def global_updates(request):
     """
     updates = Update.objects.filter(is_published=True).order_by("-created_at")
     return {"global_updates": updates}
+
+
