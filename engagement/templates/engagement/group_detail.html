@@ -11,14 +11,10 @@
     <p><strong>Next Meeting:</strong> {{ group.next_meeting.start_time|date:"M d, Y H:i" }}</p>
 {% endif %}
 
-{% if user.is_authenticated %}
-    {% if is_member %}
-        <a href="{% url 'engagement:leave_group' group.id %}" class="btn btn-danger">Leave Group</a>
-    {% else %}
-        <a href="{% url 'engagement:join_group' group.id %}" class="btn btn-primary">Join Group</a>
-    {% endif %}
+{% if is_member %}
+    <!-- Post form and posts here -->
 {% else %}
-    <p>Please <a href="{% url 'login' %}">login</a> to join this group.</p>
+    <p class="text-muted">You must be invited to view or post in this group.</p>
 {% endif %}
 
 <hr class="my-4">

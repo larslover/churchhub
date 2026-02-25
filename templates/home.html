@@ -54,55 +54,71 @@
     </div>
     {% endif %}
 
-    <!-- === Media Section === -->
     {% if media_items %}
     <div class="mt-5">
         <div class="row g-4">
             {% for media in media_items %}
             <div class="col-md-6">
                 <div class="card mb-4 border-0 shadow-lg rounded-4 overflow-hidden">
-
-                    <!-- Solid color header for media type -->
-                    <div class="card-body text-center p-4" 
+    
+                    <!-- Solid color header -->
+                    <div class="card-body text-center p-4"
                          style="background-color: {% if media.media_type|lower == 'video' %}#E10600{% else %}#6A00F4{% endif %}; color:#FFD600;">
+    
                         <h5 class="fw-bold text-white mb-3">{{ media.title }}</h5>
-
+    
                         {% if media.media_type|lower == "video" %}
+    
                             {% if media.media_url %}
-                                <div class="ratio ratio-16x9 mb-3">
-                                    <iframe src="{{ media.media_url|youtube_embed }}" frameborder="0"
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                            allowfullscreen>
-                                    </iframe>
-                                </div>
-                                <p class="text-white small mt-1">
-                                    <a href="{{ media.media_url }}" target="_blank" style="color:#FFD600;">
-                                        Open on YouTube if video doesn’t play
-                                    </a>
+                                <!-- Thumbnail Click Version -->
+                                <a href="{{ media.media_url }}" target="_blank" class="text-decoration-none">
+                                    <div style="position:relative; display:inline-block; width:100%;">
+    
+                                        <img src="{{ media.get_thumbnail_url }}"
+                                             class="img-fluid rounded-4 shadow"
+                                             style="width:100%; max-height:350px; object-fit:cover;">
+    
+                                        <!-- Play Button Overlay -->
+                                        <div style="
+                                            position:absolute;
+                                            top:50%;
+                                            left:50%;
+                                            transform:translate(-50%, -50%);
+                                            font-size:70px;
+                                            color:white;
+                                            opacity:0.9;">
+                                            ▶
+                                        </div>
+    
+                                    </div>
+                                </a>
+    
+                                <p class="text-white small mt-3">
+                                    Click to watch on YouTube
                                 </p>
+    
                             {% elif media.upload_file %}
-                                <video controls style="width:100%; max-height:300px; border-radius:12px;">
+                                <video controls style="width:100%; max-height:350px; border-radius:12px;">
                                     <source src="{{ media.upload_file.url }}" type="video/mp4">
                                     Your browser does not support the video tag.
                                 </video>
                             {% else %}
                                 <p class="text-white">No video available.</p>
                             {% endif %}
-
+    
                         {% elif media.media_type|lower == "audio" %}
                             <audio controls style="width:100%;">
                                 {% if media.upload_file %}
                                     <source src="{{ media.upload_file.url }}" type="audio/mpeg">
                                 {% else %}
-                                    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+                                    <p class="text-white">No audio file available.</p>
                                 {% endif %}
-                                Your browser does not support the audio element.
                             </audio>
-
+    
                         {% else %}
                             <p class="text-white">Unsupported media type.</p>
                         {% endif %}
-
+    
                     </div>
                 </div>
             </div>
@@ -110,6 +126,5 @@
         </div>
     </div>
     {% endif %}
-
 </div>
 {% endblock %}
