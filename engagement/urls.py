@@ -14,4 +14,8 @@ urlpatterns = [
     views.respond_invite,
     name="respond_invite",
 ),
+path('<int:group_id>/feed/', views.group_feed, name='group_feed'),
+path('post/<int:post_id>/delete/', views.delete_post, name='delete_post'),
+path('reply/<int:reply_id>/delete/', views.delete_reply, name='delete_reply'),
+path('post/<int:post_id>/like/', views.toggle_like, name='toggle_like'),
 ]

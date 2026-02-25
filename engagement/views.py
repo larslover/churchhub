@@ -65,7 +65,79 @@ def invite_members(request, group_id):
         "eligible_users": eligible_users,
         "query": query,
     })
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Group, GroupPost, PostReply, PostLike, GroupMember
 
+@login_required
+def group_feed(request, group_id):
+    group = get_object_or_404(Group, id=group_id)
+    is_member = GroupMember.objects.filter(user=request.user, group=group).exists()
+
+    posts = group.posts.prefetch_related('replies', 'likes', 'author').all()
+
+    if request.method == 'POST':
+        if not is_member:
+            messages.error(request, "You must be a member to post.")
+            return redirect('engagement:group_detail', group_id=group.id)
+
+        if 'post_content' in request.POST:
+            content = request.POST.get('post_content').strip()
+            if content:
+                GroupPost.objects.create(group=group, author=request.user, content=content)
+                messages.success(request, "Post created!")
+            return redirect('engagement:group_feed', group_id=group.id)
+
+        elif 'reply_content' in request.POST:
+            content = request.POST.get('reply_content').strip()
+            post_id = request.POST.get('post_id')
+            post = get_object_or_404(GroupPost, id=post_id)
+            if content and GroupMember.objects.filter(user=request.user, group=group).exists():
+                PostReply.objects.create(post=post, author=request.user, content=content)
+            return redirect('engagement:group_feed', group_id=group.id)
+
+    context = {
+        'group': group,
+        'is_member': is_member,
+        'posts': posts,
+    }
+    return render(request, 'engagement/group_feed.html', context)
+
+@login_required
+def delete_post(request, post_id):
+    post = get_object_or_404(GroupPost, id=post_id, author=request.user)
+    group_id = post.group.id
+    post.delete()
+    messages.success(request, "Post deleted.")
+    return redirect('engagement:group_feed', group_id=group_id)
+
+@login_required
+def delete_reply(request, reply_id):
+    reply = get_object_or_404(PostReply, id=reply_id, author=request.user)
+    group_id = reply.post.group.id
+    reply.delete()
+    messages.success(request, "Reply deleted.")
+    return redirect('engagement:group_feed', group_id=group_id)
+
+from django.shortcuts import redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import GroupPost, PostLike
+
+@login_required
+def toggle_like(request, post_id):
+    post = get_object_or_404(GroupPost, id=post_id)
+    user = request.user
+
+    # Toggle like
+    like_obj = PostLike.objects.filter(post=post, user=user)
+    if like_obj.exists():
+        like_obj.delete()
+    else:
+        PostLike.objects.create(post=post, user=user)
+
+    # Redirect back to the group feed
+    return redirect('engagement:group_detail', group_id=post.group.id)
 def group_list(request):
     groups = Group.objects.filter(is_active=True).select_related("leader")
     
@@ -82,23 +154,54 @@ def group_list(request):
         group.member_count = group.members.filter(is_active=True).count()
 
     return render(request, "engagement/group_list.html", {"groups": groups})
+from .models import GroupPost, PostReply, PostLike, GroupMember
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Group, GroupMember, GroupPost, PostReply, PostLike
+
+@login_required
 def group_detail(request, group_id):
     group = get_object_or_404(Group, id=group_id)
 
-    is_member = False
-    if request.user.is_authenticated:
-        is_member = GroupMember.objects.filter(
-            user=request.user,
-            group=group
-        ).exists()
+    # Check if current user is a member
+    is_member = GroupMember.objects.filter(user=request.user, group=group).exists()
+
+    # Handle new post
+    if request.method == 'POST' and is_member:
+        post_content = request.POST.get('post_content', '').strip()
+        if post_content:
+            GroupPost.objects.create(
+                group=group,
+                author=request.user,
+                content=post_content
+            )
+            messages.success(request, "Post created!")
+            return redirect('engagement:group_detail', group_id=group.id)
+
+        # Handle reply
+        reply_content = request.POST.get('reply_content', '').strip()
+        post_id = request.POST.get('post_id')
+        if reply_content and post_id:
+            post = get_object_or_404(GroupPost, id=post_id)
+            PostReply.objects.create(
+                post=post,
+                author=request.user,
+                content=reply_content
+            )
+            messages.success(request, "Reply added!")
+            return redirect('engagement:group_detail', group_id=group.id)
+
+    # Fetch posts with replies and likes
+    posts = GroupPost.objects.filter(group=group).prefetch_related('replies', 'likes', 'author')
 
     context = {
-        "group": group,
-        "is_member": is_member,
+        'group': group,
+        'is_member': is_member,
+        'posts': posts,
     }
+    return render(request, 'engagement/group_detail.html', context)
 
-    return render(request, "engagement/group_detail.html", context)
-@login_required
 def join_group(request, group_id):
     group = get_object_or_404(Group, id=group_id)
 

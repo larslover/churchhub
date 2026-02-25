@@ -117,10 +117,7 @@
 
                         {% for group in user_groups %}
                         <li class="nav-item d-flex align-items-center">
-                            <a class="nav-link text-warning"
-                               href="{% url 'engagement:group_detail' group.id %}">
-                                {{ group.name }}
-                            </a>
+                       
                     
                             {% if user == group.leader and group.group_type == "small" %}
                                 <a href="{% url 'engagement:invite_members' group.id %}"

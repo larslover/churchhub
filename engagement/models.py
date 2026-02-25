@@ -90,3 +90,29 @@ class GroupInvitation(models.Model):
     @property
     def is_pending(self):
         return not self.accepted
+from django.db import models
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+class GroupPost(models.Model):
+    group = models.ForeignKey('Group', on_delete=models.CASCADE, related_name='posts')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='group_posts')
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']  # newest first
+
+class PostReply(models.Model):
+    post = models.ForeignKey(GroupPost, on_delete=models.CASCADE, related_name='replies')
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class PostLike(models.Model):
+    post = models.ForeignKey(GroupPost, on_delete=models.CASCADE, related_name='likes')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('post', 'user')  # prevent double likes
