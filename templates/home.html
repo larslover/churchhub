@@ -46,13 +46,19 @@
         <p class="text-uppercase text-muted small mb-3" style="letter-spacing: 3px;">
             Daily Devotional
         </p>
+        <!-- Devotional Title -->
+{% if devotional.title %}
+<h2 class="fw-bold mb-2" style="font-size: clamp(1.8rem, 4vw, 2.8rem); color:#111;">
+    {{ devotional.title }}
+</h2>
+{% endif %}
 
         <!-- Verse Reference (Big & Bold) -->
         {% if devotional.verse_reference %}
-        <h1 class="fw-bold mb-3"
-            style="font-size: clamp(2.2rem, 5vw, 3.5rem); color:#111;">
+        <h2 class="fw-bold mb-3"
+            style="font-size: clamp(1.5rem, 3vw, 2rem); color:#111;">
             {{ devotional.verse_reference }}
-        </h1>
+        </h2>
 
         <!-- Gold Accent Line -->
         <div class="mx-auto mb-4"
