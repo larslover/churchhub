@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Devotional Archive{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Devotional Archive</h2>
+
+    {% if devotionals %}
+        <div class="list-group">
+            {% for devotional in devotionals %}
+            <a href="{% url 'home' %}#devotional-{{ devotional.id }}" 
+               class="list-group-item list-group-item-action">
+                <strong>{{ devotional.title }}</strong>
+                <span class="text-muted float-end">{{ devotional.created_at|date:"d M Y" }}</span>
+            </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No devotionals yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

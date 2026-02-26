@@ -33,6 +33,9 @@ class Group(models.Model):
         return self.meetings.filter(
             start_time__gte=timezone.now()
         ).order_by('start_time').first()
+    class Meta:
+        verbose_name = "Church Group"
+        verbose_name_plural = "Church Groups"
 
 
 class GroupMember(models.Model):

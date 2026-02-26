@@ -1,8 +1,36 @@
 from django.contrib import admin
-from .models import Media, Program, Update
 
-from django.contrib import admin
-from .models import Media, Program, Update
+
+from .models import Program, Update, Media, Devotional
+
+@admin.register(Devotional)
+class DevotionalAdmin(admin.ModelAdmin):
+    list_display = (
+        "title",
+        "verse_reference",
+        "date",
+        "is_active",
+    )
+
+    list_filter = ("is_active", "date")
+    search_fields = ("title", "verse_reference", "message")
+    ordering = ("-date",)
+
+    fieldsets = (
+        ("Content", {
+            "fields": (
+                "title",
+                "verse_reference",
+                "verse_text",
+                "message",
+            )
+        }),
+        ("Publishing", {
+            "fields": (
+                "is_active",
+            )
+        }),
+    )
 
 @admin.register(Media)
 class MediaAdmin(admin.ModelAdmin):

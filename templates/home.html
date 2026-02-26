@@ -36,6 +36,52 @@
     {% endfor %}
 </div>
 {% endif %}
+
+{% if devotional %}
+<!-- === Daily Devotional (Light & Powerful) === -->
+<section class="py-5 bg-white mb-5">
+    <div class="container text-center" style="max-width: 850px;">
+
+        <!-- Label -->
+        <p class="text-uppercase text-muted small mb-3" style="letter-spacing: 3px;">
+            Daily Devotional
+        </p>
+
+        <!-- Verse Reference (Big & Bold) -->
+        {% if devotional.verse_reference %}
+        <h1 class="fw-bold mb-3"
+            style="font-size: clamp(2.2rem, 5vw, 3.5rem); color:#111;">
+            {{ devotional.verse_reference }}
+        </h1>
+
+        <!-- Gold Accent Line -->
+        <div class="mx-auto mb-4"
+             style="width:80px; height:4px; background-color:#D4AF37; border-radius:2px;">
+        </div>
+        {% endif %}
+
+        <!-- Verse Text -->
+        {% if devotional.verse_text %}
+        <p class="fs-5 text-dark mb-4">
+            “{{ devotional.verse_text }}”
+        </p>
+        {% endif %}
+
+        <!-- Devotional Message -->
+        <p class="text-secondary mb-4" style="font-size:1.05rem;">
+            {{ devotional.message }}
+        </p>
+
+        <!-- Archive Link -->
+        <a href="{% url 'devotional_archive' %}"
+           class="fw-semibold text-decoration-none"
+           style="color:#D4AF37;">
+            View Archive →
+        </a>
+
+    </div>
+</section>
+{% endif %}
     <!-- === Latest Update === -->
     {% if latest_update %}
     <div class="card mb-4 border-0 shadow-lg rounded-4 overflow-hidden">

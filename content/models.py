@@ -1,5 +1,8 @@
+from django.utils.html import mark_safe
 from django.db import models
-
+from django.utils.html import format_html
+from urllib.parse import urlparse, parse_qs
+import re
 
 # content/models.py
 
@@ -29,15 +32,28 @@ class Update(models.Model):
         ordering = ["-created_at"]  # newest first
 
   # content/models.py
-from django.db import models
-from django.utils.html import mark_safe
 
-from django.db import models
-from django.utils.html import format_html
-from urllib.parse import urlparse, parse_qs
-import re
+class Devotional(models.Model):
+    title = models.CharField(max_length=255)
+    verse_reference = models.CharField(max_length=255, blank=True)
+    verse_text = models.TextField(blank=True)
+    message = models.TextField()
 
+    date = models.DateField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
 
+    def __str__(self):
+        return f"{self.title} - {self.date}"
+
+    class Meta:
+        ordering = ["-date"]
+
+    def save(self, *args, **kwargs):
+        if self.is_active:
+            # Deactivate all other devotionals
+            Devotional.objects.filter(is_active=True).exclude(id=self.id).update(is_active=False)
+
+        super().save(*args, **kwargs)
 class Media(models.Model):
     MEDIA_TYPES = [
         ("video", "Video"),
