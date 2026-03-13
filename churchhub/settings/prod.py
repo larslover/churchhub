@@ -3,16 +3,19 @@ from .base import *
 
 DEBUG = False
 
-ALLOWED_HOSTS = ["yourchurchdomain.com"]
+ALLOWED_HOSTS = [
+    "kingdomlightchurch.co.za",
+    "www.kingdomlightchurch.co.za",
+]
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "churchhub_prod",
-        "USER": "dbuser",
-        "PASSWORD": "securepassword",
-        "HOST": "localhost",
-        "PORT": "5432",
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "larslover$churchhub_prod",
+        "USER": "larslover",
+        "PASSWORD": "your-db-password",
+        "HOST": "larslover.mysql.pythonanywhere-services.com",
+        "PORT": "3306",
     }
 }
 
