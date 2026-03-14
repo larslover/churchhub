@@ -11,7 +11,7 @@ ALLOWED_HOSTS = [
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "LarsLover$churchhub_prod",
+        "NAME": "LarsLover$kingdomlightchurch",
         "USER": "LarsLover",
         "PASSWORD": "Lars1978",
         "HOST": "larslover.mysql.pythonanywhere-services.com",
