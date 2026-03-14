@@ -5,7 +5,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 AUTH_USER_MODEL = "accounts.User"
 SECRET_KEY = "replace-this-in-prod"
-# churchhub/healthapp/settings/base.py
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

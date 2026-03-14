@@ -13,7 +13,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "larslover$churchhub_prod",
         "USER": "larslover",
-        "PASSWORD": "your-db-password",
+        "PASSWORD": "Lars1978",
         "HOST": "larslover.mysql.pythonanywhere-services.com",
         "PORT": "3306",
     }
