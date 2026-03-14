@@ -14,7 +14,7 @@ DATABASES = {
         "NAME": "LarsLover$kingdomlightchurch",
         "USER": "LarsLover",
         "PASSWORD": "Lars1978",
-        "HOST": "larslover.mysql.pythonanywhere-services.com",
+        "HOST": "LarsLover.mysql.pythonanywhere-services.com",
         "PORT": "3306",
     }
 }
