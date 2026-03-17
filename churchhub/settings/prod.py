@@ -4,8 +4,8 @@ from .base import *
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    "kingdomlightchurch.co.za",
-    "www.kingdomlightchurch.co.za",
+    "klcapp.co.za",
+    "www.klcapp.co.za",
 ]
 
 DATABASES = {
