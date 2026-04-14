@@ -3,9 +3,23 @@ from django.db import models
 from django.utils.html import format_html
 from urllib.parse import urlparse, parse_qs
 import re
-
+from django.core.exceptions import ValidationError
+from PIL import Image
 # content/models.py
+def validate_file_size(file):
+    max_size_mb = 2  # 🔥 change limit here
 
+    if file.size > max_size_mb * 1024 * 1024:
+        raise ValidationError(f"File must be under {max_size_mb}MB")
+def resize_image(image_field, max_width=800, max_height=800):
+    try:
+        img = Image.open(image_field.path)
+
+        if img.height > max_height or img.width > max_width:
+            img.thumbnail((max_width, max_height))
+            img.save(image_field.path, optimize=True, quality=70)
+    except Exception:
+        pass
 class Program(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
