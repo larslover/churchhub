@@ -25,9 +25,7 @@
 
             <div class="flex-grow-1">
                 <h3 class="fw-bold mb-1">{{ program.title }}</h3>
-                <p class="fs-6 mb-1">
-                    {{ program.description|truncatewords:25 }}
-                </p>
+                <p class="fs-6 mb-1">{{ program.description|truncatewords:25 }}</p>
 
                 {% if program.day or program.time %}
                 <span class="badge rounded-pill px-3 py-1"
@@ -44,7 +42,7 @@
 {% endif %}
 
 <!-- ================================= -->
-<!-- Daily Devotional -->
+<!-- Devotional -->
 <!-- ================================= -->
 {% if devotional %}
 <section class="py-5 bg-white mb-5">
@@ -120,7 +118,7 @@
 {% endif %}
 
 <!-- ================================= -->
-<!-- Media Section -->
+<!-- Media -->
 <!-- ================================= -->
 {% if media_items %}
 <div class="mt-5">
@@ -143,39 +141,21 @@
                     <!-- ======================= -->
                     {% if media.media_type|lower == "video" %}
 
-                        {% if media.media_url %}
+                    {% if media.media_url %}
 
-                            <a href="{{ media.media_url }}"
-                               target="_blank"
-                               class="text-decoration-none">
-
-                                <div style="position:relative; display:inline-block; width:100%;">
-
-                                    <img src="{{ media.get_thumbnail_url }}"
-                                         class="img-fluid rounded-4 shadow"
-                                         style="width:100%; max-height:350px; object-fit:cover;">
-
-                                    <div style="
-                                        position:absolute;
-                                        top:50%;
-                                        left:50%;
-                                        transform:translate(-50%, -50%);
-                                        font-size:70px;
-                                        color:white;
-                                        opacity:0.9;">
-                                        ▶
-                                    </div>
-
-                                </div>
-
-                            </a>
-
-                            <p class="text-white small mt-3">
-                                Click to watch on YouTube
-                            </p>
-
-                        {% elif media.upload_file %}
-
+                    <div class="ratio ratio-16x9">
+                        <iframe
+                            src="{{ media.media_url|youtube_embed }}"
+                            title="{{ media.title }}"
+                            class="rounded-4"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            loading="lazy">
+                        </iframe>
+                    </div>
+                    
+                    {% elif media.upload_file %}
                             <video controls
                                    style="width:100%; max-height:350px; border-radius:12px;">
                                 <source src="{{ media.upload_file.url }}" type="video/mp4">
@@ -222,9 +202,6 @@
 
                         {% endif %}
 
-                    <!-- ======================= -->
-                    <!-- OTHER -->
-                    <!-- ======================= -->
                     {% else %}
 
                         <p class="text-white">
