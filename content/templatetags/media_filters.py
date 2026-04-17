@@ -4,26 +4,36 @@ import logging
 
 register = template.Library()
 
-# Configure logger for this module
 logger = logging.getLogger(__name__)
+
 
 @register.filter
 def youtube_embed(value):
     """
-    Converts a regular YouTube URL to an embeddable URL.
-    Example: https://www.youtube.com/watch?v=aqz-KE-bpKQ
-             -> https://www.youtube.com/embed/aqz-KE-bpKQ
+    Converts YouTube URL to embed URL
     """
     if not value:
-        logger.warning("youtube_embed called with empty value")
         return ""
-    
-    # Regex to capture the video ID
-    video_id = re.findall(r"(?:v=|youtu\.be/)([\w-]+)", value)
-    if video_id:
-        embed_url = f"https://www.youtube.com/embed/{video_id[0]}"
-        logger.info(f"youtube_embed: original='{value}' embed='{embed_url}'")
-        return embed_url
 
-    logger.warning(f"youtube_embed: could not parse URL '{value}'")
+    video_id = re.findall(r"(?:v=|youtu\.be/)([\w-]+)", value)
+
+    if video_id:
+        return f"https://www.youtube.com/embed/{video_id[0]}"
+
     return ""
+
+
+@register.filter
+def spotify_embed(value):
+    """
+    Converts Spotify track URL to embed URL
+    """
+    if not value:
+        return ""
+
+    match = re.search(r"spotify\.com/track/([A-Za-z0-9]+)", value)
+
+    if match:
+        return f"https://open.spotify.com/embed/track/{match.group(1)}"
+
+    return value
