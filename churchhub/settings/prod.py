@@ -4,14 +4,15 @@ from .base import *
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    "klcapp.co.za",
-    "www.klcapp.co.za",
+    "wayoffaithglobal.com",
+    "www.wayoffaithglobal.com",
+    "webapp-2693333.pythonanywhere.com",
 ]
 
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "LarsLover$kingdomlightchurch",
+        "NAME": "LarsLover$churchhub",
         "USER": "LarsLover",
         "PASSWORD": "Lars1978",
         "HOST": "LarsLover.mysql.pythonanywhere-services.com",
