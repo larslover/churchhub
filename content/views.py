@@ -4,9 +4,16 @@ from .models import Update, Program, Media, Devotional
 
 def devotional_archive(request):
     from .models import Devotional
-    devotionals = Devotional.objects.filter(is_active=True)
 
-    return render(request, "content/devotional_archive.html", {"devotionals": devotionals})
+    devotionals = Devotional.objects.all().order_by("-date")
+
+    return render(
+        request,
+        "content/devotional_archive.html",
+        {
+            "devotionals": devotionals
+        }
+    )
 
 def home(request):
     programs = Program.objects.filter(is_active=True)
