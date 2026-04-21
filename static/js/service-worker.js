@@ -1,4 +1,4 @@
-const CACHE_NAME = 'churchhub-cache-v1';
+const CACHE_NAME = 'fig-cache-v2';
 const urlsToCache = [
   '/',
   '/static/css/bootstrap.min.css',

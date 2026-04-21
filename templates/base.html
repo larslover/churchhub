@@ -32,7 +32,7 @@
     
         /* Navbar */
         .navbar {
-            background-color: #d73e26; /* deep red, flat */
+            background-color: #26d732; /* deep red, flat */
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
         .navbar-brand span {
@@ -225,6 +225,59 @@
     </script>
 
     {% block extra_js %}{% endblock %}
-
+    <script>
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent auto mini-infobar (Chrome removed auto banners anyway)
+            e.preventDefault();
+        
+            deferredPrompt = e;
+        
+            console.log("PWA install available");
+        
+            // OPTIONAL: show your own install button/banner
+            showInstallBanner();
+        });
+        
+        function showInstallBanner() {
+            if (document.getElementById("pwa-install-banner")) return;
+        
+            const banner = document.createElement("div");
+            banner.id = "pwa-install-banner";
+            banner.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                right: 20px;
+                background: #0d6efd;
+                color: white;
+                padding: 12px;
+                border-radius: 10px;
+                text-align: center;
+                z-index: 9999;
+            `;
+        
+            banner.innerHTML = `
+                📱 Install Faith in God App
+                <button onclick="installPWA()" style="margin-left:10px; padding:5px 10px;">
+                    Install
+                </button>
+            `;
+        
+            document.body.appendChild(banner);
+        }
+        
+        function installPWA() {
+            if (!deferredPrompt) return;
+        
+            deferredPrompt.prompt();
+        
+            deferredPrompt.userChoice.then(() => {
+                deferredPrompt = null;
+                document.getElementById("pwa-install-banner")?.remove();
+            });
+        }
+        </script>
 </body>
 </html>
