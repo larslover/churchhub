@@ -68,6 +68,15 @@ class Program(models.Model):
 class Update(models.Model):
     title = models.CharField(max_length=255)
     body = models.TextField()
+
+    # newsletter image
+    image = models.ImageField(
+        upload_to="updates/",
+        blank=True,
+        null=True,
+        validators=[validate_file_size]
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     is_published = models.BooleanField(default=True)
 
@@ -77,8 +86,12 @@ class Update(models.Model):
     def __str__(self):
         return self.title
 
+    def save(self, *args, **kwargs):
+        # save first (important for ImageField path availability)
+        super().save(*args, **kwargs)
 
-# ===============================
+        if self.image:
+            resize_image(self.image)# ===============================
 # 🙏 DEVOTIONAL
 # ===============================
 class Devotional(models.Model):
@@ -94,10 +107,10 @@ class Devotional(models.Model):
         ordering = ["-date"]
 
     def save(self, *args, **kwargs):
-        if self.is_active:
-            Devotional.objects.filter(is_active=True).exclude(id=self.id).update(is_active=False)
-
         super().save(*args, **kwargs)
+
+        if self.is_active:
+            Devotional.objects.exclude(pk=self.pk).filter(is_active=True).update(is_active=False)
 
     def __str__(self):
         return f"{self.title} - {self.date}"

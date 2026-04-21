@@ -8,11 +8,21 @@
 {% for update in updates %}
 <div class="card mb-3">
     <div class="card-body">
+
         <h5>{{ update.title }}</h5>
+
+        {% if update.image %}
+            <img src="{{ update.image.url }}"
+                 class="img-fluid mb-3 rounded"
+                 style="max-height:350px; object-fit:cover;">
+        {% endif %}
+
         <p>{{ update.body|linebreaks }}</p>
+
         <small class="text-muted">
             {{ update.created_at|date:"d M Y" }}
         </small>
+
     </div>
 </div>
 {% empty %}
