@@ -6,41 +6,50 @@
 <div class="container mt-4">
 
 <!-- ================================= -->
-<!-- Programs Row -->
+<!-- Latest Update -->
 <!-- ================================= -->
-{% if programs %}
-<div class="mb-5">
-    {% for program in programs %}
-    <div class="card mb-4 border-0 shadow-lg rounded-4 overflow-hidden">
-        <div class="d-flex align-items-center p-3"
-             style="background-color:#f44900; color:#FFD600;">
+{% if latest_update %}
+<div class="card mb-4 border-0 shadow-lg rounded-4 overflow-hidden">
 
-            {% if program.image %}
-            <img src="{{ program.image.url }}"
-                 class="rounded-circle me-3 shadow-sm"
-                 width="80"
-                 height="80"
-                 style="object-fit:cover; border:2px solid #FFD600;">
-            {% endif %}
+    <!-- Accent bar -->
+    <div style="height:6px; background:#FF6F00;"></div>
 
-            <div class="flex-grow-1">
-                <h3 class="fw-bold mb-1">{{ program.title }}</h3>
-                <p class="fs-6 mb-1">{{ program.description|truncatewords:25 }}</p>
+    <div class="card-body p-0">
 
-                {% if program.day or program.time %}
-                <span class="badge rounded-pill px-3 py-1"
-                      style="background-color:#E10600; color:#fff;">
-                    {{ program.day }} {{ program.time }}
+        <!-- IMAGE (no cropping, full visibility) -->
+        {% if latest_update.image %}
+        <img src="{{ latest_update.image.url }}"
+             class="img-fluid w-100"
+             style="
+                width:100%;
+                height:auto;
+                display:block;
+                background:#000;
+             ">
+        {% endif %}
+
+        <!-- CONTENT -->
+        <div class="p-4" style="background:#FFF8E1;">
+
+            <h4 class="card-title fw-bold mb-3" style="color:#6A00F4;">
+                {{ latest_update.title }}
+            </h4>
+
+            <p class="card-text fs-5">
+                {{ latest_update.body|linebreaks }}
+            </p>
+
+            <div class="mt-3 text-end">
+                <span class="badge rounded-pill px-3 py-2"
+                      style="background:#E10600; color:#fff;">
+                    {{ latest_update.created_at|date:"d M Y" }}
                 </span>
-                {% endif %}
             </div>
 
         </div>
     </div>
-    {% endfor %}
 </div>
 {% endif %}
-
 <!-- ================================= -->
 <!-- Devotional -->
 <!-- ================================= -->
@@ -90,51 +99,43 @@
     </div>
 </section>
 {% endif %}
+
 <!-- ================================= -->
-<!-- Latest Update -->
+<!-- Programs Row -->
 <!-- ================================= -->
-{% if latest_update %}
-<div class="card mb-4 border-0 shadow-lg rounded-4 overflow-hidden">
+{% if programs %}
+<div class="mb-5">
+    {% for program in programs %}
+    <div class="card mb-4 border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="d-flex align-items-center p-3"
+             style="background-color:#f44900; color:#FFD600;">
 
-    <!-- Accent bar -->
-    <div style="height:6px; background:#FF6F00;"></div>
+            {% if program.image %}
+            <img src="{{ program.image.url }}"
+                 class="rounded-circle me-3 shadow-sm"
+                 width="80"
+                 height="80"
+                 style="object-fit:cover; border:2px solid #FFD600;">
+            {% endif %}
 
-    <div class="card-body p-0">
+            <div class="flex-grow-1">
+                <h3 class="fw-bold mb-1">{{ program.title }}</h3>
+                <p class="fs-6 mb-1">{{ program.description|truncatewords:25 }}</p>
 
-        <!-- IMAGE (no cropping, full visibility) -->
-        {% if latest_update.image %}
-        <img src="{{ latest_update.image.url }}"
-             class="img-fluid w-100"
-             style="
-                width:100%;
-                height:auto;
-                display:block;
-                background:#000;
-             ">
-        {% endif %}
-
-        <!-- CONTENT -->
-        <div class="p-4" style="background:#FFF8E1;">
-
-            <h4 class="card-title fw-bold mb-3" style="color:#6A00F4;">
-                {{ latest_update.title }}
-            </h4>
-
-            <p class="card-text fs-5">
-                {{ latest_update.body|linebreaks }}
-            </p>
-
-            <div class="mt-3 text-end">
-                <span class="badge rounded-pill px-3 py-2"
-                      style="background:#E10600; color:#fff;">
-                    {{ latest_update.created_at|date:"d M Y" }}
+                {% if program.day or program.time %}
+                <span class="badge rounded-pill px-3 py-1"
+                      style="background-color:#E10600; color:#fff;">
+                    {{ program.day }} {{ program.time }}
                 </span>
+                {% endif %}
             </div>
 
         </div>
     </div>
+    {% endfor %}
 </div>
 {% endif %}
+
 <!-- ================================= -->
 <!-- Media -->
 <!-- ================================= -->
