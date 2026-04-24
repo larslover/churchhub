@@ -44,9 +44,15 @@
 
             {% if group.next_meeting %}
             <div class="card-body bg-light border-top">
-                <strong>Next Meeting:</strong>
-                {{ group.next_meeting.start_time|date:"D, M j, H:i" }}
-                at {{ group.next_meeting.location }}
+            
+                <strong>Next Meeting:</strong><br>
+            
+                📅 {{ group.next_meeting.start_time|date:"D, M j, H:i" }}
+            
+                {% if group.next_meeting.location %}
+                    • 📍 {{ group.next_meeting.location }}
+                {% endif %}
+            
             </div>
             {% endif %}
 
