@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Search Groups{% endblock %}
+{% block title %}My Groups{% endblock %}
 
 {% block content %}
 
-<h2 class="mb-4 text-center">Search Groups</h2>
+<h2 class="mb-4 text-center">My Groups</h2>
 
 <div class="row">
     {% for group in groups %}
     <div class="col-md-6 mb-4">
         <div class="card shadow-lg border-0 rounded-4 overflow-hidden"
-             style="border-left: 5px solid #E10600;">
+             style="border-left: 5px solid #0d6efd;">
 
             <div class="d-flex align-items-center p-3 bg-white">
 
@@ -29,10 +29,6 @@
                     <small class="text-muted d-block mb-1">
                         <i class="bi bi-people-fill"></i>
                         {{ group.member_count }} members
-
-                        {% if group.leader %}
-                        • {{ group.leader.full_name }}
-                        {% endif %}
                     </small>
 
                     <p class="text-muted mb-0">
@@ -40,12 +36,10 @@
                     </p>
                 </div>
 
-                {% if group.is_member %}
                 <a href="{% url 'engagement:group_detail' group.id %}"
-                   class="btn btn-outline-primary btn-sm rounded-pill ms-2">
-                    Open
+                   class="btn btn-primary btn-sm rounded-pill ms-2">
+                    Enter Group
                 </a>
-                {% endif %}
             </div>
 
             {% if group.next_meeting %}
@@ -59,7 +53,9 @@
         </div>
     </div>
     {% empty %}
-    <p class="text-center text-muted">No groups available yet.</p>
+    <p class="text-center text-muted">
+        You have not joined any groups yet.
+    </p>
     {% endfor %}
 </div>
 

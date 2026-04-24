@@ -1,19 +1,45 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.admin import UserAdmin
 from .models import User
 
+
 @admin.register(User)
-class UserAdmin(BaseUserAdmin):
+class CustomUserAdmin(UserAdmin):
+    model = User
+
+    list_display = ("phone", "full_name", "email", "role", "is_staff")
+    ordering = ("phone",)
+
     fieldsets = (
-        (None, {"fields": ("username", "email", "password")}),
-        ("Permissions", {"fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions")}),
-        ("Important dates", {"fields": ("last_login", "date_joined")}),
+        (None, {"fields": ("phone", "password")}),
+        ("Personal Info", {"fields": ("full_name", "email")}),
+        ("Permissions", {
+            "fields": (
+                "is_active",
+                "is_staff",
+                "is_superuser",
+                "groups",
+                "user_permissions",
+            )
+        }),
+        ("Church Role", {"fields": ("role",)}),
+        ("Important Dates", {"fields": ("last_login", "date_joined")}),
     )
+
     add_fieldsets = (
         (None, {
             "classes": ("wide",),
-            "fields": ("username", "email", "password1", "password2"),
+            "fields": (
+                "phone",
+                "full_name",
+                "email",
+                "password1",
+                "password2",
+                "role",
+                "is_staff",
+                "is_superuser",
+            ),
         }),
     )
-    list_display = ("username", "email", "is_staff", "is_superuser")
-    search_fields = ("username", "email")
+
+    search_fields = ("phone", "full_name", "email")
