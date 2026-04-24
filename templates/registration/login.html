@@ -6,6 +6,7 @@
 <div class="row justify-content-center">
     <div class="col-md-5">
         <div class="card shadow p-4">
+
             <h3 class="text-center mb-3">Login</h3>
 
             <form method="post">
@@ -15,27 +16,31 @@
                     <label class="form-label">Email or Mobile Number</label>
 
                     <div class="row g-2">
+
+                        <!-- Country Code Dropdown -->
                         <div class="col-4">
                             <select class="form-select" name="country_code">
-                                <option value="+91" selected>🇮🇳 +91</option>
-                                <option value="+47">🇳🇴 +47</option>
-                                <option value="+31">🇳🇱 +31</option>
-                                <option value="+1">🇺🇸 +1</option>
+                                {% for code, label in country_codes %}
+                                    <option value="{{ code }}">{{ label }}</option>
+                                {% endfor %}
                             </select>
                         </div>
 
+                        <!-- Identifier Input -->
                         <div class="col-8">
                             <input type="text"
                                    name="identifier"
                                    class="form-control"
-                                   placeholder="Email or mobile"
+                                   placeholder="Phone number or email"
                                    required>
                         </div>
+
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Password</label>
+
                     <input type="password"
                            name="password"
                            class="form-control"
@@ -45,6 +50,7 @@
                 <button type="submit" class="btn btn-primary w-100">
                     Login
                 </button>
+
             </form>
 
             <hr>
@@ -53,6 +59,7 @@
                 Don't have an account?
                 <a href="{% url 'signup' %}">Sign Up</a>
             </p>
+
         </div>
     </div>
 </div>

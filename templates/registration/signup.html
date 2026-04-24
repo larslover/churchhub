@@ -6,6 +6,7 @@
 <div class="row justify-content-center">
     <div class="col-md-5">
         <div class="card shadow p-4">
+
             <h3 class="text-center mb-3">Sign Up</h3>
 
             <form method="post">
@@ -21,29 +22,17 @@
                     {{ form.email }}
                 </div>
 
+                <!-- PHONE SECTION (CLEAN VERSION) -->
                 <div class="mb-3">
                     <label class="form-label">Mobile Number</label>
 
                     <div class="row g-2">
                         <div class="col-4">
-                            <select class="form-select" name="country_code">
-                                <option value="+91" selected>🇮🇳 +91</option>
-                                <option value="+47">🇳🇴 +47</option>
-                                <option value="+31">🇳🇱 +31</option>
-                                <option value="+1">🇺🇸 +1</option>
-                                <option value="+44">🇬🇧 +44</option>
-                                <option value="+61">🇦🇺 +61</option>
-                            </select>
+                            {{ form.country_code }}
                         </div>
 
                         <div class="col-8">
-                            <input
-                                type="text"
-                                name="local_phone"
-                                class="form-control"
-                                placeholder="Enter mobile number"
-                                required
-                            >
+                            {{ form.local_phone }}
                         </div>
                     </div>
                 </div>
@@ -69,6 +58,7 @@
                 Already have an account?
                 <a href="{% url 'login' %}">Login</a>
             </p>
+
         </div>
     </div>
 </div>

@@ -28,11 +28,13 @@ def is_leader(user, group):
 # =========================
 # 👑 LEADER DASHBOARD
 # =========================
+from .models import Meeting
+
 @login_required
 def leader_dashboard(request, group_id):
     group = get_object_or_404(Group, id=group_id)
 
-    if not is_leader(request.user, group):
+    if group.leader != request.user:
         messages.error(request, "You are not the leader of this group.")
         return redirect("engagement:group_detail", group_id=group.id)
 
@@ -46,22 +48,14 @@ def leader_dashboard(request, group_id):
         accepted=False
     )
 
-    meetings = Meeting.objects.filter(
-        group=group
-    ).order_by("-start_time")
-
-    posts = GroupPost.objects.filter(
-        group=group
-    ).select_related("author")
+    meetings = Meeting.objects.filter(group=group).order_by("-start_time")
 
     return render(request, "engagement/leader_dashboard.html", {
         "group": group,
         "members": members,
         "pending_invites": pending_invites,
-        "meetings": meetings,
-        "posts": posts,
+        "meetings": meetings,   # ✅ THIS FIXES IT
     })
-
 
 # =========================
 # 📌 GROUP LIST
