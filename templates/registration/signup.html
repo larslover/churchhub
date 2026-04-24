@@ -22,7 +22,7 @@
                     {{ form.email }}
                 </div>
 
-                <!-- PHONE SECTION (CLEAN VERSION) -->
+                <!-- PHONE -->
                 <div class="mb-3">
                     <label class="form-label">Mobile Number</label>
 
@@ -37,14 +37,42 @@
                     </div>
                 </div>
 
+                <!-- PASSWORD -->
                 <div class="mb-3">
                     <label class="form-label">Password</label>
-                    {{ form.password1 }}
+
+                    <div class="input-group">
+                        <input type="password"
+                               name="password1"
+                               id="password1"
+                               class="form-control"
+                               required>
+
+                        <button type="button"
+                                class="btn btn-outline-secondary"
+                                onclick="togglePassword('password1','eye1')">
+                            <i class="bi bi-eye" id="eye1"></i>
+                        </button>
+                    </div>
                 </div>
 
+                <!-- CONFIRM PASSWORD -->
                 <div class="mb-3">
                     <label class="form-label">Confirm Password</label>
-                    {{ form.password2 }}
+
+                    <div class="input-group">
+                        <input type="password"
+                               name="password2"
+                               id="password2"
+                               class="form-control"
+                               required>
+
+                        <button type="button"
+                                class="btn btn-outline-secondary"
+                                onclick="togglePassword('password2','eye2')">
+                            <i class="bi bi-eye" id="eye2"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <button type="submit" class="btn btn-success w-100">

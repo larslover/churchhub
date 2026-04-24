@@ -16,8 +16,6 @@
                     <label class="form-label">Email or Mobile Number</label>
 
                     <div class="row g-2">
-
-                        <!-- Country Code Dropdown -->
                         <div class="col-4">
                             <select class="form-select" name="country_code">
                                 {% for code, label in country_codes %}
@@ -26,31 +24,37 @@
                             </select>
                         </div>
 
-                        <!-- Identifier Input -->
                         <div class="col-8">
                             <input type="text"
                                    name="identifier"
                                    class="form-control"
-                                   placeholder="Phone number or email"
+                                   placeholder="Phone or email"
                                    required>
                         </div>
-
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Password</label>
 
-                    <input type="password"
-                           name="password"
-                           class="form-control"
-                           required>
+                    <div class="input-group">
+                        <input type="password"
+                               name="password"
+                               id="loginPassword"
+                               class="form-control"
+                               required>
+
+                        <button type="button"
+                                class="btn btn-outline-secondary"
+                                onclick="togglePassword('loginPassword','eyeLogin')">
+                            <i class="bi bi-eye" id="eyeLogin"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100">
                     Login
                 </button>
-
             </form>
 
             <hr>
