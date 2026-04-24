@@ -8,13 +8,10 @@
 
     <title>{% block title %}Faith in God Church{% endblock %}</title>
 
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- PWA Manifest -->
     <link rel="manifest" href="{% static 'manifest.json' %}">
 
-    <!-- iOS support -->
     <link rel="apple-touch-icon" href="{% static 'icons/icon-192x192.png' %}">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -31,7 +28,6 @@
             min-height: 100vh;
         }
 
-        /* NAVBAR */
         .navbar {
             background-color: #26d732;
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
@@ -49,7 +45,6 @@
 
         main { flex: 1; }
 
-        /* FOOTER */
         .footer {
             padding: 25px 0;
             text-align: center;
@@ -58,14 +53,12 @@
             font-weight: 500;
         }
 
-        /* CARD */
         .card {
             background-color: #F4F1DE;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        /* INSTALL BANNER */
         #pwa-install-banner {
             position: fixed;
             bottom: 18px;
@@ -102,6 +95,7 @@
 
     {% block extra_head %}{% endblock %}
 </head>
+
 <body>
 
 <!-- NAVBAR -->
@@ -127,11 +121,30 @@
 
             <ul class="navbar-nav ms-auto">
 
-                <!-- Visible to everyone -->
+                <!-- ALWAYS VISIBLE -->
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'devotional_archive' %}">
                         Devotionals
                     </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'engagement:group_list' %}">
+                        Discover
+                    </a>
+                </li>
+
+                <!-- My Communities (login-gated but visible entry point) -->
+                <li class="nav-item">
+                    {% if user.is_authenticated %}
+                        <a class="nav-link" href="{% url 'engagement:my_groups' %}">
+                            My Communities
+                        </a>
+                    {% else %}
+                        <a class="nav-link" href="{% url 'login' %}?next={% url 'engagement:my_groups' %}">
+                            My Communities 🔒
+                        </a>
+                    {% endif %}
                 </li>
 
                 {% if user.is_authenticated %}
@@ -144,17 +157,6 @@
                     </li>
                     {% endif %}
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'engagement:group_list' %}">
-                            Discover
-                        </a>
-                    </li>
-                    
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'engagement:my_groups' %}">
-                            My Communities
-                        </a>
-                    </li>
                     <li class="nav-item d-flex align-items-center">
                         <form method="post"
                               action="{% url 'logout' %}"
@@ -177,6 +179,7 @@
                     </li>
 
                 {% endif %}
+
             </ul>
 
         </div>
@@ -201,23 +204,16 @@
     &copy; {% now "Y" %} Faith in God. All rights reserved.
 </footer>
 
-<!-- INSTALL BANNER -->
+<!-- PWA BANNER -->
 <div id="pwa-install-banner">
     📱 Install Faith in God App
 
-    <button class="install-btn" onclick="installPWA()">
-        Install
-    </button>
-
-    <button class="close-btn" onclick="closeInstallBanner()">
-        Later
-    </button>
+    <button class="install-btn" onclick="installPWA()">Install</button>
+    <button class="close-btn" onclick="closeInstallBanner()">Later</button>
 </div>
 
-<!-- Bootstrap -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Service Worker -->
 <script>
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
@@ -226,29 +222,20 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 
-<!-- PWA INSTALL -->
 <script>
 let deferredPrompt = null;
 
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
-
-    const banner = document.getElementById('pwa-install-banner');
-    if (banner) {
-        banner.style.display = 'block';
-    }
+    document.getElementById('pwa-install-banner').style.display = 'block';
 });
 
 async function installPWA() {
     if (!deferredPrompt) return;
-
     deferredPrompt.prompt();
-
-    const result = await deferredPrompt.userChoice;
-
+    await deferredPrompt.userChoice;
     deferredPrompt = null;
-
     document.getElementById('pwa-install-banner').style.display = 'none';
 }
 
