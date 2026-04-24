@@ -20,7 +20,7 @@
         <div class="collapse mt-3" id="editGroupForm">
     
             <form method="post"
-                  action="{% url 'engagement:edit_group' group.id %}"
+               
                   enctype="multipart/form-data">
     
                 {% csrf_token %}
@@ -135,32 +135,80 @@
 
     <div class="row">
 
-        <!-- ================= MEETINGS ================= -->
-        <div class="col-md-6">
-            <div class="card p-3 mb-3">
-                <h4>📅 Meetings</h4>
+       <!-- ================= MEETINGS ================= -->
+<div class="col-md-6">
+    <div class="card p-3 mb-3">
+        <h4>📅 Meetings</h4>
 
-                {% for m in meetings %}
-                    <div class="border-bottom py-2">
-                        <strong>{{ m.title }}</strong><br>
-                        <small>{{ m.start_time }}</small>
-                    </div>
-                {% empty %}
-                    <p class="text-muted">No meetings yet</p>
-                {% endfor %}
+        {% for m in meetings %}
+            <div class="border-bottom py-2">
 
-                <hr>
+                <strong>{{ m.title }}</strong><br>
+                <small>{{ m.start_time }}</small>
 
-                <form method="post" action="{% url 'engagement:create_meeting' group.id %}">
-                    {% csrf_token %}
-                    <input name="title" class="form-control mb-2" placeholder="Meeting title">
-                    <input name="start_time" type="datetime-local" class="form-control mb-2">
-                    <input name="location" class="form-control mb-2" placeholder="Location (optional)">
-                    <button class="btn btn-success w-100">Create Meeting</button>
-                </form>
+                {% if m.location %}
+                    <br><small>📍 {{ m.location }}</small>
+                {% endif %}
+
+                <!-- EDIT TOGGLE -->
+                <button class="btn btn-sm btn-outline-primary mt-2"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#editMeeting{{ m.id }}">
+                    Edit
+                </button>
+
+                <!-- EDIT FORM -->
+                <div class="collapse mt-2" id="editMeeting{{ m.id }}">
+
+                    <form method="post"
+                          action="{% url 'engagement:edit_meeting' m.id %}"
+                          class="border p-3 rounded">
+
+                        {% csrf_token %}
+
+                        <label>Title</label>
+                        <input type="text"
+                               name="title"
+                               class="form-control mb-2"
+                               value="{{ m.title }}">
+
+                        <label>Start Time</label>
+                        <input type="datetime-local"
+                               name="start_time"
+                               class="form-control mb-2"
+                               value="{{ m.start_time|date:'Y-m-d\\TH:i' }}">
+
+                        <label>Location</label>
+                        <input type="text"
+                               name="location"
+                               class="form-control mb-2"
+                               value="{{ m.location }}">
+
+                        <button class="btn btn-primary btn-sm w-100">
+                            Save Changes
+                        </button>
+
+                    </form>
+                </div>
+
             </div>
-        </div>
+        {% empty %}
+            <p class="text-muted">No meetings yet</p>
+        {% endfor %}
 
+        <hr>
+
+        <!-- CREATE MEETING -->
+        <form method="post" action="{% url 'engagement:create_meeting' group.id %}">
+            {% csrf_token %}
+            <input name="title" class="form-control mb-2" placeholder="Meeting title">
+            <input name="start_time" type="datetime-local" class="form-control mb-2">
+            <input name="location" class="form-control mb-2" placeholder="Location (optional)">
+            <button class="btn btn-success w-100">Create Meeting</button>
+        </form>
+    </div>
+</div>
         <!-- ================= POSTS ================= -->
         <div class="col-md-6">
             <div class="card p-3 mb-3">

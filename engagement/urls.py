@@ -62,5 +62,6 @@ path("group/<int:group_id>/meeting/create/", views.create_meeting, name="create_
         views.toggle_like,
         name="toggle_like",
     ),
-    path("group/<int:group_id>/edit/", views.edit_group, name="edit_group"),
+  
+    path("meeting/<int:meeting_id>/edit/", views.edit_meeting, name="edit_meeting"),
 ]

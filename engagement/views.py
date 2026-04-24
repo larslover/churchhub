@@ -29,34 +29,29 @@ def is_leader(user, group):
 # 👑 LEADER DASHBOARD
 # =========================
 from .models import Meeting
+from django.utils import timezone
 
 @login_required
 def leader_dashboard(request, group_id):
     group = get_object_or_404(Group, id=group_id)
 
     if group.leader != request.user:
-        messages.error(request, "You are not the leader of this group.")
         return redirect("engagement:group_detail", group_id=group.id)
 
-    members = GroupMember.objects.filter(
-        group=group,
-        is_active=True
-    ).select_related("user")
+    members = GroupMember.objects.filter(group=group, is_active=True)
+    pending_invites = GroupInvitation.objects.filter(group=group, accepted=False)
 
-    pending_invites = GroupInvitation.objects.filter(
+    meetings = Meeting.objects.filter(
         group=group,
-        accepted=False
-    )
-
-    meetings = Meeting.objects.filter(group=group).order_by("-start_time")
+        start_time__gte=timezone.now()
+    ).order_by("start_time")
 
     return render(request, "engagement/leader_dashboard.html", {
         "group": group,
         "members": members,
         "pending_invites": pending_invites,
-        "meetings": meetings,   # ✅ THIS FIXES IT
+        "meetings": meetings,
     })
-
 # =========================
 # 📌 GROUP LIST
 # =========================
@@ -376,6 +371,9 @@ def leader_respond_invite(request, invite_id):
 # =========================
 # 📅 CREATE MEETING
 # =========================
+from django.utils.dateparse import parse_datetime
+from django.utils import timezone
+
 @login_required
 def create_meeting(request, group_id):
     group = get_object_or_404(Group, id=group_id)
@@ -413,8 +411,61 @@ def edit_group(request, group_id):
             group.image = request.FILES["image"]
 
         group.save()
-        messages.success(request, "Group updated successfully!")
 
         return redirect("engagement:leader_dashboard", group_id=group.id)
 
-    return render(request, "engagement/edit_group.html", {"group": group})
+    # 🔥 THIS MUST EXIST
+    meetings = Meeting.objects.filter(group=group)
+
+    return render(request, "engagement/edit_group.html", {
+        "group": group,
+        "meetings": meetings,
+    })
+from django.utils.dateparse import parse_datetime
+
+@login_required
+def edit_meeting(request, meeting_id):
+    meeting = get_object_or_404(Meeting, id=meeting_id)
+    group = meeting.group
+
+    print("\n====== EDIT MEETING DEBUG ======")
+    print("Request method:", request.method)
+    print("Meeting ID:", meeting_id)
+    print("Current meeting:", meeting)
+    print("Group:", group)
+    print("User:", request.user)
+    print("Group leader:", group.leader)
+
+    if group.leader != request.user:
+        print("❌ Permission denied: user is not leader")
+        messages.error(request, "Not allowed.")
+        return redirect("engagement:group_detail", group_id=group.id)
+
+    if request.method == "POST":
+        print("📩 POST DATA:", request.POST)
+
+        meeting.title = request.POST.get("title")
+        print("New title:", meeting.title)
+
+        raw_time = request.POST.get("start_time")
+        print("Raw start_time:", raw_time)
+
+        start_time = parse_datetime(raw_time)
+        print("Parsed start_time:", start_time)
+
+        if start_time:
+            meeting.start_time = start_time
+            print("✅ start_time updated")
+        else:
+            print("⚠️ start_time NOT parsed")
+
+        meeting.location = request.POST.get("location")
+        print("New location:", meeting.location)
+
+        meeting.save()
+        print("💾 Meeting saved successfully")
+
+        messages.success(request, "Meeting updated!")
+
+    print("Redirecting to edit_group page")
+    return redirect("engagement:leader_dashboard", group_id=group.id)
