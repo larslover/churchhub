@@ -10,7 +10,12 @@
 {% if group.next_meeting %}
     <p><strong>Next Meeting:</strong> {{ group.next_meeting.start_time|date:"M d, Y H:i" }}</p>
 {% endif %}
-
+{% if group.leader_id == user.id %}
+    <a href="{% url 'engagement:leader_dashboard' group.id %}"
+       class="btn btn-warning mt-3">
+        👑 Leader Dashboard
+    </a>
+{% endif %}
 {% if is_member %}
     <!-- Post form and posts here -->
 {% else %}

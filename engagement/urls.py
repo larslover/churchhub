@@ -4,11 +4,20 @@ from . import views
 app_name = "engagement"
 
 urlpatterns = [
+  path(
+    "group/<int:group_id>/leader/",
+    views.leader_dashboard,
+    name="leader_dashboard"
+),
     # -----------------------------------
     # Group Lists
     # -----------------------------------
     path("", views.group_list, name="group_list"),
     path("my/", views.my_groups, name="my_groups"),
+    path("group/<int:group_id>/leader/remove/<int:user_id>/", views.remove_member, name="remove_member"),
+path("post/<int:post_id>/pin/", views.toggle_pin_post, name="toggle_pin_post"),
+path("invite/<int:invite_id>/leader/", views.leader_respond_invite, name="leader_respond_invite"),
+path("group/<int:group_id>/meeting/create/", views.create_meeting, name="create_meeting"),
 
     # -----------------------------------
     # Group Actions

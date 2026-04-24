@@ -43,7 +43,7 @@ class Group(models.Model):
 
     GROUP_TYPES = [
         ("small", "Small Group"),
-        ("ministrial", "Ministrial Group"),
+      
     ]
 
     name = models.CharField(max_length=200)
@@ -75,13 +75,34 @@ class Group(models.Model):
         return self.meetings.filter(
             start_time__gte=timezone.now()
         ).order_by('start_time').first()
+    def is_leader(self, user):
+        if not user or not user.is_authenticated:
+            return False
+        return self.leader_id == user.id
+
+    def is_member(self, user):
+        return GroupMember.objects.filter(
+        group=self,
+        user=user,
+        is_active=True
+    ).exists()
 
     # ✅ RESIZE ON SAVE
     def save(self, *args, **kwargs):
+        is_new = self.pk is None
+
         super().save(*args, **kwargs)
 
+    # resize image
         if self.image:
             resize_image(self.image)
+
+    # ensure leader is always a member
+        if is_new and self.leader:
+            GroupMember.objects.get_or_create(
+            user=self.leader,
+            group=self
+        )
 
     class Meta:
         verbose_name = "Church Group"
@@ -157,17 +178,16 @@ class GroupInvitation(models.Model):
 # 📝 POSTS
 # ===============================
 class GroupPost(models.Model):
-
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='posts')
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='group_posts')
 
     content = models.TextField()
+    is_pinned = models.BooleanField(default=False)  # ✅ ADD THIS
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['-created_at']
-
-
+        ordering = ['-is_pinned', '-created_at']
 # ===============================
 # 💬 REPLIES
 # ===============================

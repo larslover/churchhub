@@ -8,11 +8,14 @@
 <h2 class="mb-4 text-center">Search Groups</h2>
 
 <div class="row">
+
     {% for group in groups %}
     <div class="col-md-6 mb-4">
+
         <div class="card shadow-lg border-0 rounded-4 overflow-hidden"
              style="border-left: 5px solid #E10600;">
 
+            <!-- HEADER -->
             <div class="d-flex align-items-center p-3 bg-white">
 
                 {% if group.image %}
@@ -21,46 +24,89 @@
                      width="70"
                      height="70"
                      style="object-fit: cover;">
+                {% else %}
+                <div class="rounded-circle me-3 bg-secondary d-flex align-items-center justify-content-center"
+                     style="width:70px;height:70px;color:white;">
+                    {{ group.name|first }}
+                </div>
                 {% endif %}
 
                 <div class="flex-grow-1">
+
                     <h5 class="mb-1 fw-bold">{{ group.name }}</h5>
 
                     <small class="text-muted d-block mb-1">
-                        <i class="bi bi-people-fill"></i>
-                        {{ group.member_count }} members
+                        👥 {{ group.member_count }} members
 
                         {% if group.leader %}
-                        • {{ group.leader.full_name }}
+                        • Leader: {{ group.leader.full_name|default:group.leader.username }}
                         {% endif %}
                     </small>
 
                     <p class="text-muted mb-0">
                         {{ group.description|truncatewords:15 }}
                     </p>
+
                 </div>
 
-                {% if group.is_member %}
-                <a href="{% url 'engagement:group_detail' group.id %}"
-                   class="btn btn-outline-primary btn-sm rounded-pill ms-2">
-                    Open
-                </a>
-                {% endif %}
+                <!-- ACTION BUTTONS -->
+                <div class="ms-2">
+
+                    {% if user.is_authenticated %}
+
+                        {% if group.is_member %}
+
+                            <a href="{% url 'engagement:group_detail' group.id %}"
+                               class="btn btn-outline-primary btn-sm rounded-pill">
+                                Open
+                            </a>
+
+                        {% else %}
+
+                            <a href="{% url 'engagement:join_group' group.id %}"
+                               class="btn btn-success btn-sm rounded-pill">
+                                Join
+                            </a>
+
+                        {% endif %}
+
+                    {% else %}
+
+                        <a href="{% url 'login' %}"
+                           class="btn btn-secondary btn-sm rounded-pill">
+                            Login
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
             </div>
 
+            <!-- NEXT MEETING -->
             {% if group.next_meeting %}
             <div class="card-body bg-light border-top">
-                <strong>Next Meeting:</strong>
-                {{ group.next_meeting.start_time|date:"D, M j, H:i" }}
-                at {{ group.next_meeting.location }}
+
+                <strong>Next Meeting:</strong><br>
+
+                📅 {{ group.next_meeting.start_time|date:"D, M j, H:i" }}
+
+                {% if group.next_meeting.location %}
+                    • 📍 {{ group.next_meeting.location }}
+                {% endif %}
+
             </div>
             {% endif %}
 
         </div>
     </div>
+
     {% empty %}
-    <p class="text-center text-muted">No groups available yet.</p>
+    <div class="col-12 text-center text-muted">
+        No groups available yet.
+    </div>
     {% endfor %}
+
 </div>
 
 {% endblock %}
