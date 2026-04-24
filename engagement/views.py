@@ -403,3 +403,24 @@ def create_meeting(request, group_id):
             messages.success(request, "Meeting created!")
 
     return redirect("engagement:leader_dashboard", group_id=group.id)
+@login_required
+def edit_group(request, group_id):
+    group = get_object_or_404(Group, id=group_id)
+
+    if group.leader != request.user:
+        messages.error(request, "Only leader can edit group.")
+        return redirect("engagement:group_detail", group_id=group.id)
+
+    if request.method == "POST":
+        group.name = request.POST.get("name")
+        group.description = request.POST.get("description")
+
+        if "image" in request.FILES:
+            group.image = request.FILES["image"]
+
+        group.save()
+        messages.success(request, "Group updated successfully!")
+
+        return redirect("engagement:leader_dashboard", group_id=group.id)
+
+    return render(request, "engagement/edit_group.html", {"group": group})

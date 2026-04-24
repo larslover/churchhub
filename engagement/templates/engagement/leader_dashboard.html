@@ -5,6 +5,60 @@
 
     <!-- HEADER -->
     <div class="card p-3 mb-4">
+
+        <div class="d-flex justify-content-between align-items-center">
+            <h4>⚙️ Group Settings</h4>
+    
+            <button class="btn btn-sm btn-outline-dark"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#editGroupForm">
+                Edit
+            </button>
+        </div>
+    
+        <div class="collapse mt-3" id="editGroupForm">
+    
+            <form method="post"
+                  action="{% url 'engagement:edit_group' group.id %}"
+                  enctype="multipart/form-data">
+    
+                {% csrf_token %}
+    
+                <label>Group Name</label>
+                <input type="text"
+                       name="name"
+                       class="form-control mb-2"
+                       value="{{ group.name }}">
+    
+                <label>Description</label>
+                <textarea name="description"
+                          class="form-control mb-2">{{ group.description }}</textarea>
+    
+                <label>Group Image</label>
+    
+                {% if group.image %}
+                    <div class="mb-2">
+                        <img src="{{ group.image.url }}"
+                             width="100"
+                             class="rounded">
+                    </div>
+                {% endif %}
+    
+                <input type="file"
+                       name="image"
+                       class="form-control mb-2">
+    
+                <button class="btn btn-success w-100">
+                    Save Changes
+                </button>
+    
+            </form>
+    
+        </div>
+    
+    </div>
+    <div class="card p-3 mb-4">
         <div class="d-flex justify-content-between align-items-center">
             <div>
                 <h2>{{ group.name }} Leader Dashboard</h2>
