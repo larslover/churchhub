@@ -30,13 +30,26 @@ def is_leader(user, group):
 # =========================
 from .models import Meeting
 from django.utils import timezone
-
 @login_required
 def leader_dashboard(request, group_id):
     group = get_object_or_404(Group, id=group_id)
 
     if group.leader != request.user:
         return redirect("engagement:group_detail", group_id=group.id)
+
+    # =========================
+    # HANDLE GROUP EDIT (POST)
+    # =========================
+    if request.method == "POST":
+        group.name = request.POST.get("name")
+        group.description = request.POST.get("description")
+
+        if "image" in request.FILES:
+            group.image = request.FILES["image"]
+
+        group.save()
+        messages.success(request, "Group updated successfully!")
+        return redirect("engagement:leader_dashboard", group_id=group.id)
 
     members = GroupMember.objects.filter(group=group, is_active=True)
     pending_invites = GroupInvitation.objects.filter(group=group, accepted=False)
@@ -51,8 +64,7 @@ def leader_dashboard(request, group_id):
         "members": members,
         "pending_invites": pending_invites,
         "meetings": meetings,
-    })
-# =========================
+    })# =========================
 # 📌 GROUP LIST
 # =========================
 def group_list(request):
