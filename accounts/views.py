@@ -3,6 +3,11 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from .forms import CustomUserCreationForm
 
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from django.contrib import messages
+from .forms import CustomUserCreationForm
+
 
 def signup_view(request):
     if request.method == "POST":
@@ -11,6 +16,7 @@ def signup_view(request):
         country_code = post_data.get("country_code", "").strip()
         local_phone = post_data.get("local_phone", "").strip().replace(" ", "").replace("-", "")
 
+        # combine full phone
         post_data["phone"] = f"{country_code}{local_phone}"
 
         form = CustomUserCreationForm(post_data)
@@ -18,12 +24,15 @@ def signup_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
+            messages.success(request, "Account created successfully.")
             return redirect("home")
+        else:
+            print(form.errors)   # IMPORTANT for debugging
+
     else:
         form = CustomUserCreationForm()
 
     return render(request, "registration/signup.html", {"form": form})
-
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.contrib import messages

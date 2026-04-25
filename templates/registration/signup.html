@@ -12,14 +12,42 @@
             <form method="post">
                 {% csrf_token %}
 
+                <!-- GLOBAL FORM ERRORS -->
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                    <strong>Please fix the errors below:</strong>
+                    <ul class="mb-0 mt-2">
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ field.label }}: {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <!-- FULL NAME -->
                 <div class="mb-3">
                     <label class="form-label">Full Name</label>
                     {{ form.full_name }}
+                    {% for error in form.full_name.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
                 </div>
 
+                <!-- EMAIL -->
                 <div class="mb-3">
-                    <label class="form-label">Email (Optional)</label>
+                    <label class="form-label">
+                        Email <small class="text-muted">(optional)</small>
+                    </label>
                     {{ form.email }}
+                    {% for error in form.email.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
                 </div>
 
                 <!-- PHONE -->
@@ -35,6 +63,14 @@
                             {{ form.local_phone }}
                         </div>
                     </div>
+
+                    {% for error in form.country_code.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+
+                    {% for error in form.local_phone.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
                 </div>
 
                 <!-- PASSWORD -->
@@ -54,6 +90,10 @@
                             <i class="bi bi-eye" id="eye1"></i>
                         </button>
                     </div>
+
+                    {% for error in form.password1.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
                 </div>
 
                 <!-- CONFIRM PASSWORD -->
@@ -73,6 +113,10 @@
                             <i class="bi bi-eye" id="eye2"></i>
                         </button>
                     </div>
+
+                    {% for error in form.password2.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
                 </div>
 
                 <button type="submit" class="btn btn-success w-100">
