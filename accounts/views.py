@@ -344,3 +344,28 @@ def terms(request):
 
 def privacy(request):
     return render(request, "legal/privacy.html")
+
+@login_required
+def approve_org(request, request_id):
+    if not request.user.is_superuser:
+        return redirect("home")
+
+    req = get_object_or_404(OrganizationJoinRequest, id=request_id)
+
+    org = req.organization
+    creator = req.user   # or req.user depending on your intent
+
+    if request.method == "POST":
+        org.is_active = True
+        org.save()
+
+        OrganizationMember.objects.get_or_create(
+            user=creator,
+            organization=org,
+            defaults={"is_admin": True, "is_active": True}
+        )
+
+        req.approved = True
+        req.save()
+
+    return redirect("admin_org_requests")

@@ -91,7 +91,7 @@ class Organization(models.Model):
         null=True
     )
 
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -150,11 +150,19 @@ class OrganizationJoinRequest(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
 
-    created_at = models.DateTimeField(auto_now_add=True)
     approved = models.BooleanField(default=False)
+    rejected = models.BooleanField(default=False)
+
+    reviewed_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="reviewed_org_requests"
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    reviewed_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         unique_together = ("user", "organization")
-
-    def __str__(self):
-        return f"{self.user} -> {self.organization}"
