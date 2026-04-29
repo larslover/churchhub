@@ -6,6 +6,8 @@ from .views import (
     organization_signup_view,
     connect_organization_view,
     find_church_view,
+    terms,
+    privacy,
 
     org_requests_view,
     approve_org_request_view,
@@ -64,4 +66,6 @@ urlpatterns = [
         regenerate_join_code_view,
         name="regenerate_join_code"
     ),
+     path("terms/", terms, name="terms"),
+    path("privacy/",privacy, name="privacy"),
 ]

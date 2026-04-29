@@ -65,9 +65,10 @@ class OrganizationMemberAdmin(admin.ModelAdmin):
     list_display = ("user", "organization", "is_admin", "is_active", "joined_at")
 
     list_filter = ("organization", "is_admin", "is_active")
-
     search_fields = (
         "user__phone",
         "user__full_name",
         "organization__name",
     )
+
+    autocomplete_fields = ["user", "organization"]

@@ -338,3 +338,9 @@ def regenerate_join_code_view(request):
     org.save()
 
     return redirect("org_dashboard")
+def terms(request):
+    return render(request, "legal/terms.html")
+
+
+def privacy(request):
+    return render(request, "legal/privacy.html")
