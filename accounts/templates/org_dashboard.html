@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+
+<h2>{{ organization.name }} Dashboard</h2>
+
+<div class="row mt-4">
+
+<div class="col-md-4">
+<div class="card p-3">
+<h5>Total Members</h5>
+<h2>{{ total_members }}</h2>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="card p-3">
+<h5>Pending Requests</h5>
+<h2>{{ pending_requests }}</h2>
+
+<a href="{% url 'org_requests' %}" class="btn btn-success mt-2">
+Review Requests
+</a>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="card p-3">
+<h5>Invite Code</h5>
+<h2>{{ organization.slug|upper }}</h2>
+</div>
+</div>
+
+</div>
+
+</div>
+{% endblock %}

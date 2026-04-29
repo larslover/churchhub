@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Organization</title>
+</head>
+<body>
+
+<h2>Create Your Organization</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <h3>Organization Details</h3>
+
+    <input type="text" name="org_name" placeholder="Organization Name" required><br><br>
+
+    <input type="text" name="slug" placeholder="Unique URL slug (e.g. faith-in-god)" required><br><br>
+
+    <hr>
+
+    <h3>Admin Account</h3>
+
+    <input type="text" name="full_name" placeholder="Your Full Name" required><br><br>
+
+    <select name="country_code">
+        {% for code in country_codes %}
+            <option value="{{ code }}">{{ code }}</option>
+        {% endfor %}
+    </select>
+
+    <input type="text" name="local_phone" placeholder="Phone Number" required><br><br>
+
+    <input type="password" name="password" placeholder="Password" required><br><br>
+
+    <button type="submit">Create Organization</button>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+
+<h2>Pending Requests</h2>
+
+{% for r in requests %}
+<div class="card p-3 mb-2">
+    <strong>{{ r.user.full_name }}</strong>
+
+    <a href="{% url 'approve_org_request' r.id %}"
+       class="btn btn-success btn-sm mt-2">
+       Approve
+    </a>
+</div>
+{% empty %}
+<p>No pending requests.</p>
+{% endfor %}
+
+</div>
+{% endblock %}

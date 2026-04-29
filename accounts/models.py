@@ -3,6 +3,9 @@ from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 
 
+# ===============================
+# 👤 USER MANAGER
+# ===============================
 class UserManager(BaseUserManager):
     def create_user(self, phone, password=None, **extra_fields):
         if not phone:
@@ -27,6 +30,9 @@ class UserManager(BaseUserManager):
         return self.create_user(phone, password, **extra_fields)
 
 
+# ===============================
+# 👤 USER MODEL (GLOBAL IDENTITY)
+# ===============================
 class User(AbstractUser):
     username = None
     first_name = None
@@ -45,22 +51,10 @@ class User(AbstractUser):
         null=True
     )
 
-    ROLE_CHOICES = (
-        ("member", "Member"),
-        ("leader", "Leader"),
-        ("pastor", "Pastor"),
-        ("admin", "Admin"),
-    )
-
-    role = models.CharField(
-        max_length=20,
-        choices=ROLE_CHOICES,
-        default="member"
-    )
-
     is_verified = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     USERNAME_FIELD = "phone"
     REQUIRED_FIELDS = ["full_name"]
@@ -69,3 +63,93 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.full_name or str(self.phone)
+
+
+# ===============================
+# 🏢 ORGANIZATION (TENANT)
+# ===============================
+import uuid
+from django.db import models
+
+
+class Organization(models.Model):
+    name = models.CharField(max_length=255)
+
+    slug = models.SlugField(
+        unique=True
+    )
+
+    join_code = models.CharField(
+        max_length=12,
+        unique=True,
+        blank=True
+    )
+
+    logo = models.ImageField(
+        upload_to="org_logos/",
+        blank=True,
+        null=True
+    )
+
+    is_active = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if not self.join_code:
+            self.join_code = self.generate_join_code()
+
+        super().save(*args, **kwargs)
+
+    def generate_join_code(self):
+        base = self.slug.upper().replace("-", "")[:6]
+
+        while True:
+            code = f"{base}{uuid.uuid4().hex[:4].upper()}"
+
+            if not Organization.objects.filter(join_code=code).exists():
+                return code
+
+    def __str__(self):
+        return self.name
+
+# ===============================
+# 🔗 ORGANIZATION MEMBERSHIP
+# ===============================
+class OrganizationMember(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="memberships"
+    )
+
+    organization = models.ForeignKey(
+        Organization,
+        on_delete=models.CASCADE,
+        related_name="members"
+    )
+
+    is_admin = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+
+    joined_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "organization")
+
+    def __str__(self):
+        return f"{self.user} → {self.organization}"
+    
+class OrganizationJoinRequest(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    approved = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ("user", "organization")
+
+    def __str__(self):
+        return f"{self.user} -> {self.organization}"

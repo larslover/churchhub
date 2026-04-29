@@ -9,7 +9,7 @@ import re
 # 🔒 FILE SIZE VALIDATOR
 # ===============================
 def validate_file_size(file):
-    max_size_mb = 2  # 🔥 change limit here
+    max_size_mb = 2
 
     if file.size > max_size_mb * 1024 * 1024:
         raise ValidationError(f"File must be under {max_size_mb}MB")
@@ -30,7 +30,6 @@ def resize_image(image_field, max_width=800, max_height=800):
             img.save(image_field.path, optimize=True, quality=70)
 
     except Exception:
-        # Fail silently (prevents crashes)
         pass
 
 
@@ -38,6 +37,12 @@ def resize_image(image_field, max_width=800, max_height=800):
 # 📘 PROGRAM
 # ===============================
 class Program(models.Model):
+    organization = models.ForeignKey(
+        "accounts.Organization",
+        on_delete=models.CASCADE,
+        related_name="programs"
+    )
+
     title = models.CharField(max_length=200)
     description = models.TextField()
 
@@ -50,7 +55,11 @@ class Program(models.Model):
 
     day = models.CharField(max_length=100, blank=True)
     time = models.CharField(max_length=100, blank=True)
+
     is_active = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -66,10 +75,15 @@ class Program(models.Model):
 # 📰 UPDATES
 # ===============================
 class Update(models.Model):
+    organization = models.ForeignKey(
+        "accounts.Organization",
+        on_delete=models.CASCADE,
+        related_name="updates"
+    )
+
     title = models.CharField(max_length=255)
     body = models.TextField()
 
-    # newsletter image
     image = models.ImageField(
         upload_to="updates/",
         blank=True,
@@ -77,8 +91,10 @@ class Update(models.Model):
         validators=[validate_file_size]
     )
 
-    created_at = models.DateTimeField(auto_now_add=True)
     is_published = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ["-created_at"]
@@ -87,14 +103,22 @@ class Update(models.Model):
         return self.title
 
     def save(self, *args, **kwargs):
-        # save first (important for ImageField path availability)
         super().save(*args, **kwargs)
 
         if self.image:
-            resize_image(self.image)# ===============================
+            resize_image(self.image)
+
+
+# ===============================
 # 🙏 DEVOTIONAL
 # ===============================
 class Devotional(models.Model):
+    organization = models.ForeignKey(
+        "accounts.Organization",
+        on_delete=models.CASCADE,
+        related_name="devotionals"
+    )
+
     title = models.CharField(max_length=255)
     verse_reference = models.CharField(max_length=255, blank=True)
     verse_text = models.TextField(blank=True)
@@ -110,7 +134,10 @@ class Devotional(models.Model):
         super().save(*args, **kwargs)
 
         if self.is_active:
-            Devotional.objects.exclude(pk=self.pk).filter(is_active=True).update(is_active=False)
+            Devotional.objects.filter(
+                organization=self.organization,
+                is_active=True
+            ).exclude(pk=self.pk).update(is_active=False)
 
     def __str__(self):
         return f"{self.title} - {self.date}"
@@ -125,13 +152,16 @@ class Media(models.Model):
         ("audio", "Audio"),
     ]
 
+    organization = models.ForeignKey(
+        "accounts.Organization",
+        on_delete=models.CASCADE,
+        related_name="media"
+    )
+
     title = models.CharField(max_length=200)
     media_type = models.CharField(max_length=10, choices=MEDIA_TYPES)
 
-    # External link (YouTube, etc.)
     media_url = models.URLField(blank=True, null=True)
-
-    # Local file upload
     upload_file = models.FileField(
         upload_to="media/",
         blank=True,
@@ -139,15 +169,17 @@ class Media(models.Model):
         validators=[validate_file_size]
     )
 
-    # Thumbnail image
     image = models.ImageField(
-        upload_to="programs/",
+        upload_to="media/",
         blank=True,
         null=True,
         validators=[validate_file_size]
     )
 
     is_published = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
