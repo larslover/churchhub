@@ -146,19 +146,21 @@
 
             <ul class="navbar-nav ms-auto">
 
-                <!-- ALWAYS VISIBLE -->
+                {% if user.is_authenticated %}
+
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'devotional_archive' %}">
                         Devotionals
                     </a>
                 </li>
-
+                
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'engagement:group_list' %}">
                         Discover
                     </a>
                 </li>
-
+                
+                {% endif %}
                 <!-- MY COMMUNITIES -->
                 <li class="nav-item">
                     {% if user.is_authenticated %}

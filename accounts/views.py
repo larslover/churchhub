@@ -1,113 +1,75 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout, authenticate
+# =========================
+# IMPORTS (CLEANED)
+# =========================
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 
+import io
+import base64
+import qrcode
+
+from .models import (
+    Organization,
+    OrganizationMember,
+    OrganizationJoinRequest,
+)
+
+from engagement.models import Group
 from .forms import CustomUserCreationForm
 from .phone_utils import COUNTRY_CODES
 
-from django.shortcuts import render, redirect
-from django.contrib.auth import login
-from django.contrib import messages
 
-from .models import Organization, OrganizationMember,OrganizationJoinRequest
-from .forms import CustomUserCreationForm
-# ===============================
-# 📝 SIGNUP
-# ===============================
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-
-from .models import Organization, OrganizationMember
+# =========================
+# HELPERS
+# =========================
+def set_active_org(request, org_id):
+    request.session["organization_id"] = org_id
 
 
-@login_required
-def connect_organization_view(request):
-    if request.method == "POST":
-        invite_code = request.POST.get("invite_code", "").strip().upper()
+def get_active_org(request):
+    org_id = request.session.get("organization_id")
+    if not org_id:
+        return None
+    return Organization.objects.filter(id=org_id).first()
 
-        try:
-            organization = Organization.objects.get(
-                join_code=invite_code,
-                is_active=True
-            )
 
-            # Create membership
-            OrganizationMember.objects.get_or_create(
-                user=request.user,
-                organization=organization,
-                defaults={
-                    "is_admin": False,
-                    "is_active": True
-                }
-            )
-
-            # Set active org
-            request.session["organization_id"] = organization.id
-
-            messages.success(
-                request,
-                f"You joined {organization.name} successfully."
-            )
-
-            return redirect("home")
-
-        except Organization.DoesNotExist:
-            messages.error(request, "Invalid church code.")
-
-    return render(request, "registration/connect_organization.html")
+# =========================
+# SIGNUP
+# =========================
 def signup_view(request):
+    print("sign up view triggered")
+
     if request.method == "POST":
-        post_data = request.POST.copy()
-
-        country_code = post_data.get("country_code", "").strip()
-        local_phone = (
-            post_data.get("local_phone", "")
-            .strip()
-            .replace(" ", "")
-            .replace("-", "")
-        )
-
-        # Combine full phone number
-        post_data["phone"] = f"{country_code}{local_phone}"
-
-        form = CustomUserCreationForm(post_data)
+        form = CustomUserCreationForm(request.POST)
 
         if form.is_valid():
             user = form.save()
-
-            # Log user in
             login(request, user)
 
-            messages.success(
-                request,
-                "Account created successfully. Now connect to your church."
-            )
+            pending_code = request.session.get("pending_org_code")
 
-            # 🔥 IMPORTANT CHANGE
+            if pending_code:
+                return redirect(f"/accounts/join/{pending_code}/")
+
             return redirect("connect_organization")
 
-        else:
-            print(form.errors)
+        print(form.errors)  # 🔥 DEBUG
+        print(request.POST)
+        
 
     else:
         form = CustomUserCreationForm()
 
     return render(request, "registration/signup.html", {
-        "form": form
+        "form": form,
+        "country_codes": COUNTRY_CODES
     })
-# ===============================
-# 🔐 LOGIN
-# ===============================
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
-from django.contrib import messages
-
-from .models import OrganizationMember
-from .phone_utils import COUNTRY_CODES
+# =========================
+# LOGIN (FIXED SaaS FLOW)
+# =========================
 def login_view(request):
     if request.method == "POST":
         identifier = request.POST.get("identifier", "").strip()
@@ -121,150 +83,163 @@ def login_view(request):
 
         user = authenticate(request, username=identifier, password=password)
 
-        if user is not None:
+        if user:
             login(request, user)
 
             memberships = OrganizationMember.objects.filter(
                 user=user,
-                is_active=True,
-                organization__isnull=False
+                is_active=True
             ).select_related("organization")
 
-            if memberships.count() == 1:
-                request.session["organization_id"] = memberships.first().organization_id
-                return redirect("home")
+            if not memberships.exists():
+                request.session.pop("organization_id", None)
+                return redirect("connect_organization")
 
-            elif memberships.exists():
+            # ALWAYS set default org (prevents UI break)
+            org = memberships.first().organization
+            set_active_org(request, org.id)
+
+            if memberships.count() > 1:
                 return redirect("select_organization")
 
-            else:
-                request.session.pop("organization_id", None)
-                messages.error(request, "No organization assigned to this account.")
-                return redirect("login")
+            return redirect("home")
 
         messages.error(request, "Invalid login credentials.")
 
     return render(request, "registration/login.html", {
         "country_codes": COUNTRY_CODES
     })
-# 🚪 LOGOUT
-# ===============================
+
+
+# =========================
+# LOGOUT
+# =========================
 def logout_view(request):
     logout(request)
     return redirect("login")
+
+
+# =========================
+# CREATE ORGANIZATION
+# =========================
+from .phone_utils import COUNTRY_CODES
 def organization_signup_view(request):
     if request.method == "POST":
+        form = CustomUserCreationForm(request.POST)
 
-        org_name = request.POST.get("org_name", "").strip()
-        slug = request.POST.get("slug", "").strip()
+        if form.is_valid():
+            org_name = request.POST.get("org_name", "").strip()
+            slug = request.POST.get("slug", "").strip()
 
-        country_code = request.POST.get("country_code", "").strip()
-        local_phone = request.POST.get("local_phone", "").strip().replace(" ", "").replace("-", "")
-        phone = f"{country_code}{local_phone}"
+            organization = Organization.objects.create(
+                name=org_name,
+                slug=slug
+            )
 
-        password = request.POST.get("password")
-        full_name = request.POST.get("full_name")
+            user = form.save()
 
-        form = CustomUserCreationForm({
-            "phone": phone,
-            "full_name": full_name,
-            "password1": password,
-            "password2": password
+            OrganizationMember.objects.create(
+                user=user,
+                organization=organization,
+                is_admin=True
+            )
+
+            login(request, user)
+            request.session["organization_id"] = organization.id
+
+            return redirect("home")
+
+        return render(request, "registration/org_signup.html", {
+            "form_errors": form.errors,
+            "country_codes": COUNTRY_CODES
         })
 
-        if not form.is_valid():
-            return render(request, "registration/org_signup.html", {"form_errors": form.errors})
+    return render(request, "registration/org_signup.html", {
+        "country_codes": COUNTRY_CODES
+    })# =========================
+# JOIN ORGANIZATION (SINGLE FLOW)
+# =========================
+def join_organization_view(request, code):
+    organization = get_object_or_404(
+        Organization,
+        join_code=code,
+        is_active=True
+    )
 
-        # 1. create org
-        organization = Organization.objects.create(
-            name=org_name,
-            slug=slug
-        )
+    if not request.user.is_authenticated:
+        request.session["pending_org_code"] = code
+        return redirect(f"/accounts/login/?next=/accounts/join/{code}/")
 
-        # 2. create user
-        user = form.save()
-
-        # 3. link user to org
-        OrganizationMember.objects.create(
-            user=user,
-            organization=organization,
-            is_admin=True
-        )
-
-        # 4. login
-        login(request, user)
-
-        # 5. set session
-        request.session["organization_id"] = organization.id
-
-        messages.success(request, "Organization created successfully.")
+    # already member → switch org
+    if OrganizationMember.objects.filter(
+        user=request.user,
+        organization=organization
+    ).exists():
+        set_active_org(request, organization.id)
         return redirect("home")
 
-    return render(request, "registration/org_signup.html")
-
-from django.contrib.auth.decorators import login_required
-from django.db.models import Q
-
-@login_required
-def find_church_view(request):
-    query = request.GET.get("q", "").strip()
-
-    organizations = Organization.objects.filter(is_active=True)
-
-    if query:
-        organizations = organizations.filter(
-            Q(name__icontains=query) |
-            Q(slug__icontains=query)
-        )
-
-    return render(request, "registration/find_church.html", {
-        "organizations": organizations[:20],
-        "query": query
-    })
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
-
-from .models import (
-    Organization,
-    OrganizationMember,
-    OrganizationJoinRequest,
-)
-
-
-# ==================================
-# USER REQUESTS ACCESS TO CHURCH
-# ==================================
-@login_required
-def request_org_access_view(request, org_id):
-    organization = get_object_or_404(Organization, id=org_id)
-
+    # request join
     OrganizationJoinRequest.objects.get_or_create(
         user=request.user,
         organization=organization
     )
 
-    messages.success(
-        request,
-        f"Access request sent to {organization.name}."
-    )
-
-    return redirect("find_church")
+    messages.success(request, "Join request sent.")
+    return redirect("home")
 
 
-# ==================================
-# ADMIN SEES PENDING REQUESTS
-# ==================================
+# =========================
+# CONNECT BY CODE (manual fallback)
+# =========================
+@login_required
+def connect_organization_view(request):
+    if request.method == "POST":
+        code = request.POST.get("invite_code", "").strip().upper()
+
+        organization = get_object_or_404(Organization, join_code=code, is_active=True)
+
+        OrganizationMember.objects.get_or_create(
+            user=request.user,
+            organization=organization,
+            defaults={"is_admin": False, "is_active": True}
+        )
+
+        set_active_org(request, organization.id)
+
+        return redirect("home")
+
+    return render(request, "registration/connect_organization.html")
+
+
+# =========================
+# FIND CHURCH
+# =========================
+@login_required
+def find_church_view(request):
+    query = request.GET.get("q", "").strip()
+
+    orgs = Organization.objects.filter(is_active=True)
+
+    if query:
+        orgs = orgs.filter(Q(name__icontains=query) | Q(slug__icontains=query))
+
+    return render(request, "registration/find_church.html", {
+        "organizations": orgs[:20],
+        "query": query
+    })
+
+
+# =========================
+# ADMIN REQUESTS
+# =========================
 @login_required
 def org_requests_view(request):
     membership = OrganizationMember.objects.filter(
         user=request.user,
         is_admin=True
-    ).first()
+    ).select_related("organization").first()
 
     if not membership:
-        messages.error(request, "Admins only.")
         return redirect("home")
 
     requests = OrganizationJoinRequest.objects.filter(
@@ -276,15 +251,12 @@ def org_requests_view(request):
     })
 
 
-# ==================================
-# ADMIN APPROVES REQUEST
-# ==================================
+# =========================
+# APPROVE REQUEST
+# =========================
 @login_required
 def approve_org_request_view(request, request_id):
-    join_request = get_object_or_404(
-        OrganizationJoinRequest,
-        id=request_id
-    )
+    join_request = get_object_or_404(OrganizationJoinRequest, id=request_id)
 
     is_admin = OrganizationMember.objects.filter(
         user=request.user,
@@ -293,20 +265,23 @@ def approve_org_request_view(request, request_id):
     ).exists()
 
     if not is_admin:
-        messages.error(request, "Admins only.")
         return redirect("home")
 
-    OrganizationMember.objects.get_or_create(
+    OrganizationMember.objects.create(
         user=join_request.user,
         organization=join_request.organization,
-        defaults={"is_admin": False}
+        is_admin=False,
+        is_active=True
     )
 
     join_request.delete()
 
-    messages.success(request, "Member approved.")
     return redirect("org_requests")
 
+
+# =========================
+# DASHBOARD
+# =========================
 @login_required
 def org_dashboard_view(request):
     membership = OrganizationMember.objects.filter(
@@ -315,21 +290,51 @@ def org_dashboard_view(request):
     ).select_related("organization").first()
 
     if not membership:
-        messages.error(request, "Admins only.")
         return redirect("home")
 
-    organization = membership.organization
+    org = membership.organization
 
-    total_members = OrganizationMember.objects.filter(
-        organization=organization
-    ).count()
+    total_members = OrganizationMember.objects.filter(organization=org).count()
+    pending_requests = OrganizationJoinRequest.objects.filter(organization=org).count()
+    total_groups = Group.objects.filter(organization=org, is_active=True).count()
 
-    pending_requests = OrganizationJoinRequest.objects.filter(
-        organization=organization
-    ).count()
+    join_link = request.build_absolute_uri(f"/accounts/join/{org.join_code}/")
+
+    qr = qrcode.QRCode(box_size=10, border=4)
+    qr.add_data(join_link)
+    qr.make(fit=True)
+
+    img = qr.make_image(fill_color="black", back_color="white")
+
+    buffer = io.BytesIO()
+    img.save(buffer, format="PNG")
+    qr_code = base64.b64encode(buffer.getvalue()).decode()
 
     return render(request, "org_dashboard.html", {
-        "organization": organization,
+        "organization": org,
         "total_members": total_members,
         "pending_requests": pending_requests,
+        "total_groups": total_groups,
+        "join_link": join_link,
+        "qr_code": qr_code,
     })
+
+
+# =========================
+# REGENERATE CODE
+# =========================
+@login_required
+def regenerate_join_code_view(request):
+    membership = OrganizationMember.objects.filter(
+        user=request.user,
+        is_admin=True
+    ).select_related("organization").first()
+
+    if not membership:
+        return redirect("home")
+
+    org = membership.organization
+    org.join_code = org.generate_join_code()
+    org.save()
+
+    return redirect("org_dashboard")

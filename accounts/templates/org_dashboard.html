@@ -1,38 +1,200 @@
 {% extends "base.html" %}
 
+{% block title %}Church Admin Dashboard{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
+<div class="container py-4">
 
-<h2>{{ organization.name }} Dashboard</h2>
+    <!-- HEADER -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">{{ organization.name }}</h2>
+            <p class="text-muted mb-0">Church Admin Dashboard</p>
+        </div>
 
-<div class="row mt-4">
+        <div class="mt-3 mt-md-0">
+            <span class="badge bg-success fs-6 px-3 py-2">
+                Invite Code: {{ organization.join_code }}
+            </span>
+        </div>
+    </div>
+    <div class="card p-4 mb-4">
 
-<div class="col-md-4">
-<div class="card p-3">
-<h5>Total Members</h5>
-<h2>{{ total_members }}</h2>
-</div>
-</div>
+      <h5 class="fw-bold mb-3">Invite Members</h5>
+  
+      <!-- JOIN CODE -->
+      <div class="mb-3">
+          <label class="text-muted small">Church Code</label>
+          <div class="d-flex gap-2 align-items-center">
+              <input class="form-control"
+                     value="{{ organization.join_code }}"
+                     readonly>
+  
+              <a href="{% url 'regenerate_join_code' %}"
+                 class="btn btn-outline-danger btn-sm">
+                  Regenerate
+              </a>
+          </div>
+      </div>
+  
+      <!-- INVITE LINK -->
+      <div class="mb-3">
+          <label class="text-muted small">Invite Link</label>
+          <input class="form-control"
+                 value="{{ join_link }}"
+                 readonly>
+      </div>
+  
+      <!-- ACTIONS -->
+      <div class="d-flex gap-2 mb-3">
+          <button class="btn btn-primary btn-sm"
+                  onclick="navigator.clipboard.writeText('{{ join_link }}')">
+              Copy Link
+          </button>
+  
+          <button class="btn btn-outline-success btn-sm"
+                  onclick="navigator.clipboard.writeText('{{ organization.join_code }}')">
+              Copy Code
+          </button>
+      </div>
+  
+      <!-- QR -->
+      <div class="text-center">
+          <img src="data:image/png;base64,{{ qr_code }}"
+               style="max-width:200px;"
+               class="mb-2">
+  
+          <div>
+              <button class="btn btn-dark btn-sm"
+                      onclick="downloadQR()">
+                  Download QR
+              </button>
+          </div>
+      </div>
+  
+  </div>
+    <!-- STATS -->
+    <div class="row g-3 mb-4">
 
-<div class="col-md-4">
-<div class="card p-3">
-<h5>Pending Requests</h5>
-<h2>{{ pending_requests }}</h2>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 p-4 h-100">
+                <div class="text-muted small">Total Members</div>
+                <h1 class="fw-bold mb-0">{{ total_members }}</h1>
+            </div>
+        </div>
 
-<a href="{% url 'org_requests' %}" class="btn btn-success mt-2">
-Review Requests
-</a>
-</div>
-</div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 p-4 h-100">
+                <div class="text-muted small">Pending Requests</div>
+                <h1 class="fw-bold mb-0">{{ pending_requests }}</h1>
+            </div>
+        </div>
 
-<div class="col-md-4">
-<div class="card p-3">
-<h5>Invite Code</h5>
-<h2>{{ organization.slug|upper }}</h2>
-</div>
-</div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 p-4 h-100">
+                <div class="text-muted small">Active Groups</div>
+                <h1 class="fw-bold mb-0">{{ total_groups|default:"0" }}</h1>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ACTION GRID -->
+    <div class="row g-3">
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm p-4 h-100">
+                <h5 class="fw-bold">Pending Requests</h5>
+                <p class="text-muted small">
+                    Review and approve new members.
+                </p>
+
+                <a href="{% url 'org_requests' %}"
+                   class="btn btn-success mt-auto">
+                    Review Requests
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm p-4 h-100">
+                <h5 class="fw-bold">Members</h5>
+                <p class="text-muted small">
+                    View church members and admins.
+                </p>
+
+                <a href="#"
+                   class="btn btn-outline-primary mt-auto">
+                    View Members
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm p-4 h-100">
+                <h5 class="fw-bold">Groups</h5>
+                <p class="text-muted small">
+                    Manage communities and ministries.
+                </p>
+
+                <a href="{% url 'engagement:group_list' %}"
+                   class="btn btn-outline-dark mt-auto">
+                    Manage Groups
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm p-4 h-100">
+                <h5 class="fw-bold">Branding</h5>
+                <p class="text-muted small">
+                    Update church logo and church name.
+                </p>
+
+                <a href="#"
+                   class="btn btn-outline-secondary mt-auto">
+                    Edit Branding
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm p-4 h-100">
+                <h5 class="fw-bold">Invite Members</h5>
+                <p class="text-muted small">
+                    Share invite code with members.
+                </p>
+
+                <button class="btn btn-outline-success mt-auto"
+                        onclick="copyInviteCode()">
+                    Copy Code
+                </button>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm p-4 h-100">
+                <h5 class="fw-bold">Settings</h5>
+                <p class="text-muted small">
+                    Church preferences and permissions.
+                </p>
+
+                <a href="#"
+                   class="btn btn-outline-warning mt-auto">
+                    Open Settings
+                </a>
+            </div>
+        </div>
+
+    </div>
 
 </div>
+{% endblock %}
 
-</div>
+{% block extra_js %}
+<script>
+function copyInviteCode() {
+    navigator.clipboard.writeText("{{ organization.join_code }}");
+}
+</script>
 {% endblock %}

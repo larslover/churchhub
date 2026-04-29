@@ -47,6 +47,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "accounts.middleware.OrganizationMiddleware",
+   
 ]
 
 ROOT_URLCONF = "churchhub.urls"

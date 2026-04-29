@@ -1,39 +1,149 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Create Organization</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #e1ffed;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        .brand-title {
+            font-weight: 700;
+            color: #198754;
+        }
+    </style>
 </head>
+
 <body>
 
-<h2>Create Your Organization</h2>
+<div class="container py-5">
+    <div class="row justify-content-center">
 
-<form method="POST">
-    {% csrf_token %}
+        <div class="col-md-7 col-lg-6">
 
-    <h3>Organization Details</h3>
+            <div class="text-center mb-4">
+                <h2 class="brand-title">Create Your Church</h2>
+                <p class="text-muted">
+                    Set up your organization and become the first admin.
+                </p>
+            </div>
 
-    <input type="text" name="org_name" placeholder="Organization Name" required><br><br>
+            <div class="card p-4">
 
-    <input type="text" name="slug" placeholder="Unique URL slug (e.g. faith-in-god)" required><br><br>
+                <!-- ERROR DISPLAY -->
+                {% if form_errors %}
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        {% for field, errors in form_errors.items %}
+                            {% for error in errors %}
+                                <li><strong>{{ field }}:</strong> {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
 
-    <hr>
+                <form method="POST">
+                    {% csrf_token %}
 
-    <h3>Admin Account</h3>
+                    <!-- ORGANIZATION -->
+                    <h5 class="mb-3">Church Details</h5>
 
-    <input type="text" name="full_name" placeholder="Your Full Name" required><br><br>
+                    <div class="mb-3">
+                        <label class="form-label">Church Name</label>
+                        <input type="text"
+                               name="org_name"
+                               class="form-control"
+                               placeholder="e.g. Faith in God Church"
+                               required>
+                    </div>
 
-    <select name="country_code">
-        {% for code in country_codes %}
-            <option value="{{ code }}">{{ code }}</option>
-        {% endfor %}
-    </select>
+                    <hr class="my-4">
 
-    <input type="text" name="local_phone" placeholder="Phone Number" required><br><br>
+                    <!-- ADMIN -->
+                    <h5 class="mb-3">Your Admin Account</h5>
 
-    <input type="password" name="password" placeholder="Password" required><br><br>
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text"
+                               name="full_name"
+                               class="form-control"
+                               placeholder="Your full name"
+                               required>
+                    </div>
 
-    <button type="submit">Create Organization</button>
-</form>
+                    <div class="row g-2 mb-3">
+
+                        <div class="col-4">
+                            <label class="form-label">Country</label>
+                            <select name="country_code" class="form-select" required>
+                                {% for code, label in country_codes %}
+                                    <option value="{{ code }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-8">
+                            <label class="form-label">Phone Number</label>
+                            <input type="text"
+                                   name="local_phone"
+                                   class="form-control"
+                                   placeholder="Phone number"
+                                   required>
+                        </div>
+
+                    </div>
+
+                    <!-- PASSWORD -->
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password"
+                               name="password1"
+                               class="form-control"
+                               placeholder="Create a password"
+                               required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Confirm Password</label>
+                        <input type="password"
+                               name="password2"
+                               class="form-control"
+                               placeholder="Confirm password"
+                               required>
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-success w-100 py-2 fw-semibold">
+                        Create Church
+                    </button>
+
+                </form>
+
+            </div>
+
+            <p class="text-center text-muted mt-3 small">
+                You’ll be automatically set as the first admin.
+            </p>
+
+        </div>
+
+    </div>
+</div>
 
 </body>
 </html>

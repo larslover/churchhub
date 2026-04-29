@@ -103,7 +103,12 @@ class Organization(models.Model):
         super().save(*args, **kwargs)
 
     def generate_join_code(self):
-        base = self.slug.upper().replace("-", "")[:6]
+        words = self.name.split()
+
+        if len(words) >= 2:
+            base = ''.join(word[0] for word in words[:3]).upper()
+        else:
+            base = self.slug.upper().replace("-", "")[:6]
 
         while True:
             code = f"{base}{uuid.uuid4().hex[:4].upper()}"

@@ -6,43 +6,62 @@ from .views import (
     organization_signup_view,
     connect_organization_view,
     find_church_view,
-    request_org_access_view,
+
     org_requests_view,
     approve_org_request_view,
-    org_dashboard_view
+    org_dashboard_view,
+    regenerate_join_code_view,
+
 )
 
 urlpatterns = [
+
+    # ======================
+    # AUTH
+    # ======================
     path("signup/", signup_view, name="signup"),
     path("login/", login_view, name="login"),
     path("logout/", logout_view, name="logout"),
 
-    # Create organization
+    # ======================
+    # ORGANIZATION SETUP
+    # ======================
     path("org-signup/", organization_signup_view, name="org_signup"),
 
-    # User onboarding
+    # ======================
+    # ONBOARDING
+    # ======================
     path("connect/", connect_organization_view, name="connect_organization"),
     path("find-church/", find_church_view, name="find_church"),
 
-    # Join requests
-    path(
-        "request-access/<int:org_id>/",
-        request_org_access_view,
-        name="request_org_access"
-    ),
+    # ======================
+    # JOIN FLOW (SINGLE SOURCE OF TRUTH)
+    # ======================
+ 
 
-    # Admin approvals
+    # ======================
+    # REQUEST ACCESS
+    # ======================
+
+
+    # ======================
+    # ADMIN REQUESTS
+    # ======================
     path("requests/", org_requests_view, name="org_requests"),
-
     path(
         "requests/<int:request_id>/approve/",
         approve_org_request_view,
         name="approve_org_request"
     ),
 
-
-
+    # ======================
+    # DASHBOARD
+    # ======================
     path("dashboard/", org_dashboard_view, name="org_dashboard"),
-    path("requests/", org_requests_view, name="org_requests"),
-    path("requests/<int:request_id>/approve/", approve_org_request_view, name="approve_org_request"),
+
+    path(
+        "dashboard/regenerate-code/",
+        regenerate_join_code_view,
+        name="regenerate_join_code"
+    ),
 ]
