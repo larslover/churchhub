@@ -57,6 +57,65 @@
               Copy Code
           </button>
       </div>
+      <div class="row g-3 mt-1">
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm p-4 h-100">
+                <h5 class="fw-bold">Devotionals</h5>
+                <p class="text-muted small">
+                    Create daily devotionals for members.
+                </p>
+    
+                <a href="{% url 'org_admin:devotional_list' %}"
+                   class="btn btn-outline-primary mt-auto">
+                    Manage Devotionals
+                </a>
+            </div>
+        </div>
+    
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm p-4 h-100">
+                <h5 class="fw-bold">Updates</h5>
+                <p class="text-muted small">
+                    Post announcements and church news.
+                </p>
+    
+                <a href="{% url 'org_admin:update_list' %}"
+                   class="btn btn-outline-success mt-auto">
+                    Manage Updates
+                </a>
+            </div>
+        </div>
+    
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm p-4 h-100">
+                <h5 class="fw-bold">Media</h5>
+                <p class="text-muted small">
+                    Upload sermons, videos and audio.
+                </p>
+    
+                <a href="{% url 'org_admin:media_list' %}"
+                   class="btn btn-outline-dark mt-auto">
+                    Manage Media
+                </a>
+            </div>
+        </div>
+    
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm p-4 h-100">
+                <h5 class="fw-bold">Programs</h5>
+                <p class="text-muted small">
+                    Manage church services and events.
+                </p>
+    
+                <a href="{% url 'org_admin:program_list' %}"
+                   class="btn btn-outline-warning mt-auto">
+                    Manage Programs
+                </a>
+            </div>
+        </div>
+    
+    </div>
   
       <!-- QR -->
       <div class="text-center">
