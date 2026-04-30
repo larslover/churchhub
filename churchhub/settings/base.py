@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "content",
     "giving",
     "engagement",
+     "org_admin",   # ← REQUIRED
 ]
 
 MIDDLEWARE = [

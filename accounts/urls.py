@@ -9,9 +9,8 @@ from .views import (
     terms,
     privacy,
 
-    org_requests_view,
-    approve_org_request_view,
-    org_dashboard_view,
+   
+  
     regenerate_join_code_view,
 
 )
@@ -46,20 +45,13 @@ urlpatterns = [
     # ======================
 
 
-    # ======================
-    # ADMIN REQUESTS
-    # ======================
-    path("requests/", org_requests_view, name="org_requests"),
-    path(
-        "requests/<int:request_id>/approve/",
-        approve_org_request_view,
-        name="approve_org_request"
-    ),
+ 
+   
 
     # ======================
     # DASHBOARD
     # ======================
-    path("dashboard/", org_dashboard_view, name="org_dashboard"),
+  
 
     path(
         "dashboard/regenerate-code/",

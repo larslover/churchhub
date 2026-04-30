@@ -180,7 +180,7 @@
 
                     {% if user_is_org_admin %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'org_dashboard' %}">
+                        <a class="nav-link" href="{% url 'org_admin:org_dashboard' %}">
                             Church Admin
                         </a>
                     </li>
@@ -227,7 +227,7 @@
 {% if user.is_authenticated %}
 
 <li class="nav-item">
-<a class="nav-link" href="{% url 'org_dashboard' %}">
+<a class="nav-link" href="{% url 'org_admin:org_dashboard' %}">
 Dashboard
 </a>
 </li>
