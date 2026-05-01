@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% if update %}Edit Update{% else %}New Update{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width:700px;">
+
+    <h2 class="mb-4">
+        {% if update %}
+            Edit Update
+        {% else %}
+            New Update
+        {% endif %}
+    </h2>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label>Title</label>
+            <input type="text"
+                   name="title"
+                   class="form-control"
+                   value="{{ update.title|default:'' }}"
+                   required>
+        </div>
+
+        <div class="mb-3">
+            <label>Body</label>
+            <textarea name="body"
+                      class="form-control"
+                      rows="6"
+                      required>{{ update.body|default:'' }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label>Image</label>
+            <input type="file"
+                   name="image"
+                   class="form-control">
+        </div>
+
+        {% if update.image %}
+        <div class="mb-3">
+            <img src="{{ update.image.url }}"
+                 style="max-width:220px;"
+                 class="rounded shadow-sm">
+        </div>
+        {% endif %}
+
+        <button class="btn btn-primary">
+            {% if update %}
+                Save Changes
+            {% else %}
+                Create Update
+            {% endif %}
+        </button>
+
+    </form>
+
+</div>
+{% endblock %}

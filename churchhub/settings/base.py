@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-AUTH_USER_MODEL = "accounts.User"
+
 SECRET_KEY = "replace-this-in-prod"
 
 LOGGING = {
@@ -32,10 +32,11 @@ INSTALLED_APPS = [
 
     # your apps
     "accounts",
-    "groups",
+  
     "content",
     "giving",
     "engagement",
+     "org_admin",   # ← REQUIRED
 ]
 
 MIDDLEWARE = [
@@ -46,6 +47,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "accounts.middleware.OrganizationMiddleware",
+   
 ]
 
 ROOT_URLCONF = "churchhub.urls"
@@ -63,7 +66,9 @@ TEMPLATES = [
              "engagement.context_processors.user_groups",
             "django.contrib.messages.context_processors.messages",
               "content.context_processors.global_updates",  # add this
-              "engagement.context_processors.user_groups",
+              "accounts.context_processors.org_admin_status",
+              "accounts.context_processors.active_organization",
+            
                 "engagement.context_processors.pending_invitations",
         ]},
     },

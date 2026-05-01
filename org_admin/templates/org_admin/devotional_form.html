@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% if devotional %}Edit Devotional{% else %}New Devotional{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width:700px;">
+
+    <h2 class="mb-4">
+        {% if devotional %}
+            Edit Devotional
+        {% else %}
+            New Devotional
+        {% endif %}
+    </h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label>Title</label>
+            <input
+                type="text"
+                name="title"
+                class="form-control"
+                value="{{ devotional.title|default:'' }}"
+                required>
+        </div>
+
+        <div class="mb-3">
+            <label>Verse Reference</label>
+            <input
+                type="text"
+                name="verse_reference"
+                class="form-control"
+                value="{{ devotional.verse_reference|default:'' }}">
+        </div>
+
+        <div class="mb-3">
+            <label>Verse Text</label>
+            <textarea
+                name="verse_text"
+                class="form-control"
+                rows="3">{{ devotional.verse_text|default:'' }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label>Message</label>
+            <textarea
+                name="message"
+                class="form-control"
+                rows="6"
+                required>{{ devotional.message|default:'' }}</textarea>
+        </div>
+
+        <button class="btn btn-primary">
+            {% if devotional %}
+                Save Changes
+            {% else %}
+                Save Devotional
+            {% endif %}
+        </button>
+
+    </form>
+
+</div>
+{% endblock %}

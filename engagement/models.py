@@ -1,5 +1,4 @@
 from django.db import models
-from django.conf import settings
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
@@ -12,7 +11,7 @@ User = get_user_model()
 # 📦 FILE SIZE VALIDATOR
 # ===============================
 def validate_file_size(file):
-    max_size_mb = 2  # 🔥 change limit here
+    max_size_mb = 2
 
     if file.size > max_size_mb * 1024 * 1024:
         raise ValidationError(f"File must be under {max_size_mb}MB")
@@ -37,30 +36,25 @@ def resize_image(image_field, max_width=800, max_height=800):
 
 
 # ===============================
-# 👥 GROUP MODEL
+# 👥 GROUP
 # ===============================
 class Group(models.Model):
-
-    GROUP_TYPES = [
-        ("small", "Small Group"),
-      
-    ]
+    organization = models.ForeignKey(
+        "accounts.Organization",
+        on_delete=models.CASCADE,
+        related_name="groups"
+    )
 
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
 
     leader = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, related_name="led_groups"
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="led_groups"
     )
 
-    group_type = models.CharField(
-        max_length=20, choices=GROUP_TYPES, default="small"
-    )
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    is_active = models.BooleanField(default=True)
-
-    # ✅ APPLY VALIDATOR HERE
     image = models.ImageField(
         upload_to="groups/",
         blank=True,
@@ -68,71 +62,87 @@ class Group(models.Model):
         validators=[validate_file_size]
     )
 
+    is_active = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Group"
+        verbose_name_plural = "Groups"
+
     def __str__(self):
         return self.name
 
     def next_meeting(self):
         return self.meetings.filter(
             start_time__gte=timezone.now()
-        ).order_by('start_time').first()
+        ).order_by("start_time").first()
+
     def is_leader(self, user):
-        if not user or not user.is_authenticated:
-            return False
-        return self.leader_id == user.id
+        return user.is_authenticated and self.leader_id == user.id
 
     def is_member(self, user):
         return GroupMember.objects.filter(
-        group=self,
-        user=user,
-        is_active=True
-    ).exists()
+            group=self,
+            user=user,
+            is_active=True
+        ).exists()
 
-    # ✅ RESIZE ON SAVE
     def save(self, *args, **kwargs):
         is_new = self.pk is None
-
         super().save(*args, **kwargs)
 
-    # resize image
         if self.image:
             resize_image(self.image)
 
-    # ensure leader is always a member
         if is_new and self.leader:
             GroupMember.objects.get_or_create(
-            user=self.leader,
-            group=self
-        )
-
-    class Meta:
-        verbose_name = "Church Group"
-        verbose_name_plural = "Church Groups"
+                user=self.leader,
+                group=self
+            )
 
 
 # ===============================
-# 👤 GROUP MEMBERS
+# 👤 GROUP MEMBER
 # ===============================
 class GroupMember(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="group_memberships"
+    )
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="group_memberships")
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="members")
+    group = models.ForeignKey(
+        Group,
+        on_delete=models.CASCADE,
+        related_name="members"
+    )
 
     joined_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        unique_together = ("user", "group")
+        constraints = [
+            models.UniqueConstraint(fields=["user", "group"], name="unique_group_member")
+        ]
 
-    def __str__(self):
-        return f"{self.user} in {self.group}"
+    def save(self, *args, **kwargs):
+        # 🔒 enforce org consistency at write-time
+        if self.group and self.user:
+            pass  # (optional hook for org checks later)
 
+        super().save(*args, **kwargs)
 
 # ===============================
-# 📅 MEETINGS
+# 📅 MEETING
 # ===============================
 class Meeting(models.Model):
-
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="meetings")
+    group = models.ForeignKey(
+        Group,
+        on_delete=models.CASCADE,
+        related_name="meetings"
+    )
 
     title = models.CharField(max_length=255)
     start_time = models.DateTimeField()
@@ -143,70 +153,99 @@ class Meeting(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        ordering = ["start_time"]
-
-    def __str__(self):
-        return f"{self.title} ({self.group.name})"
-
+    def organization(self):
+        return self.group.organization
 
 # ===============================
-# 📩 INVITATIONS
+# 📩 INVITATION
 # ===============================
 class GroupInvitation(models.Model):
+    group = models.ForeignKey(
+        Group,
+        on_delete=models.CASCADE,
+        related_name="invitations"
+    )
 
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="invitations")
-    invited_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="received_invitations")
-    invited_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_invitations")
+    invited_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="received_invitations"
+    )
+
+    invited_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="sent_invitations"
+    )
 
     accepted = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def organization(self):
+        return self.group.organization
+
     class Meta:
-        unique_together = ("group", "invited_user")
-
-    def __str__(self):
-        status = "Accepted" if self.accepted else "Pending"
-        return f"Invite: {self.invited_user} to {self.group} ({status})"
-
-    @property
-    def is_pending(self):
-        return not self.accepted
-
-
-# ===============================
-# 📝 POSTS
+        constraints = [
+            models.UniqueConstraint(fields=["group", "invited_user"], name="unique_group_invite")
+        ]# ===============================
+# 📝 POST
 # ===============================
 class GroupPost(models.Model):
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='posts')
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='group_posts')
+    group = models.ForeignKey(
+        Group,
+        on_delete=models.CASCADE,
+        related_name="posts"
+    )
+
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="group_posts"
+    )
 
     content = models.TextField()
-    is_pinned = models.BooleanField(default=False)  # ✅ ADD THIS
+    is_pinned = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def organization(self):
+        return self.group.organization
+
     class Meta:
-        ordering = ['-is_pinned', '-created_at']
+        ordering = ["-is_pinned", "-created_at"]
 # ===============================
-# 💬 REPLIES
+# 💬 REPLY
 # ===============================
 class PostReply(models.Model):
+    post = models.ForeignKey(
+        GroupPost,
+        on_delete=models.CASCADE,
+        related_name="replies"
+    )
 
-    post = models.ForeignKey(GroupPost, on_delete=models.CASCADE, related_name='replies')
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-
     content = models.TextField()
+
     created_at = models.DateTimeField(auto_now_add=True)
 
-
+    def organization(self):
+        return self.post.group.organization
 # ===============================
-# ❤️ LIKES
+# ❤️ LIKE
 # ===============================
 class PostLike(models.Model):
+    post = models.ForeignKey(
+        GroupPost,
+        on_delete=models.CASCADE,
+        related_name="likes"
+    )
 
-    post = models.ForeignKey(GroupPost, on_delete=models.CASCADE, related_name='likes')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    def organization(self):
+        return self.post.group.organization
+
     class Meta:
-        unique_together = ('post', 'user')
+        constraints = [
+            models.UniqueConstraint(fields=["post", "user"], name="unique_post_like")
+        ]
