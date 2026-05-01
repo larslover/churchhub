@@ -65,7 +65,7 @@ TEMPLATES = [
             "engagement.context_processors.next_meeting",
              "engagement.context_processors.user_groups",
             "django.contrib.messages.context_processors.messages",
-              "content.context_processors.global_updates",  # add this
+            
               "accounts.context_processors.org_admin_status",
               "accounts.context_processors.active_organization",
             
