@@ -23,6 +23,7 @@ from .utils import get_admin_org
 # =========================
 # DASHBOARD
 # =========================
+
 @login_required
 def org_dashboard_view(request):
     org = get_admin_org(request)

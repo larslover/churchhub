@@ -18,120 +18,115 @@
             </span>
         </div>
     </div>
-    <div class="card p-4 mb-4">
 
-      <h5 class="fw-bold mb-3">Invite Members</h5>
-  
-      <!-- JOIN CODE -->
-      <div class="mb-3">
-          <label class="text-muted small">Church Code</label>
-          <div class="d-flex gap-2 align-items-center">
-              <input class="form-control"
-                     value="{{ organization.join_code }}"
-                     readonly>
-  
-              <a href="{% url 'regenerate_join_code' %}"
-                 class="btn btn-outline-danger btn-sm">
-                  Regenerate
-              </a>
-          </div>
-      </div>
-  
-      <!-- INVITE LINK -->
-      <div class="mb-3">
-          <label class="text-muted small">Invite Link</label>
-          <input class="form-control"
-                 value="{{ join_link }}"
-                 readonly>
-      </div>
-  
-      <!-- ACTIONS -->
-      <div class="d-flex gap-2 mb-3">
-          <button class="btn btn-primary btn-sm"
-                  onclick="navigator.clipboard.writeText('{{ join_link }}')">
-              Copy Link
-          </button>
-  
-          <button class="btn btn-outline-success btn-sm"
-                  onclick="navigator.clipboard.writeText('{{ organization.join_code }}')">
-              Copy Code
-          </button>
-      </div>
-      <div class="row g-3 mt-1">
+    <!-- INVITE CARD -->
+    <div class="card border-0 shadow-sm p-4 mb-4">
+        <h5 class="fw-bold mb-3">Invite Members</h5>
 
-        <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm p-4 h-100">
-                <h5 class="fw-bold">Devotionals</h5>
-                <p class="text-muted small">
-                    Create daily devotionals for members.
-                </p>
-    
-                <a href="{% url 'org_admin:devotional_list' %}"
-                   class="btn btn-outline-primary mt-auto">
-                    Manage Devotionals
+        <!-- JOIN CODE -->
+        <div class="mb-3">
+            <label class="text-muted small">Church Code</label>
+
+            <div class="d-flex gap-2">
+                <input class="form-control"
+                       value="{{ organization.join_code }}"
+                       readonly>
+
+                <a href="{% url 'regenerate_join_code' %}"
+                   class="btn btn-outline-danger">
+                    Regenerate
                 </a>
             </div>
         </div>
-    
-        <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm p-4 h-100">
-                <h5 class="fw-bold">Updates</h5>
-                <p class="text-muted small">
-                    Post announcements and church news.
-                </p>
-    
-                <a href="{% url 'org_admin:update_list' %}"
-                   class="btn btn-outline-success mt-auto">
-                    Manage Updates
-                </a>
-            </div>
+
+        <!-- INVITE LINK -->
+        <div class="mb-3">
+            <label class="text-muted small">Invite Link</label>
+
+            <input class="form-control"
+                   value="{{ join_link }}"
+                   readonly>
         </div>
-    
-        <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm p-4 h-100">
-                <h5 class="fw-bold">Media</h5>
-                <p class="text-muted small">
-                    Upload sermons, videos and audio.
-                </p>
-    
-                <a href="{% url 'org_admin:media_list' %}"
-                   class="btn btn-outline-dark mt-auto">
-                    Manage Media
-                </a>
-            </div>
+
+        <!-- ACTIONS -->
+        <div class="d-flex gap-2">
+            <button class="btn btn-primary"
+                    onclick="navigator.clipboard.writeText('{{ join_link }}')">
+                Copy Link
+            </button>
+
+            <button class="btn btn-outline-success"
+                    onclick="copyInviteCode()">
+                Copy Code
+            </button>
         </div>
-    
-        <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm p-4 h-100">
-                <h5 class="fw-bold">Programs</h5>
-                <p class="text-muted small">
-                    Manage church services and events.
-                </p>
-    
-                <a href="{% url 'org_admin:program_list' %}"
-                   class="btn btn-outline-warning mt-auto">
-                    Manage Programs
-                </a>
-            </div>
-        </div>
-    
     </div>
-  
-      <!-- QR -->
-      <div class="text-center">
-          <img src="data:image/png;base64,{{ qr_code }}"
-               style="max-width:200px;"
-               class="mb-2">
-  
-          <div>
-              <button class="btn btn-dark btn-sm"
-                      onclick="downloadQR()">
-                  Download QR
-              </button>
-          </div>
-      </div>
-  
-  </div>
+
+    <!-- CONTENT MANAGEMENT CARD -->
+    <div class="card border-0 shadow-sm p-4 mb-4">
+        <h5 class="fw-bold mb-4">Content Management</h5>
+
+        <div class="row g-3">
+
+            <div class="col-md-6 col-lg-3">
+                <div class="border rounded p-3 h-100 bg-light">
+                    <h6 class="fw-bold">Devotionals</h6>
+                    <p class="small text-muted">
+                        Create daily devotionals for members.
+                    </p>
+
+                    <a href="{% url 'org_admin:devotional_list' %}"
+                       class="btn btn-outline-primary btn-sm w-100">
+                        Manage
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="border rounded p-3 h-100 bg-light">
+                    <h6 class="fw-bold">Updates</h6>
+                    <p class="small text-muted">
+                        Church announcements and news.
+                    </p>
+
+                    <a href="{% url 'org_admin:update_list' %}"
+                       class="btn btn-outline-success btn-sm w-100">
+                        Manage
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="border rounded p-3 h-100 bg-light">
+                    <h6 class="fw-bold">Media</h6>
+                    <p class="small text-muted">
+                        Upload sermons, audio and video.
+                    </p>
+
+                    <a href="{% url 'org_admin:media_list' %}"
+                       class="btn btn-outline-dark btn-sm w-100">
+                        Manage
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="border rounded p-3 h-100 bg-light">
+                    <h6 class="fw-bold">Programs</h6>
+                    <p class="small text-muted">
+                        Services and events.
+                    </p>
+
+                    <a href="{% url 'org_admin:program_list' %}"
+                       class="btn btn-outline-warning btn-sm w-100">
+                        Manage
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <!-- STATS -->
     <div class="row g-3 mb-4">
 
@@ -158,7 +153,7 @@
 
     </div>
 
-    <!-- ACTION GRID -->
+    <!-- ADMIN ACTIONS -->
     <div class="row g-3">
 
         <div class="col-md-6 col-lg-4">
@@ -183,33 +178,23 @@
                 </p>
 
                 <a href="{% url 'org_admin:member_list' %}"
-                class="btn btn-outline-primary mt-auto">
-                 View Members
-             </a>
+                   class="btn btn-outline-primary mt-auto">
+                    View Members
+                </a>
             </div>
         </div>
 
         <div class="col-md-6 col-lg-4">
-            <div class="card border-0 shadow-sm h-100 rounded-4 p-4">
-        
-                <div class="d-flex flex-column h-100">
-        
-                    <div>
-                        <h5 class="fw-bold mb-2">Groups</h5>
-                        <p class="text-muted small mb-0">
-                            Create and manage ministries, small groups, and communities within your organization.
-                        </p>
-                    </div>
-        
-                    <div class="mt-auto pt-3">
-                        <a href="{% url 'org_admin:group_list' %}"
-   class="btn btn-dark mt-auto">
-    Manage Groups
-</a>
-                    </div>
-        
-                </div>
-        
+            <div class="card border-0 shadow-sm p-4 h-100">
+                <h5 class="fw-bold">Groups</h5>
+                <p class="text-muted small">
+                    Manage ministries and communities.
+                </p>
+
+                <a href="{% url 'org_admin:group_list' %}"
+                   class="btn btn-dark mt-auto">
+                    Manage Groups
+                </a>
             </div>
         </div>
 
@@ -217,39 +202,12 @@
             <div class="card border-0 shadow-sm p-4 h-100">
                 <h5 class="fw-bold">Branding</h5>
                 <p class="text-muted small">
-                    Update church logo and church name.
+                    Update logo and church name.
                 </p>
-        
+
                 <a href="{% url 'org_admin:branding' %}"
                    class="btn btn-outline-secondary mt-auto">
                     Edit Branding
-                </a>
-            </div>
-        </div>
-        <div class="col-md-6 col-lg-4">
-            <div class="card border-0 shadow-sm p-4 h-100">
-                <h5 class="fw-bold">Invite Members</h5>
-                <p class="text-muted small">
-                    Share invite code with members.
-                </p>
-
-                <button class="btn btn-outline-success mt-auto"
-                        onclick="copyInviteCode()">
-                    Copy Code
-                </button>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-lg-4">
-            <div class="card border-0 shadow-sm p-4 h-100">
-                <h5 class="fw-bold">Settings</h5>
-                <p class="text-muted small">
-                    Church preferences and permissions.
-                </p>
-
-                <a href="#"
-                   class="btn btn-outline-warning mt-auto">
-                    Open Settings
                 </a>
             </div>
         </div>

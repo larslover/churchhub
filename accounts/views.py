@@ -241,7 +241,30 @@ def find_church_view(request):
 # DASHBOARD
 # =========================
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+@login_required
+def request_access_view(request, org_id):
+    org = get_object_or_404(Organization, id=org_id)
 
+    request_obj, created = OrganizationJoinRequest.objects.get_or_create(
+        user=request.user,
+        organization=org
+    )
+
+    if created:
+        messages.success(
+            request,
+            f"Your request to join {org.name} has been sent."
+        )
+    else:
+        messages.info(
+            request,
+            f"You already requested access to {org.name}."
+        )
+
+    return redirect("find_church")
 # =========================
 # REGENERATE CODE
 # =========================
@@ -259,7 +282,10 @@ def regenerate_join_code_view(request):
     org.join_code = org.generate_join_code()
     org.save()
 
-    return redirect("org_dashboard")
+    messages.success(request, "Invite code regenerated successfully.")
+
+    return redirect("org_admin:org_dashboard")
+
 def terms(request):
     return render(request, "legal/terms.html")
 
