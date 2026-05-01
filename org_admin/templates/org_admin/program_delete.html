@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Program{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center">
+
+    <h3 class="mb-3">Delete Program</h3>
+
+    <p class="text-muted mb-4">
+        Are you sure you want to delete <strong>{{ program.title }}</strong>?
+    </p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <button class="btn btn-danger">
+            Yes, Delete
+        </button>
+
+        <a href="{% url 'org_admin:program_list' %}" class="btn btn-secondary">
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+{% endblock %}

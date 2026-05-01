@@ -8,7 +8,7 @@ urlpatterns = [
     path("devotionals/", views.devotional_list, name="devotional_list"),
 path("updates/", views.update_list, name="update_list"),
 
-path("programs/", views.program_list, name="program_list"),
+
 path(
     "devotionals/new/",
     views.devotional_create,
@@ -35,4 +35,10 @@ path("media/", views.media_list, name="media_list"),
 path("media/new/", views.media_create, name="media_create"),
 path("media/<int:pk>/edit/", views.media_edit, name="media_edit"),
 path("media/<int:pk>/delete/", views.media_delete, name="media_delete"),
+
+
+path("programs/", views.program_list, name="program_list"),
+path("programs/create/", views.program_create, name="program_create"),
+path("programs/<int:pk>/edit/", views.program_edit, name="program_edit"),
+path("programs/<int:pk>/delete/", views.program_delete, name="program_delete"),
 ]

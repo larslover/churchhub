@@ -3,10 +3,11 @@
 # =========================
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
-import io
 import base64
 import qrcode
+import io
 
 from accounts.models import (
     OrganizationMember,
@@ -14,7 +15,7 @@ from accounts.models import (
 )
 
 from engagement.models import Group
-from content.models import Devotional,Update
+from content.models import Devotional,Update, Program
 
 from .utils import get_admin_org
 
@@ -84,18 +85,19 @@ def org_requests_view(request):
         "requests": requests
     })
 
-
 @login_required
 def approve_org_request_view(request, request_id):
-    join_request = get_object_or_404(
-        OrganizationJoinRequest,
-        id=request_id
-    )
-
     org = get_admin_org(request)
 
-    if not org or join_request.organization != org:
+    if not org:
         return redirect("home")
+
+    # 🔐 tenant-safe fetch (IMPORTANT CHANGE)
+    join_request = get_object_or_404(
+        OrganizationJoinRequest,
+        id=request_id,
+        organization=org
+    )
 
     OrganizationMember.objects.get_or_create(
         user=join_request.user,
@@ -109,8 +111,6 @@ def approve_org_request_view(request, request_id):
     join_request.delete()
 
     return redirect("org_admin:org_requests")
-
-
 # =========================
 # DEVOTIONALS
 # =========================
@@ -289,13 +289,91 @@ def media_delete(request, pk):
     return render(request, "org_admin/media_delete.html", {
         "media": media
     })
-
 @login_required
 def program_list(request):
-    return render(request, "org_admin/programs.html")
+    org = get_admin_org(request)
 
-from django.contrib import messages
-from content.models import Devotional
+    if not org:
+        return redirect("home")
+
+    programs = Program.objects.filter(
+        organization=org
+    ).order_by("-created_at")
+
+    return render(request, "org_admin/programs.html", {
+        "programs": programs
+    })
+@login_required
+def program_create(request):
+    org = get_admin_org(request)
+
+    if not org:
+        return redirect("home")
+
+    if request.method == "POST":
+        Program.objects.create(
+            organization=org,
+            title=request.POST.get("title"),
+            description=request.POST.get("description"),
+            image=request.FILES.get("image"),
+            day=request.POST.get("day"),
+            time=request.POST.get("time"),
+            is_active=True
+        )
+
+        return redirect("org_admin:program_list")
+
+    return render(request, "org_admin/program_form.html")
+@login_required
+def program_edit(request, pk):
+    org = get_admin_org(request)
+
+    if not org:
+        return redirect("home")
+
+    program = get_object_or_404(
+        Program,
+        pk=pk,
+        organization=org   # 🔐 critical SaaS protection
+    )
+
+    if request.method == "POST":
+        program.title = request.POST.get("title")
+        program.description = request.POST.get("description")
+        program.day = request.POST.get("day")
+        program.time = request.POST.get("time")
+
+        if request.FILES.get("image"):
+            program.image = request.FILES.get("image")
+
+        program.save()
+
+        return redirect("org_admin:program_list")
+
+    return render(request, "org_admin/program_form.html", {
+        "program": program
+    })
+
+@login_required
+def program_delete(request, pk):
+    org = get_admin_org(request)
+
+    if not org:
+        return redirect("home")
+
+    program = get_object_or_404(
+        Program,
+        pk=pk,
+        organization=org  # 🔐 prevents cross-org deletion
+    )
+
+    if request.method == "POST":
+        program.delete()
+        return redirect("org_admin:program_list")
+
+    return render(request, "org_admin/program_delete.html", {
+        "program": program
+    })
 
 
 @login_required
