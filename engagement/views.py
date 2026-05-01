@@ -78,34 +78,48 @@ def leader_dashboard(request, group_id):
 
 # 📌 GROUP LIST
 # =========================
-def group_list(request):
-    org_id = request.session.get("organization_id")
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from .models import Group, GroupMember
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from .models import Group, GroupMember
+from accounts.models import OrganizationMember
 
-    if not org_id:
+@login_required
+def group_list(request):
+
+    org_membership = OrganizationMember.objects.filter(
+        user=request.user,
+        is_active=True
+    ).select_related("organization").first()
+
+    if not org_membership:
         return redirect("connect_organization")
+
+    org = org_membership.organization
 
     groups = Group.objects.filter(
         is_active=True,
-        organization_id=org_id
+        organization=org
     ).select_related("leader")
 
-    user_memberships = set()
-
-    if request.user.is_authenticated:
-        user_memberships = set(
-            GroupMember.objects.filter(
-                user=request.user,
-                is_active=True,
-                group__organization_id=org_id
-            ).values_list("group_id", flat=True)
-        )
+    user_group_ids = set(
+        GroupMember.objects.filter(
+            user=request.user,
+            is_active=True,
+            group__organization=org
+        ).values_list("group_id", flat=True)
+    )
 
     for group in groups:
-        group.is_member = group.id in user_memberships
+        group.is_member = group.id in user_group_ids
         group.member_count = group.members.filter(is_active=True).count()
 
-    return render(request, "engagement/group_list.html", {"groups": groups})
-# =========================
+    return render(request, "engagement/group_list.html", {
+        "groups": groups,
+        "active_organization": org
+    })   
 # 👤 MY GROUPS
 # =========================
 @login_required
