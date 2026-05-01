@@ -190,16 +190,26 @@
         </div>
 
         <div class="col-md-6 col-lg-4">
-            <div class="card border-0 shadow-sm p-4 h-100">
-                <h5 class="fw-bold">Groups</h5>
-                <p class="text-muted small">
-                    Manage communities and ministries.
-                </p>
-
-                <a href="{% url 'engagement:group_list' %}"
-                   class="btn btn-outline-dark mt-auto">
-                    Manage Groups
-                </a>
+            <div class="card border-0 shadow-sm h-100 rounded-4 p-4">
+        
+                <div class="d-flex flex-column h-100">
+        
+                    <div>
+                        <h5 class="fw-bold mb-2">Groups</h5>
+                        <p class="text-muted small mb-0">
+                            Create and manage ministries, small groups, and communities within your organization.
+                        </p>
+                    </div>
+        
+                    <div class="mt-auto pt-3">
+                        <a href="{% url 'org_admin:group_list' %}"
+   class="btn btn-dark mt-auto">
+    Manage Groups
+</a>
+                    </div>
+        
+                </div>
+        
             </div>
         </div>
 

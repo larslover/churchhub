@@ -32,7 +32,7 @@ INSTALLED_APPS = [
 
     # your apps
     "accounts",
-    "groups",
+  
     "content",
     "giving",
     "engagement",

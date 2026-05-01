@@ -41,4 +41,9 @@ path("programs/", views.program_list, name="program_list"),
 path("programs/create/", views.program_create, name="program_create"),
 path("programs/<int:pk>/edit/", views.program_edit, name="program_edit"),
 path("programs/<int:pk>/delete/", views.program_delete, name="program_delete"),
+
+path("groups/", views.group_list, name="group_list"),
+    path("groups/create/", views.group_create, name="group_create"),
+    path("groups/<int:pk>/edit/", views.group_edit, name="group_edit"),
+    path("groups/<int:pk>/delete/", views.group_delete, name="group_delete"),
 ]

@@ -11,12 +11,12 @@ import io
 
 from accounts.models import (
     OrganizationMember,
-    OrganizationJoinRequest,
+    OrganizationJoinRequest
 )
 
 from engagement.models import Group
 from content.models import Devotional,Update, Program
-
+from engagement.models import GroupMember
 from .utils import get_admin_org
 
 
@@ -435,4 +435,136 @@ def devotional_delete(request, pk):
 
     return render(request, "org_admin/devotional_delete.html", {
         "devotional": devotional
+    })
+@login_required
+def group_list(request):
+    org = get_admin_org(request)
+
+    if not org:
+        return redirect("home")
+
+    groups = Group.objects.filter(
+        organization=org
+    ).select_related("leader")
+
+    return render(request, "org_admin/groups.html", {
+        "groups": groups
+    })
+from django.contrib.auth import get_user_model
+from accounts.models import OrganizationMember
+from engagement.models import Group, GroupMember
+
+User = get_user_model()
+
+
+@login_required
+def group_create(request):
+    org = get_admin_org(request)
+
+    if not org:
+        return redirect("home")
+
+    members = OrganizationMember.objects.filter(
+        organization=org,
+        is_active=True
+    ).select_related("user")
+
+    if request.method == "POST":
+        leader_id = request.POST.get("leader")
+
+        leader_member = OrganizationMember.objects.filter(
+            organization=org,
+            user_id=leader_id,
+            is_active=True
+        ).first()
+
+        group = Group.objects.create(
+            organization=org,
+            name=request.POST.get("name"),
+            description=request.POST.get("description"),
+            leader=leader_member.user if leader_member else None,
+            is_active=True
+        )
+
+        # auto-add leader as group member
+        if leader_member:
+            GroupMember.objects.get_or_create(
+                user=leader_member.user,
+                group=group
+            )
+
+        return redirect("org_admin:group_list")
+
+    return render(request, "org_admin/group_form.html", {
+        "members": members
+    })
+@login_required
+def group_edit(request, pk):
+    org = get_admin_org(request)
+
+    if not org:
+        return redirect("home")
+
+    group = get_object_or_404(
+        Group,
+        pk=pk,
+        organization=org
+    )
+
+    members = OrganizationMember.objects.filter(
+        organization=org,
+        is_active=True
+    ).select_related("user")
+
+    if request.method == "POST":
+        leader_id = request.POST.get("leader")
+
+        leader_member = OrganizationMember.objects.filter(
+            organization=org,
+            user_id=leader_id,
+            is_active=True
+        ).first()
+
+        group.name = request.POST.get("name")
+        group.description = request.POST.get("description")
+        group.leader = leader_member.user if leader_member else None
+
+        if request.FILES.get("image"):
+            group.image = request.FILES.get("image")
+
+        group.save()
+
+        # ensure leader is member
+        if leader_member:
+            GroupMember.objects.get_or_create(
+                user=leader_member.user,
+                group=group
+            )
+
+        return redirect("org_admin:group_list")
+
+    return render(request, "org_admin/group_form.html", {
+        "group": group,
+        "members": members
+    })
+@login_required
+def group_delete(request, pk):
+    org = get_admin_org(request)
+
+    if not org:
+        return redirect("home")
+
+    group = get_object_or_404(
+        Group,
+        pk=pk,
+        organization=org
+    )
+
+    if request.method == "POST":
+        group.delete()
+        messages.success(request, "Group deleted successfully.")
+        return redirect("org_admin:group_list")
+
+    return render(request, "org_admin/group_delete.html", {
+        "group": group
     })

@@ -127,9 +127,12 @@ class GroupMember(models.Model):
             models.UniqueConstraint(fields=["user", "group"], name="unique_group_member")
         ]
 
-    def __str__(self):
-        return f"{self.user} in {self.group}"
+    def save(self, *args, **kwargs):
+        # 🔒 enforce org consistency at write-time
+        if self.group and self.user:
+            pass  # (optional hook for org checks later)
 
+        super().save(*args, **kwargs)
 
 # ===============================
 # 📅 MEETING
@@ -150,12 +153,8 @@ class Meeting(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        ordering = ["start_time"]
-
-    def __str__(self):
-        return f"{self.title} ({self.group.name})"
-
+    def organization(self):
+        return self.group.organization
 
 # ===============================
 # 📩 INVITATION
@@ -182,21 +181,13 @@ class GroupInvitation(models.Model):
     accepted = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def organization(self):
+        return self.group.organization
+
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=["group", "invited_user"], name="unique_group_invite")
-        ]
-
-    def __str__(self):
-        status = "Accepted" if self.accepted else "Pending"
-        return f"{self.invited_user} → {self.group} ({status})"
-
-    @property
-    def is_pending(self):
-        return not self.accepted
-
-
-# ===============================
+        ]# ===============================
 # 📝 POST
 # ===============================
 class GroupPost(models.Model):
@@ -217,10 +208,11 @@ class GroupPost(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def organization(self):
+        return self.group.organization
+
     class Meta:
         ordering = ["-is_pinned", "-created_at"]
-
-
 # ===============================
 # 💬 REPLY
 # ===============================
@@ -236,7 +228,8 @@ class PostReply(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
-
+    def organization(self):
+        return self.post.group.organization
 # ===============================
 # ❤️ LIKE
 # ===============================
@@ -248,6 +241,9 @@ class PostLike(models.Model):
     )
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def organization(self):
+        return self.post.group.organization
 
     class Meta:
         constraints = [
