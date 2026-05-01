@@ -17,9 +17,7 @@ def devotional_archive(request):
 
 def home(request):
     programs = Program.objects.filter(is_active=True)
-    latest_update = Update.objects.filter(is_published=True)\
-                                  .order_by("-created_at")\
-                                  .first()
+    latest_update = None
 
     media_items = Media.objects.filter(is_published=True)
 
