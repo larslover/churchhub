@@ -568,3 +568,49 @@ def group_delete(request, pk):
     return render(request, "org_admin/group_delete.html", {
         "group": group
     })
+
+@login_required
+def member_list(request):
+    org = get_admin_org(request)
+    if not org:
+        return redirect("home")
+
+    members = (
+        OrganizationMember.objects
+        .filter(
+            organization=org,
+            is_active=True
+        )
+        .select_related("user")
+        .order_by("user__full_name", "user__email")
+    )
+
+    return render(request, "org_admin/members.html", {
+        "members": members,
+        "organization": org
+    })
+@login_required
+def branding_view(request):
+    org = get_admin_org(request)
+
+    if not org:
+        return redirect("home")
+
+    if request.method == "POST":
+
+        display_name = request.POST.get("display_name")
+
+        # only update if value exists
+        if display_name:
+            org.name = display_name  # you are reusing name as display name
+
+        if request.FILES.get("logo"):
+            org.logo = request.FILES["logo"]
+
+        org.save()
+
+        return redirect("org_admin:branding")
+
+    return render(request, "org_admin/branding.html", {
+        "organization": org
+    })

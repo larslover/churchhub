@@ -182,10 +182,10 @@
                     View church members and admins.
                 </p>
 
-                <a href="#"
-                   class="btn btn-outline-primary mt-auto">
-                    View Members
-                </a>
+                <a href="{% url 'org_admin:member_list' %}"
+                class="btn btn-outline-primary mt-auto">
+                 View Members
+             </a>
             </div>
         </div>
 
@@ -219,14 +219,13 @@
                 <p class="text-muted small">
                     Update church logo and church name.
                 </p>
-
-                <a href="#"
+        
+                <a href="{% url 'org_admin:branding' %}"
                    class="btn btn-outline-secondary mt-auto">
                     Edit Branding
                 </a>
             </div>
         </div>
-
         <div class="col-md-6 col-lg-4">
             <div class="card border-0 shadow-sm p-4 h-100">
                 <h5 class="fw-bold">Invite Members</h5>

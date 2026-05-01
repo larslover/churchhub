@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Join Requests{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+    <h3 class="fw-bold mb-4">Pending Join Requests</h3>
+
+    {% if requests %}
+        <div class="list-group">
+
+            {% for r in requests %}
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+
+                <div>
+                    <div class="fw-bold">{{ r.user }}</div>
+                    <div class="text-muted small">
+                        Requested to join your organization
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+
+                    <a href="{% url 'org_admin:approve_org_request' r.id %}"
+                       class="btn btn-success btn-sm">
+                        Approve
+                    </a>
+
+                    <form method="POST"
+                          action="{% url 'org_admin:approve_org_request' r.id %}">
+                        {% csrf_token %}
+                        <button class="btn btn-outline-danger btn-sm">
+                            Approve (POST safe)
+                        </button>
+                    </form>
+
+                </div>
+
+            </div>
+            {% endfor %}
+
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            No pending requests.
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

@@ -71,18 +71,24 @@ class User(AbstractUser):
 import uuid
 from django.db import models
 
-
 class Organization(models.Model):
     name = models.CharField(max_length=255)
 
-    slug = models.SlugField(
-        unique=True
-    )
+    slug = models.SlugField(unique=True)
 
     join_code = models.CharField(
         max_length=12,
         unique=True,
         blank=True
+    )
+
+    # =========================
+    # 🎨 BRANDING
+    # =========================
+    display_name = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True
     )
 
     logo = models.ImageField(
@@ -91,34 +97,25 @@ class Organization(models.Model):
         null=True
     )
 
+    primary_color = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True,
+        help_text="Hex color like #0d6efd"
+    )
+
     is_active = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
     def save(self, *args, **kwargs):
         if not self.join_code:
             self.join_code = self.generate_join_code()
 
+        if not self.display_name:
+            self.display_name = self.name
+
         super().save(*args, **kwargs)
-
-    def generate_join_code(self):
-        words = self.name.split()
-
-        if len(words) >= 2:
-            base = ''.join(word[0] for word in words[:3]).upper()
-        else:
-            base = self.slug.upper().replace("-", "")[:6]
-
-        while True:
-            code = f"{base}{uuid.uuid4().hex[:4].upper()}"
-
-            if not Organization.objects.filter(join_code=code).exists():
-                return code
-
-    def __str__(self):
-        return self.name
-
 # ===============================
 # 🔗 ORGANIZATION MEMBERSHIP
 # ===============================

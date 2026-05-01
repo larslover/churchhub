@@ -46,4 +46,9 @@ path("groups/", views.group_list, name="group_list"),
     path("groups/create/", views.group_create, name="group_create"),
     path("groups/<int:pk>/edit/", views.group_edit, name="group_edit"),
     path("groups/<int:pk>/delete/", views.group_delete, name="group_delete"),
+
+    path("requests/", views.org_requests_view, name="org_requests"),
+
+    path("members/",views.member_list, name="member_list"),
+        path("branding/", views.branding_view, name="branding"),
 ]
