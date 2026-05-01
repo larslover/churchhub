@@ -14,23 +14,55 @@ def devotional_archive(request):
             "devotionals": devotionals
         }
     )
+from django.shortcuts import render
+from .models import Update, Program, Media, Devotional 
+from accounts.models import OrganizationMember
+
+
+
 
 def home(request):
-    programs = Program.objects.filter(is_active=True)
-    latest_update = None
+    membership = OrganizationMember.objects.filter(
+        user=request.user,
+        is_active=True
+    ).select_related("organization").first()
 
-    media_items = Media.objects.filter(is_published=True)
+    if not membership:
+        return render(request, "home.html", {
+            "programs": [],
+            "media_items": [],
+            "latest_update": None,
+            "devotional": None,
+            "organization": None,
+        })
 
-    # 🔥 Get latest active devotional
-    devotional = Devotional.objects.filter(is_active=True)\
-                                    .order_by("-date")\
-                                    .first()
+    organization = membership.organization
 
-    context = {
+    programs = Program.objects.filter(
+        is_active=True,
+        organization=organization
+    )
+
+    media_items = Media.objects.filter(
+        is_published=True,
+        organization=organization
+    )
+
+    # Update model (assumes created_at exists)
+    latest_update = Update.objects.filter(
+        organization=organization
+    ).order_by("-created_at").first()
+
+    # Devotional model (uses 'date' NOT created_at)
+    devotional = Devotional.objects.filter(
+        is_active=True,
+        organization=organization
+    ).order_by("-date").first()
+
+    return render(request, "home.html", {
         "programs": programs,
-        "latest_update": latest_update,
         "media_items": media_items,
-        "devotional": devotional,  # ← add this
-    }
-
-    return render(request, "home.html", context)
+        "latest_update": latest_update,
+        "devotional": devotional,
+        "organization": organization,
+    })
