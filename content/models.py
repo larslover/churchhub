@@ -159,14 +159,24 @@ class Media(models.Model):
     )
 
     title = models.CharField(max_length=200)
-    media_type = models.CharField(max_length=10, choices=MEDIA_TYPES)
 
-    media_url = models.URLField(blank=True, null=True)
+    media_type = models.CharField(
+        max_length=10,
+        choices=MEDIA_TYPES,
+        default="video"
+    )
+
+    # Only external URLs (YouTube / Spotify etc)
+    media_url = models.URLField(
+        blank=True,
+        null=True
+    )
+
+    # Keep field optional, but do NOT use uploads
     upload_file = models.FileField(
         upload_to="media/",
         blank=True,
-        null=True,
-        validators=[validate_file_size]
+        null=True
     )
 
     image = models.ImageField(
@@ -181,7 +191,14 @@ class Media(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # ==================================
+    # SAVE
+    # ==================================
     def save(self, *args, **kwargs):
+
+        # Prevent file uploads eating server storage
+        self.upload_file = None
+
         super().save(*args, **kwargs)
 
         if self.image:
@@ -190,44 +207,69 @@ class Media(models.Model):
     def __str__(self):
         return self.title
 
-
-    # ===============================
-    # 🎥 YOUTUBE ID EXTRACTION
-    # ===============================
+    # ==================================
+    # YOUTUBE ID EXTRACTION
+    # ==================================
     def get_youtube_id(self):
         if not self.media_url:
             return None
 
-        regex = r"(?:v=|\/live\/|youtu\.be\/)([A-Za-z0-9_-]{11})"
-        match = re.search(regex, self.media_url)
-        return match.group(1) if match else None
+        url = self.media_url.strip()
 
+        patterns = [
+            r"(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([A-Za-z0-9_-]{11})",
+            r"(?:https?:\/\/)?(?:www\.)?youtu\.be\/([A-Za-z0-9_-]{11})",
+            r"(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([A-Za-z0-9_-]{11})",
+            r"(?:https?:\/\/)?(?:www\.)?youtube\.com\/shorts\/([A-Za-z0-9_-]{11})",
+            r"(?:https?:\/\/)?(?:www\.)?youtube\.com\/live\/([A-Za-z0-9_-]{11})",
+        ]
 
-    # ===============================
-    # 🖼 THUMBNAIL URL
-    # ===============================
-    def get_thumbnail_url(self):
-        video_id = self.get_youtube_id()
-        if video_id:
-            return f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg"
+        for pattern in patterns:
+            match = re.search(pattern, url)
+            if match:
+                return match.group(1)
+
         return None
 
+    # ==================================
+    # EMBED URL
+    # ==================================
+    @property
+    def embed_url(self):
+        video_id = self.get_youtube_id()
+        if video_id:
+            return (
+                f"https://www.youtube-nocookie.com/embed/{video_id}"
+                "?rel=0&modestbranding=1&enablejsapi=1"
+            )
+        return ""
 
-    # ===============================
-    # 👀 ADMIN PREVIEW
-    # ===============================
+    # ==================================
+    # THUMBNAIL
+    # ==================================
+    def get_thumbnail_url(self):
+        video_id = self.get_youtube_id()
+
+        if video_id:
+            return f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg"
+
+        return None
+
+    # ==================================
+    # ADMIN PREVIEW
+    # ==================================
     def thumbnail_preview(self):
         thumbnail = self.get_thumbnail_url()
 
         if thumbnail:
             return format_html(
-                '<img src="{}" style="width:120px; height:auto;" />',
+                '<img src="{}" style="width:120px;height:auto;border-radius:8px;" />',
                 thumbnail
             )
 
         if self.image:
             return format_html(
-                '<img src="{}" style="width:120px; height:auto;" />',
+                '<img src="{}" style="width:120px;height:auto;border-radius:8px;" />',
                 self.image.url
             )
 

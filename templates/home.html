@@ -220,60 +220,71 @@
     </div>
     {% endif %}
 
-    <!-- ========================= -->
-    <!-- Media -->
-    <!-- ========================= -->
-    {% if media_items %}
-    <div class="mt-5">
+  <!-- ========================= -->
+<!-- Media -->
+<!-- ========================= -->
+{% if media_items %}
+<div class="mt-5">
 
-        <div class="row g-4">
+    <div class="row g-4">
 
-            {% for media in media_items %}
-            <div class="col-md-6">
+        {% for media in media_items %}
+        <div class="col-md-6">
 
-                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
 
-                    <div class="card-body text-center p-4"
-                         style="background:{% if media.media_type|lower == 'video' %}#E10600{% else %}#6A00F4{% endif %}; color:#FFD600;">
+                <div class="card-body p-4 text-center"
+                     style="background:#ffffff;">
 
-                        <h5 class="fw-bold text-white mb-3">
-                            {{ media.title }}
-                        </h5>
+                    <h5 class="fw-semibold mb-3" style="color:#1f1f1f;">
+                        {{ media.title }}
+                    </h5>
 
-                        {% if media.media_type|lower == "video" %}
+                    <!-- ========================= -->
+                    <!-- VIDEO -->
+                    <!-- ========================= -->
+                    {% if media.media_type|lower == "video" %}
 
-                            {% if media.media_url %}
-                            <div class="ratio ratio-16x9">
-                                <iframe src="{{ media.media_url|youtube_embed }}"
-                                        class="rounded-4"
-                                        allowfullscreen></iframe>
-                            </div>
-                            {% endif %}
-
-                        {% elif media.media_type|lower == "audio" %}
-
-                            {% if media.upload_file %}
-                            <audio controls style="width:100%;">
-                                <source src="{{ media.upload_file.url }}">
-                            </audio>
-                            {% endif %}
-
+                        {% if media.embed_url %}
+                        <div class="ratio ratio-16x9 rounded-3 overflow-hidden shadow-sm">
+                            <iframe
+                                src="{{ media.embed_url }}"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                referrerpolicy="strict-origin-when-cross-origin"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        {% else %}
+                            <p class="text-muted">Invalid or unsupported YouTube link</p>
                         {% endif %}
 
-                    </div>
+                    <!-- ========================= -->
+                    <!-- AUDIO -->
+                    <!-- ========================= -->
+                    {% elif media.media_type|lower == "audio" %}
+
+                        {% if media.upload_file %}
+                        <audio controls style="width:100%;">
+                            <source src="{{ media.upload_file.url }}">
+                        </audio>
+                        {% else %}
+                            <p class="text-muted">No audio file uploaded</p>
+                        {% endif %}
+
+                    {% endif %}
 
                 </div>
 
             </div>
-            {% endfor %}
 
         </div>
+        {% endfor %}
 
     </div>
-    {% endif %}
 
 </div>
-
+{% endif %}
 <!-- FOOTER (LOGGED IN ALSO) -->
 <footer class="text-center mt-5 py-4 border-top">
 

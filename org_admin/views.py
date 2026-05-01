@@ -14,7 +14,7 @@ from accounts.models import (
 )
 
 from engagement.models import Group
-from content.models import Devotional
+from content.models import Devotional,Update
 
 from .utils import get_admin_org
 
@@ -135,13 +135,160 @@ def devotional_list(request):
 # =========================
 @login_required
 def update_list(request):
+    org = get_admin_org(request)
+
+    if not org:
+        return redirect("home")
+
+    updates = Update.objects.filter(
+        organization=org
+    )
+
+    return render(request, "org_admin/updates.html", {
+        "updates": updates
+    })
     return render(request, "org_admin/updates.html")
+@login_required
+def update_create(request):
+    org = get_admin_org(request)
+
+    if not org:
+        return redirect("home")
+
+    if request.method == "POST":
+        Update.objects.create(
+            organization=org,
+            title=request.POST.get("title"),
+            body=request.POST.get("body"),
+            image=request.FILES.get("image"),
+            is_published=True
+        )
+
+        return redirect("org_admin:update_list")
+
+    return render(request, "org_admin/update_form.html")
+
+@login_required
+def update_edit(request, pk):
+    org = get_admin_org(request)
+
+    update = get_object_or_404(
+        Update,
+        pk=pk,
+        organization=org
+    )
+
+    if request.method == "POST":
+        update.title = request.POST.get("title")
+        update.body = request.POST.get("body")
+
+        if request.FILES.get("image"):
+            update.image = request.FILES.get("image")
+
+        update.save()
+
+        return redirect("org_admin:update_list")
+
+    return render(request, "org_admin/update_form.html", {
+        "update": update
+    })
+@login_required
+def update_delete(request, pk):
+    org = get_admin_org(request)
+
+    update = get_object_or_404(
+        Update,
+        pk=pk,
+        organization=org
+    )
+
+    if request.method == "POST":
+        update.delete()
+        return redirect("org_admin:update_list")
+
+    return render(request, "org_admin/update_delete.html", {
+        "update": update
+    })
+from content.models import Media
 
 
 @login_required
 def media_list(request):
-    return render(request, "org_admin/media.html")
+    org = get_admin_org(request)
 
+    if not org:
+        return redirect("home")
+
+    items = Media.objects.filter(
+        organization=org
+    ).order_by("-created_at")
+
+    return render(request, "org_admin/media.html", {
+        "items": items
+    })
+
+
+@login_required
+def media_create(request):
+    org = get_admin_org(request)
+
+    if not org:
+        return redirect("home")
+
+    if request.method == "POST":
+        Media.objects.create(
+            organization=org,
+            title=request.POST.get("title"),
+            media_type=request.POST.get("media_type"),
+            media_url=request.POST.get("media_url"),
+            is_published=True
+        )
+
+        return redirect("org_admin:media_list")
+
+    return render(request, "org_admin/media_form.html")
+
+
+@login_required
+def media_edit(request, pk):
+    org = get_admin_org(request)
+
+    media = get_object_or_404(
+        Media,
+        pk=pk,
+        organization=org
+    )
+
+    if request.method == "POST":
+        media.title = request.POST.get("title")
+        media.media_type = request.POST.get("media_type")
+        media.media_url = request.POST.get("media_url")
+        media.save()
+
+        return redirect("org_admin:media_list")
+
+    return render(request, "org_admin/media_form.html", {
+        "media": media
+    })
+
+
+@login_required
+def media_delete(request, pk):
+    org = get_admin_org(request)
+
+    media = get_object_or_404(
+        Media,
+        pk=pk,
+        organization=org
+    )
+
+    if request.method == "POST":
+        media.delete()
+        return redirect("org_admin:media_list")
+
+    return render(request, "org_admin/media_delete.html", {
+        "media": media
+    })
 
 @login_required
 def program_list(request):

@@ -3,13 +3,14 @@ from accounts.models import (
     OrganizationMember,
     OrganizationJoinRequest,
 )
+from accounts.models import OrganizationMember
 
 def get_admin_org(request):
-    org_id = request.session.get("organization_id")
+    if not request.user.is_authenticated:
+        return None
 
     membership = OrganizationMember.objects.filter(
         user=request.user,
-        organization_id=org_id,
         is_admin=True,
         is_active=True
     ).select_related("organization").first()
