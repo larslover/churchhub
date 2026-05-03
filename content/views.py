@@ -19,9 +19,19 @@ from .models import Update, Program, Media, Devotional
 from accounts.models import OrganizationMember
 
 
-
-
 def home(request):
+
+    # ✅ FIRST: handle anonymous users
+    if not request.user.is_authenticated:
+        return render(request, "home.html", {
+            "programs": [],
+            "media_items": [],
+            "latest_update": None,
+            "devotional": None,
+            "organization": None,
+        })
+
+    # ✅ NOW it's safe to query
     membership = OrganizationMember.objects.filter(
         user=request.user,
         is_active=True
@@ -48,12 +58,10 @@ def home(request):
         organization=organization
     )
 
-    # Update model (assumes created_at exists)
     latest_update = Update.objects.filter(
         organization=organization
     ).order_by("-created_at").first()
 
-    # Devotional model (uses 'date' NOT created_at)
     devotional = Devotional.objects.filter(
         is_active=True,
         organization=organization
