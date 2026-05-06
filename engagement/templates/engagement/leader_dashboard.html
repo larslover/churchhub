@@ -3,12 +3,12 @@
 
 <div class="container">
 
-    <!-- HEADER -->
+    <!-- ================= SETTINGS ================= -->
     <div class="card p-3 mb-4">
 
         <div class="d-flex justify-content-between align-items-center">
             <h4>⚙️ Group Settings</h4>
-    
+
             <button class="btn btn-sm btn-outline-dark"
                     type="button"
                     data-bs-toggle="collapse"
@@ -16,60 +16,105 @@
                 Edit
             </button>
         </div>
-    
+
         <div class="collapse mt-3" id="editGroupForm">
-    
-            <form method="post"
-               
-                  enctype="multipart/form-data">
-    
+
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-    
+
+                <!-- NAME -->
                 <label>Group Name</label>
                 <input type="text"
                        name="name"
                        class="form-control mb-2"
                        value="{{ group.name }}">
-    
+
+                <!-- DESCRIPTION -->
                 <label>Description</label>
                 <textarea name="description"
-                          class="form-control mb-2">{{ group.description }}</textarea>
-    
-                <label>Group Image</label>
-    
-                {% if group.image %}
-                    <div class="mb-2">
-                        <img src="{{ group.image.url }}"
-                             width="100"
-                             class="rounded">
+                          class="form-control mb-3">{{ group.description }}</textarea>
+
+                <!-- IMAGE -->
+                <label class="form-label">Group Image</label>
+
+                <div class="d-flex align-items-center gap-3 mb-3">
+
+                    <!-- AVATAR -->
+                    <div style="width:70px;height:70px;" class="position-relative">
+
+                        {% if group.image %}
+                            <img src="{{ group.image.url }}"
+                                 class="rounded-circle w-100 h-100"
+                                 style="object-fit:cover;"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        {% endif %}
+
+                        <div class="rounded-circle text-white d-flex align-items-center justify-content-center w-100 h-100"
+                             style="
+                                {% if group.image %}display:none;{% endif %}
+                                font-size:22px;
+                                font-weight:600;
+                                background: linear-gradient(135deg, #6366f1, #22c55e);
+                             ">
+                            {{ group.initials|default:group.name|slice:":2"|upper }}
+                        </div>
+
                     </div>
-                {% endif %}
-    
+
+                    <div class="text-muted small">
+                        Upload a new image
+                    </div>
+
+                </div>
+
                 <input type="file"
                        name="image"
-                       class="form-control mb-2">
-    
+                       class="form-control mb-3">
+
                 <button class="btn btn-success w-100">
                     Save Changes
                 </button>
-    
+
             </form>
-    
+
         </div>
-    
     </div>
+
+
+    <!-- ================= HEADER ================= -->
     <div class="card p-3 mb-4">
         <div class="d-flex justify-content-between align-items-center">
+
             <div>
-                <h2>{{ group.name }} Leader Dashboard</h2>
-                <p class="text-muted">{{ group.description }}</p>
+                <h2 class="mb-1">{{ group.name }} Leader Dashboard</h2>
+                <p class="text-muted mb-0">{{ group.description }}</p>
             </div>
 
-            {% if group.image %}
-                <img src="{{ group.image.url }}" width="80" height="80" class="rounded-circle">
-            {% endif %}
+            <!-- AVATAR -->
+            <div style="width:80px;height:80px;" class="position-relative">
+
+                {% if group.image %}
+                    <img src="{{ group.image.url }}"
+                         class="rounded-circle w-100 h-100"
+                         style="object-fit:cover;"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                {% endif %}
+
+                <div class="rounded-circle text-white d-flex align-items-center justify-content-center w-100 h-100"
+                     style="
+                        {% if group.image %}display:none;{% endif %}
+                        font-size:26px;
+                        font-weight:600;
+                        background: linear-gradient(135deg, #6366f1, #22c55e);
+                     ">
+                    {{ group.initials|default:group.name|slice:":2"|upper }}
+                </div>
+
+            </div>
+
         </div>
     </div>
+
 
     <div class="row">
 
@@ -96,6 +141,7 @@
                 {% endfor %}
             </div>
         </div>
+
 
         <!-- ================= INVITES ================= -->
         <div class="col-md-6">
@@ -133,82 +179,78 @@
 
     </div>
 
+
     <div class="row">
 
-       <!-- ================= MEETINGS ================= -->
-<div class="col-md-6">
-    <div class="card p-3 mb-3">
-        <h4>📅 Meetings</h4>
+        <!-- ================= MEETINGS ================= -->
+        <div class="col-md-6">
+            <div class="card p-3 mb-3">
+                <h4>📅 Meetings</h4>
 
-        {% for m in meetings %}
-            <div class="border-bottom py-2">
+                {% for m in meetings %}
+                    <div class="border-bottom py-2">
 
-                <strong>{{ m.title }}</strong><br>
-                <small>{{ m.start_time }}</small>
+                        <strong>{{ m.title }}</strong><br>
+                        <small>{{ m.start_time }}</small>
 
-                {% if m.location %}
-                    <br><small>📍 {{ m.location }}</small>
-                {% endif %}
+                        {% if m.location %}
+                            <br><small>📍 {{ m.location }}</small>
+                        {% endif %}
 
-                <!-- EDIT TOGGLE -->
-                <button class="btn btn-sm btn-outline-primary mt-2"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#editMeeting{{ m.id }}">
-                    Edit
-                </button>
-
-                <!-- EDIT FORM -->
-                <div class="collapse mt-2" id="editMeeting{{ m.id }}">
-
-                    <form method="post"
-                          action="{% url 'engagement:edit_meeting' m.id %}"
-                          class="border p-3 rounded">
-
-                        {% csrf_token %}
-
-                        <label>Title</label>
-                        <input type="text"
-                               name="title"
-                               class="form-control mb-2"
-                               value="{{ m.title }}">
-
-                        <label>Start Time</label>
-                        <input type="datetime-local"
-                               name="start_time"
-                               class="form-control mb-2"
-                               value="{{ m.start_time|date:'Y-m-d\\TH:i' }}">
-
-                        <label>Location</label>
-                        <input type="text"
-                               name="location"
-                               class="form-control mb-2"
-                               value="{{ m.location }}">
-
-                        <button class="btn btn-primary btn-sm w-100">
-                            Save Changes
+                        <button class="btn btn-sm btn-outline-primary mt-2"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#editMeeting{{ m.id }}">
+                            Edit
                         </button>
 
-                    </form>
-                </div>
+                        <div class="collapse mt-2" id="editMeeting{{ m.id }}">
+                            <form method="post"
+                                  action="{% url 'engagement:edit_meeting' m.id %}"
+                                  class="border p-3 rounded">
 
+                                {% csrf_token %}
+
+                                <input type="text"
+                                       name="title"
+                                       class="form-control mb-2"
+                                       value="{{ m.title }}">
+
+                                <input type="datetime-local"
+                                       name="start_time"
+                                       class="form-control mb-2"
+                                       value="{{ m.start_time|date:'Y-m-d\\TH:i' }}">
+
+                                <input type="text"
+                                       name="location"
+                                       class="form-control mb-2"
+                                       value="{{ m.location }}">
+
+                                <button class="btn btn-primary btn-sm w-100">
+                                    Save Changes
+                                </button>
+
+                            </form>
+                        </div>
+
+                    </div>
+                {% empty %}
+                    <p class="text-muted">No meetings yet</p>
+                {% endfor %}
+
+                <hr>
+
+                <form method="post" action="{% url 'engagement:create_meeting' group.id %}">
+                    {% csrf_token %}
+                    <input name="title" class="form-control mb-2" placeholder="Meeting title">
+                    <input name="start_time" type="datetime-local" class="form-control mb-2">
+                    <input name="location" class="form-control mb-2" placeholder="Location (optional)">
+                    <button class="btn btn-success w-100">Create Meeting</button>
+                </form>
             </div>
-        {% empty %}
-            <p class="text-muted">No meetings yet</p>
-        {% endfor %}
+        </div>
 
-        <hr>
 
-        <!-- CREATE MEETING -->
-        <form method="post" action="{% url 'engagement:create_meeting' group.id %}">
-            {% csrf_token %}
-            <input name="title" class="form-control mb-2" placeholder="Meeting title">
-            <input name="start_time" type="datetime-local" class="form-control mb-2">
-            <input name="location" class="form-control mb-2" placeholder="Location (optional)">
-            <button class="btn btn-success w-100">Create Meeting</button>
-        </form>
-    </div>
-</div>
         <!-- ================= POSTS ================= -->
         <div class="col-md-6">
             <div class="card p-3 mb-3">
@@ -225,7 +267,6 @@
                         <small>by {{ post.author }}</small>
 
                         <div class="mt-2 d-flex gap-2">
-
                             <a href="{% url 'engagement:toggle_pin_post' post.id %}"
                                class="btn btn-sm btn-outline-primary">
                                 {% if post.is_pinned %}Unpin{% else %}Pin{% endif %}
@@ -235,8 +276,8 @@
                                class="btn btn-sm btn-outline-danger">
                                 Delete
                             </a>
-
                         </div>
+
                     </div>
                 {% empty %}
                     <p class="text-muted">No posts yet</p>
