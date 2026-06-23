@@ -1,3 +1,4 @@
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -6,167 +7,114 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#26d732">
 
-    <title>{% block title %}ChurchHub{% endblock %}</title>
-
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <title>{% block title %}Biblical teaching library{% endblock %}</title>
 
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
     <link rel="manifest" href="{% static 'manifest.json' %}">
-    <link rel="apple-touch-icon" href="{% static 'icons/icon-192x192.png' %}">
 
     <style>
-        html, body {
-            height: 100%;
+        body{
+            padding-top:80px;
+            background:#f7fdf8;
+            min-height:100vh;
+            display:flex;
+            flex-direction:column;
+            font-family:'Segoe UI',sans-serif;
         }
 
-        body {
-            padding-top: 75px;
-            background: #e1ffed;
-            font-family: 'Segoe UI', sans-serif;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+        main{
+            flex:1;
         }
 
-        main { flex: 1; }
-
-        .navbar {
-            background: #26d732;
-            box-shadow: 0 2px 8px rgba(0,0,0,.15);
+        .navbar{
+            background:#26d732;
+            box-shadow:0 2px 10px rgba(0,0,0,.15);
         }
 
-        .navbar-brand span {
-            color: #F4F1DE !important;
-            font-weight: 600;
+        .navbar-brand{
+            color:white !important;
+            font-weight:700;
         }
 
-        .nav-link {
-            color: #F4F1DE !important;
+        .nav-link{
+            color:white !important;
+            font-weight:500;
         }
 
-        .nav-link:hover {
-            color: #FF9F1C !important;
+        .nav-link:hover{
+            color:#ffe082 !important;
         }
 
-        .footer {
-            background: #4A4E69;
-            color: #F4F1DE;
-            padding: 20px;
-            text-align: center;
+        .footer{
+            background:#4A4E69;
+            color:white;
+            padding:20px;
+            text-align:center;
         }
     </style>
 
     {% block extra_head %}{% endblock %}
 </head>
-
 <body>
 
-<!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg fixed-top">
+<nav class="navbar navbar-expand-lg fixed-top navbar-dark">
     <div class="container">
 
         <a class="navbar-brand d-flex align-items-center gap-2"
            href="{% url 'home' %}">
+            <img src="{% static 'images/figlogo.png' %}"
+                 width="42"
+                 height="42"
+                 class="rounded-circle">
 
-            {% if active_organization and active_organization.logo %}
-                <img src="{{ active_organization.logo.url }}"
-                     width="40"
-                     height="40"
-                     class="rounded-circle object-fit-cover"
-                     alt="logo">
-            {% else %}
-                <img src="{% static 'images/figlogo.png' %}"
-                     width="40"
-                     height="40"
-                     class="rounded-circle"
-                     alt="logo">
-            {% endif %}
-
-            <span>
-                {% if active_organization %}
-                    {{ active_organization.display_name|default:active_organization.name }}
-                {% else %}
-                    Way of Faith Global
-                {% endif %}
-            </span>
-
+            <span>Biblical teaching library</span>
         </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#nav">
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="nav">
+        <div class="collapse navbar-collapse" id="navbarNav">
 
             <ul class="navbar-nav ms-auto">
 
-                {% if user.is_authenticated %}
-
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'devotional_archive' %}">
-                        Devotionals
+                    <a class="nav-link"
+                       href="{% url 'home' %}">
+                        Home
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'engagement:group_list' %}">
-                        Discover
+                    <a class="nav-link"
+                       href="#">
+                        Topics
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'engagement:my_groups' %}">
-                        My Communities
+                    <a class="nav-link"
+                       href="#">
+                        Series
                     </a>
                 </li>
 
-                {% if user_is_org_admin %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'org_admin:org_dashboard' %}">
-                        Admin
-                    </a>
-                </li>
-                {% endif %}
-
-                {% if user.is_superuser %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'admin:index' %}">
-                        Django Admin
-                    </a>
-                </li>
-                {% endif %}
-
-                <li class="nav-item">
-                    <form method="post" action="{% url 'logout' %}">
-                        {% csrf_token %}
-                        <button class="btn btn-link nav-link">
-                            Logout
-                        </button>
-                    </form>
-                </li>
-
-                {% else %}
-
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'login' %}">
-                        Login
-                    </a>
-                </li>
-
-                {% endif %}
-
+              
             </ul>
 
         </div>
     </div>
 </nav>
 
-<!-- MAIN -->
-<main class="container mt-4">
+<main class="container py-4">
 
     {% if messages %}
         {% for message in messages %}
@@ -176,20 +124,13 @@
         {% endfor %}
     {% endif %}
 
-    {% block content %}{% endblock %}
+    {% block content %}
+    {% endblock %}
 
 </main>
 
-<!-- FOOTER -->
 <footer class="footer">
-    &copy; {% now "Y" %}
-
-    {% if active_organization %}
-        {{ active_organization.display_name|default:active_organization.name }}
-    {% else %}
-        Way of Faith Global
-    {% endif %}
-
+    © {% now "Y" %} Faith in God ministries
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -198,3 +139,4 @@
 
 </body>
 </html>
+

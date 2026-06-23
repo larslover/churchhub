@@ -1,27 +1,22 @@
 # churchhub/settings/base.py
-import os
+
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 SECRET_KEY = "replace-this-in-prod"
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO',
-    },
-}
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+DEBUG = True
+
+ALLOWED_HOSTS = []
+
+
+# ======================
+# APPLICATIONS
+# ======================
+
 INSTALLED_APPS = [
+    # Django
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -30,14 +25,15 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.humanize",
 
-    # your apps
+    # Local apps
     "accounts",
-  
     "content",
-    "giving",
-    "engagement",
-     "org_admin",   # ← REQUIRED
 ]
+
+
+# ======================
+# MIDDLEWARE
+# ======================
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -47,42 +43,73 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "accounts.middleware.OrganizationMiddleware",
-   
 ]
 
+
+# ======================
+# URLS / WSGI
+# ======================
+
 ROOT_URLCONF = "churchhub.urls"
+
+WSGI_APPLICATION = "churchhub.wsgi.application"
+
+
+# ======================
+# TEMPLATES
+# ======================
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
-        "OPTIONS": {"context_processors": [
-            "django.template.context_processors.debug",
-            "django.template.context_processors.request",
-            "django.contrib.auth.context_processors.auth",
-            "engagement.context_processors.next_meeting",
-             "engagement.context_processors.user_groups",
-            "django.contrib.messages.context_processors.messages",
-            
-              "accounts.context_processors.org_admin_status",
-              "accounts.context_processors.active_organization",
-            
-                "engagement.context_processors.pending_invitations",
-        ]},
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+            ]
+        },
     },
 ]
 
-WSGI_APPLICATION = "churchhub.wsgi.application"
+
+# ======================
+# DATABASE
+# ======================
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
+
+
+# ======================
+# CUSTOM USER
+# ======================
 
 AUTH_USER_MODEL = "accounts.User"
 
+
+# ======================
+# INTERNATIONALIZATION
+# ======================
+
 LANGUAGE_CODE = "en-us"
+
 TIME_ZONE = "Africa/Johannesburg"
+
 USE_I18N = True
-USE_L10N = True
 USE_TZ = True
+
+
+# ======================
+# STATIC FILES
+# ======================
 
 STATIC_URL = "/static/"
 
@@ -91,6 +118,47 @@ STATICFILES_DIRS = [
 ]
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
-# Redirect after login/logout
-LOGIN_REDIRECT_URL = "/"    # after login, go to home
-LOGOUT_REDIRECT_URL = "/"   # after logout, go to home
+
+
+# ======================
+# MEDIA FILES
+# ======================
+
+MEDIA_URL = "/media/"
+
+MEDIA_ROOT = BASE_DIR / "media"
+
+
+# ======================
+# LOGIN / LOGOUT
+# ======================
+
+LOGIN_REDIRECT_URL = "/"
+
+LOGOUT_REDIRECT_URL = "/"
+
+
+# ======================
+# LOGGING
+# ======================
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+    },
+}
+
+
+# ======================
+# DEFAULT PRIMARY KEY
+# ======================
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

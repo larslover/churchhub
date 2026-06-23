@@ -1,304 +1,204 @@
 {% extends "base.html" %}
-{% load static media_filters %}
-
-{% block title %}Home{% endblock %}
+{% block title %}Way of Faith Global{% endblock %}
 
 {% block content %}
 
-{% if not request.user.is_authenticated %}
-
-<!-- ================================= -->
-<!-- 🚀 LANDING PAGE -->
-<!-- ================================= -->
-<div class="container py-5 text-center">
+<div class="container py-5">
 
     <!-- HERO -->
-    <h1 class="fw-bold mb-3" style="font-size:3rem;">
-        Way of faith Global
-    </h1>
+    <div class="text-center mb-5">
 
-    <p class="lead text-muted mb-4">
-        A modern platform for churches to connect, organize, and grow their community.
-    </p>
+        <h1 class="display-4 fw-bold">
+            Biblical Teaching Library
+        </h1>
 
-    <!-- CTA BUTTONS -->
-    <div class="row justify-content-center mb-4">
-
-        <div class="col-md-6">
-
-            <div class="d-grid gap-3">
-
-
-                <a href="{% url 'org_signup' %}" class="btn btn-success btn-lg py-3">
-                    Create Organization
-                </a>
-
-                <a href="{% url 'signup' %}" class="btn btn-primary btn-lg py-3">
-                    Join as Member
-                </a>
-
-           
-                <a href="{% url 'login' %}" class="btn btn-outline-dark btn-lg py-3">
-                    Login
-                </a>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- ABOUT -->
-    <div class="mt-5">
-
-        <h5 class="fw-bold mb-3">What is Way of faith global?</h5>
-
-        <p class="text-muted mx-auto" style="max-width:650px;">
-            Way of faith global is a secure platform that allows churches and faith communities
-            to manage members, groups, events, and communication in one place.
-            Each organization gets its own private space with full control.
+        <p class="lead text-muted mt-3">
+            Articles, studies, and series to help believers grow in the knowledge of Christ.
         </p>
 
     </div>
 
-    <!-- HOW IT WORKS -->
-    <div class="row text-center mt-5">
+    <!-- SEARCH -->
+    <div class="row justify-content-center mb-5">
 
-        <div class="col-md-4 mb-3">
-            <h6 class="fw-bold">1. Create Organization</h6>
-            <p class="text-muted">Set up your church or ministry in minutes.</p>
-        </div>
+        <div class="col-md-8">
 
-        <div class="col-md-4 mb-3">
-            <h6 class="fw-bold">2. Invite Members</h6>
-            <p class="text-muted">Add leaders and community members easily.</p>
-        </div>
+            <form method="get" action="#">
+                <div class="input-group input-group-lg">
 
-        <div class="col-md-4 mb-3">
-            <h6 class="fw-bold">3. Engage & Grow</h6>
-            <p class="text-muted">Use groups, posts, meetings, and updates.</p>
+                    <input type="text"
+                           class="form-control"
+                           placeholder="Search teachings...">
+
+                    <button class="btn btn-success">
+                        Search
+                    </button>
+
+                </div>
+            </form>
+
         </div>
 
     </div>
 
-    <!-- LEGAL -->
-    <div class="mt-5">
 
-        <p class="text-muted small">
-            By using Way of Faith Global, you agree to our
-            <a href="{% url 'terms' %}">Terms & Conditions</a>
-            and
-            <a href="{% url 'privacy' %}">Privacy Policy</a>.
-        </p>
+    <!-- FEATURED ARTICLES -->
+    {% if featured_teachings %}
+    <section class="mb-5">
 
-    </div>
+        <h2 class="fw-bold mb-4">
+            Featured Teachings
+        </h2>
 
-</div>
+        <div class="row">
 
-<!-- ================================= -->
-<!-- 🟢 LOGGED-IN HOME FEED -->
-<!-- ================================= -->
-{% else %}
+            {% for teaching in featured_teachings %}
+            <div class="col-md-6 mb-4">
 
-<div class="container mt-4">
+                <div class="card shadow-sm h-100 border-0">
 
-    <!-- ========================= -->
-    <!-- Latest Update -->
-    <!-- ========================= -->
-    {% if latest_update %}
-    <div class="card mb-4 border-0 shadow-lg rounded-4 overflow-hidden">
+                    <div class="card-body">
 
-        <div style="height:6px; background:#FF6F00;"></div>
+                        <h4 class="fw-bold">
+                            <a href="{% url 'teaching_detail' teaching.slug %}"
+                               class="text-decoration-none">
+                                {{ teaching.title }}
+                            </a>
+                        </h4>
 
-        <div class="card-body p-0">
+                        <p class="text-muted">
+                            {{ teaching.summary|truncatewords:35 }}
+                        </p>
 
-            {% if latest_update.image %}
-            <img src="{{ latest_update.image.url }}"
-                 class="img-fluid w-100"
-                 style="width:100%; height:auto; display:block;">
-            {% endif %}
+                    </div>
 
-            <div class="p-4" style="background:#FFF8E1;">
-
-                <h4 class="fw-bold mb-3" style="color:#6A00F4;">
-                    {{ latest_update.title }}
-                </h4>
-
-                <p class="fs-5">
-                    {{ latest_update.body|linebreaks }}
-                </p>
-
-                <div class="text-end mt-3">
-                    <span class="badge rounded-pill px-3 py-2"
-                          style="background:#E10600; color:#fff;">
-                        {{ latest_update.created_at|date:"d M Y" }}
-                    </span>
                 </div>
 
             </div>
-
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- ========================= -->
-    <!-- Devotional -->
-    <!-- ========================= -->
-    {% if devotional %}
-    <section class="py-5 bg-white mb-5 text-center">
-
-        <div style="max-width:850px; margin:auto;">
-
-            <p class="text-uppercase text-muted small mb-3" style="letter-spacing:3px;">
-                Daily Devotional
-            </p>
-
-            {% if devotional.title %}
-            <h2 class="fw-bold mb-2">
-                {{ devotional.title }}
-            </h2>
-            {% endif %}
-
-            {% if devotional.verse_reference %}
-            <h3 class="fw-bold mb-3">
-                {{ devotional.verse_reference }}
-            </h3>
-
-            <div class="mx-auto mb-4" style="width:80px; height:4px; background:#D4AF37;"></div>
-            {% endif %}
-
-            {% if devotional.verse_text %}
-            <p class="fs-5">
-                “{{ devotional.verse_text }}”
-            </p>
-            {% endif %}
-
-            <p class="text-secondary">
-                {{ devotional.message }}
-            </p>
+            {% endfor %}
 
         </div>
 
     </section>
     {% endif %}
 
-    <!-- ========================= -->
-    <!-- Programs -->
-    <!-- ========================= -->
-    {% if programs %}
-    <div class="mb-5">
 
-        {% for program in programs %}
-        <div class="card mb-4 border-0 shadow-lg rounded-4 overflow-hidden">
+    <!-- TOPICS -->
+    {% if topics %}
+    <section class="mb-5">
 
-            <div class="d-flex align-items-center p-3"
-                 style="background:#f44900; color:#FFD600;">
+        <h2 class="fw-bold mb-4">
+            Browse by Topic
+        </h2>
 
-                {% if program.image %}
-                <img src="{{ program.image.url }}"
-                     class="rounded-circle me-3"
-                     width="80" height="80"
-                     style="object-fit:cover;">
-                {% endif %}
+        <div class="row">
 
-                <div>
-                    <h4 class="fw-bold mb-1">{{ program.title }}</h4>
-                    <p class="mb-1">{{ program.description|truncatewords:25 }}</p>
+            {% for topic in topics %}
+            <div class="col-md-3 col-sm-6 mb-3">
 
-                    {% if program.day or program.time %}
-                    <span class="badge rounded-pill px-3 py-1" style="background:#E10600;">
-                        {{ program.day }} {{ program.time }}
-                    </span>
-                    {% endif %}
+                <div class="card border-0 shadow-sm">
+
+                    <div class="card-body text-center">
+
+                        <h5 class="mb-2">
+                            {{ topic.name }}
+                        </h5>
+
+                        <a href="{% url 'topic_detail' topic.slug %}"
+                           class="btn btn-outline-success btn-sm">
+                            Explore
+                        </a>
+
+                    </div>
+
                 </div>
 
             </div>
+            {% endfor %}
 
         </div>
-        {% endfor %}
 
-    </div>
+    </section>
     {% endif %}
 
-  <!-- ========================= -->
-<!-- Media -->
-<!-- ========================= -->
-{% if media_items %}
-<div class="mt-5">
 
-    <div class="row g-4">
+    <!-- SERIES -->
+    {% if series %}
+    <section class="mb-5">
 
-        {% for media in media_items %}
-        <div class="col-md-6">
+        <h2 class="fw-bold mb-4">
+            Teaching Series
+        </h2>
 
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="row">
 
-                <div class="card-body p-4 text-center"
-                     style="background:#ffffff;">
+            {% for s in series %}
+            <div class="col-md-4 mb-4">
 
-                    <h5 class="fw-semibold mb-3" style="color:#1f1f1f;">
-                        {{ media.title }}
-                    </h5>
+                <div class="card border-0 shadow-sm">
 
-                    <!-- ========================= -->
-                    <!-- VIDEO -->
-                    <!-- ========================= -->
-                    {% if media.media_type|lower == "video" %}
+                    <div class="card-body">
 
-                        {% if media.embed_url %}
-                        <div class="ratio ratio-16x9 rounded-3 overflow-hidden shadow-sm">
-                            <iframe
-                                src="{{ media.embed_url }}"
-                                frameborder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                referrerpolicy="strict-origin-when-cross-origin"
-                                allowfullscreen>
-                            </iframe>
-                        </div>
-                        {% else %}
-                            <p class="text-muted">Invalid or unsupported YouTube link</p>
-                        {% endif %}
+                        <h4>
+                            {{ s.title }}
+                        </h4>
 
-                    <!-- ========================= -->
-                    <!-- AUDIO -->
-                    <!-- ========================= -->
-                    {% elif media.media_type|lower == "audio" %}
+                        <p class="text-muted">
+                            {{ s.description|truncatewords:20 }}
+                        </p>
 
-                        {% if media.upload_file %}
-                        <audio controls style="width:100%;">
-                            <source src="{{ media.upload_file.url }}">
-                        </audio>
-                        {% else %}
-                            <p class="text-muted">No audio file uploaded</p>
-                        {% endif %}
+                        <a href="{% url 'series_detail' s.slug %}"
+                           class="btn btn-success btn-sm">
+                            View Series
+                        </a>
 
-                    {% endif %}
+                    </div>
 
                 </div>
 
             </div>
+            {% endfor %}
 
         </div>
-        {% endfor %}
 
-    </div>
+    </section>
+    {% endif %}
+
+
+    <!-- RECENT ARTICLES -->
+    {% if recent_teachings %}
+    <section>
+
+        <h2 class="fw-bold mb-4">
+            Recent Teachings
+        </h2>
+
+        <div class="list-group shadow-sm">
+
+            {% for teaching in recent_teachings %}
+            <a href="{% url 'teaching_detail' teaching.slug %}"
+               class="list-group-item list-group-item-action">
+
+                <h5 class="mb-1">
+                    {{ teaching.title }}
+                </h5>
+
+                <small class="text-muted">
+                    {{ teaching.published_at|date:"d M Y" }}
+                </small>
+
+                <p class="mb-1 mt-2">
+                    {{ teaching.summary|truncatewords:25 }}
+                </p>
+
+            </a>
+            {% endfor %}
+
+        </div>
+
+    </section>
+    {% endif %}
 
 </div>
-{% endif %}
-<!-- FOOTER (LOGGED IN ALSO) -->
-<footer class="text-center mt-5 py-4 border-top">
-
-    <p class="text-muted small mb-1">
-        © {{ now|date:"Y" }} ChurchHub
-    </p>
-
-    <p class="small">
-        <a href="{% url 'terms' %}">Terms</a> ·
-        <a href="{% url 'privacy' %}">Privacy</a>
-    </p>
-
-</footer>
-
-{% endif %}
 
 {% endblock %}

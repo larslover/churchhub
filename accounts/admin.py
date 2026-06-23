@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User, Organization, OrganizationMember
+from .models import User
 
 
 # ===============================
@@ -10,12 +10,30 @@ from .models import User, Organization, OrganizationMember
 class CustomUserAdmin(UserAdmin):
     model = User
 
-    list_display = ("phone", "full_name", "email", "is_staff", "is_verified")
-    ordering = ("phone",)
+    list_display = (
+        "email",
+        "full_name",
+        "is_staff",
+        "is_verified",
+    )
+
+    ordering = ("email",)
 
     fieldsets = (
-        (None, {"fields": ("phone", "password")}),
-        ("Personal Info", {"fields": ("full_name", "email", "is_verified")}),
+        (None, {
+            "fields": (
+                "email",
+                "password",
+            )
+        }),
+
+        ("Personal Info", {
+            "fields": (
+                "full_name",
+                "is_verified",
+            )
+        }),
+
         ("Permissions", {
             "fields": (
                 "is_active",
@@ -25,16 +43,21 @@ class CustomUserAdmin(UserAdmin):
                 "user_permissions",
             )
         }),
-        ("Important Dates", {"fields": ("last_login", "date_joined")}),
+
+        ("Important Dates", {
+            "fields": (
+                "last_login",
+                "date_joined",
+            )
+        }),
     )
 
     add_fieldsets = (
         (None, {
             "classes": ("wide",),
             "fields": (
-                "phone",
-                "full_name",
                 "email",
+                "full_name",
                 "password1",
                 "password2",
                 "is_staff",
@@ -44,31 +67,7 @@ class CustomUserAdmin(UserAdmin):
         }),
     )
 
-    search_fields = ("phone", "full_name", "email")
-
-
-# ===============================
-# 🏢 ORGANIZATION ADMIN
-# ===============================
-@admin.register(Organization)
-class OrganizationAdmin(admin.ModelAdmin):
-    list_display = ("name", "slug", "is_active", "created_at")
-    search_fields = ("name", "slug")
-    prepopulated_fields = {"slug": ("name",)}
-
-
-# ===============================
-# 🔗 MEMBERSHIP ADMIN
-# ===============================
-@admin.register(OrganizationMember)
-class OrganizationMemberAdmin(admin.ModelAdmin):
-    list_display = ("user", "organization", "is_admin", "is_active", "joined_at")
-
-    list_filter = ("organization", "is_admin", "is_active")
     search_fields = (
-        "user__phone",
-        "user__full_name",
-        "organization__name",
+        "email",
+        "full_name",
     )
-
-    autocomplete_fields = ["user", "organization"]

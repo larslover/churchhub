@@ -1,49 +1,50 @@
 {% extends "base.html" %}
-{% block title %}Devotional Archive{% endblock %}
+{% block title %}Teaching Library{% endblock %}
 
 {% block content %}
 <div class="container mt-4" style="max-width:900px;">
 
     <h2 class="mb-4 fw-bold text-center">
-        Devotional Archive
+        Teaching Library
     </h2>
 
-    {% if devotionals %}
+    {% if teachings %}
 
-        {% for devotional in devotionals %}
+        {% for teaching in teachings %}
         <div class="card shadow-sm mb-4 border-0 rounded-4">
 
             <div class="card-body p-4">
 
                 <small class="text-muted">
-                    {{ devotional.date|date:"d M Y" }}
+                    {{ teaching.published_at|date:"d M Y" }}
                 </small>
 
                 <h4 class="fw-bold mt-2">
-                    {{ devotional.title }}
+                    {{ teaching.title }}
                 </h4>
 
-                {% if devotional.verse_reference %}
-                <p class="fw-semibold text-primary mb-2">
-                    {{ devotional.verse_reference }}
-                </p>
-                {% endif %}
-
-                {% if devotional.verse_text %}
-                <p class="fst-italic">
-                    "{{ devotional.verse_text }}"
-                </p>
-                {% endif %}
-
-                <p class="mt-3">
-                    {{ devotional.message|linebreaks }}
-                </p>
-
-                {% if devotional.is_active %}
-                <span class="badge bg-success">
-                    Current Devotional
+                {% if teaching.topic %}
+                <span class="badge bg-primary">
+                    {{ teaching.topic.name }}
                 </span>
                 {% endif %}
+
+                {% if teaching.series %}
+                <span class="badge bg-secondary">
+                    {{ teaching.series.title }}
+                </span>
+                {% endif %}
+
+                {% if teaching.summary %}
+                <p class="mt-3">
+                    {{ teaching.summary }}
+                </p>
+                {% endif %}
+
+                <a href="{% url 'teaching_detail' teaching.slug %}"
+                   class="btn btn-outline-primary">
+                    Read Teaching
+                </a>
 
             </div>
 
@@ -52,7 +53,7 @@
 
     {% else %}
 
-        <p>No devotionals yet.</p>
+        <p>No teachings published yet.</p>
 
     {% endif %}
 
