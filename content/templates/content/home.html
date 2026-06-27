@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1 class="mb-4">
+    Biblical Teaching Library
+</h1>
+
+{% if teachings %}
+
+    <div class="list-group">
+
+        {% for teaching in teachings %}
+
+            <a href="#"
+               class="list-group-item list-group-item-action">
+
+                <h5>{{ teaching.title }}</h5>
+
+                {% if teaching.summary %}
+                    <p class="mb-1">
+                        {{ teaching.summary|truncatewords:25 }}
+                    </p>
+                {% endif %}
+
+                <small>
+                    {{ teaching.published_at|date:"M d, Y" }}
+                </small>
+
+            </a>
+
+        {% endfor %}
+
+    </div>
+
+{% else %}
+
+    <div class="alert alert-info">
+        No teachings have been published yet.
+    </div>
+
+{% endif %}
+
+{% endblock %}

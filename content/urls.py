@@ -1,7 +1,13 @@
 from django.urls import path
-from .views import home
+from . import views
 
 urlpatterns = [
-    path("", home, name="home"),
-  
+    path("", views.home, name="home"),
+
+    # Topics
+    path("topics/", views.topic_list, name="topic_list"),
+    path("topics/<slug:slug>/", views.topic_detail, name="topic_detail"),
+
+    # Series
+    path("series/", views.series_list, name="series_list"),
 ]

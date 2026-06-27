@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}{{ topic.name }}{% endblock %}
+
+{% block content %}
+
+<h1 class="mb-4">{{ topic.name }}</h1>
+
+{% if teachings %}
+
+    <div class="mb-4 text-muted">
+        {{ teachings|length }} teaching{{ teachings|length|pluralize }}
+    </div>
+
+    {% for teaching in teachings %}
+
+        <div class="card mb-4 shadow-sm">
+
+            <div class="card-body">
+
+                <!-- Title -->
+                <h4 class="card-title mb-2">
+                    {{ teaching.title }}
+                </h4>
+
+                <!-- Meta info -->
+                <div class="text-muted small mb-3">
+
+                    {% if teaching.series %}
+                        <span>
+                            Series: {{ teaching.series.title }}
+                        </span>
+                        <br>
+                    {% endif %}
+
+                    <span>
+                        {{ teaching.published_at|date:"M d, Y" }}
+                    </span>
+
+                </div>
+
+                <!-- Summary -->
+                {% if teaching.summary %}
+                    <p class="text-muted">
+                        {{ teaching.summary }}
+                    </p>
+                {% endif %}
+
+                <hr>
+
+                <!-- FULL CONTENT -->
+                <div class="teaching-content">
+                    {{ teaching.content|linebreaks }}
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+{% else %}
+
+    <div class="alert alert-info">
+        No teachings have been added for this topic yet.
+    </div>
+
+{% endif %}
+
+{% endblock %}
