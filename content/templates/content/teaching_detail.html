@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}{{ teaching.title }}{% endblock %}
+
+{% block content %}
+
+<div class="mb-4">
+
+    <h1 class="mb-2">
+        {{ teaching.title }}
+    </h1>
+
+    <!-- META -->
+    <div class="text-muted small mb-3">
+
+        {% if teaching.series %}
+            <div>
+                Series: {{ teaching.series.title }}
+            </div>
+        {% endif %}
+
+        <div>
+            Published: {{ teaching.published_at|date:"M d, Y" }}
+        </div>
+
+    </div>
+
+    <!-- SUMMARY (optional intro) -->
+    {% if teaching.summary %}
+        <div class="alert alert-light border">
+            {{ teaching.summary }}
+        </div>
+    {% endif %}
+
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="card shadow-sm">
+
+    <div class="card-body">
+
+        <div class="teaching-content">
+            {{ teaching.content|linebreaks }}
+        </div>
+
+    </div>
+
+</div>
+
+<!-- NAVIGATION -->
+<div class="mt-4 d-flex justify-content-between">
+
+    <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm">
+        ← Back to Library
+    </a>
+
+    {% if teaching.series %}
+        <a href="{% url 'series_detail' teaching.series.id %}"
+           class="btn btn-outline-primary btn-sm">
+            View Series
+        </a>
+    {% endif %}
+
+</div>
+
+{% endblock %}

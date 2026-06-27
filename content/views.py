@@ -43,7 +43,11 @@ def topic_detail(request, slug):
             "teachings": teachings,
         }
     )
-
+def teaching_detail(request, pk):
+    teaching = get_object_or_404(Teaching, pk=pk)
+    return render(request, "content/teaching_detail.html", {
+        "teaching": teaching
+    })
 
 def series_list(request):
     series = Series.objects.all()

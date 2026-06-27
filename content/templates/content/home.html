@@ -2,9 +2,110 @@
 
 {% block content %}
 
-<h1 class="mb-4">
-    Biblical Teaching Library
-</h1>
+<div class="mb-5">
+
+    <h1 class="mb-2">Biblical Teaching Library</h1>
+
+    <p class="text-muted">
+        Explore teachings by topic, series, and scripture study.
+    </p>
+
+</div>
+
+<!-- 🔥 FEATURED / LATEST TEACHING -->
+{% if latest_teaching %}
+
+    <div class="card mb-5 shadow-sm border-primary">
+
+        <div class="card-body">
+
+            <h4 class="mb-2">
+                Latest Teaching
+            </h4>
+
+            <h5 class="mb-3">
+                {{ latest_teaching.title }}
+            </h5>
+
+            <div class="text-muted small mb-3">
+
+                {% if latest_teaching.series %}
+                    Series: {{ latest_teaching.series.title }} <br>
+                {% endif %}
+
+                {{ latest_teaching.published_at|date:"M d, Y" }}
+
+            </div>
+
+            {% if latest_teaching.summary %}
+                <p class="text-muted">
+                    {{ latest_teaching.summary }}
+                </p>
+            {% endif %}
+
+            <a href="{% url 'teaching_detail' latest_teaching.id %}"
+               class="btn btn-primary btn-sm">
+                Read Teaching
+            </a>
+
+        </div>
+
+    </div>
+
+{% endif %}
+
+
+<!-- 📚 TOPICS SECTION -->
+<h3 class="mb-3">Browse by Topic</h3>
+
+{% if topics %}
+
+    <div class="row">
+
+        {% for topic in topics %}
+
+            <div class="col-md-4 mb-3">
+
+                <a href="{% url 'topic_detail' topic.id %}"
+                   class="text-decoration-none">
+
+                    <div class="card h-100 shadow-sm">
+
+                        <div class="card-body">
+
+                            <h5 class="card-title">
+                                {{ topic.name }}
+                            </h5>
+
+                            {% if topic.teaching_count %}
+                                <p class="text-muted small mb-0">
+                                    {{ topic.teaching_count }} teachings
+                                </p>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% else %}
+
+    <div class="alert alert-info">
+        No topics available yet.
+    </div>
+
+{% endif %}
+
+
+<!-- 📖 RECENT TEACHINGS -->
+<h3 class="mt-5 mb-3">Recent Teachings</h3>
 
 {% if teachings %}
 
@@ -12,20 +113,26 @@
 
         {% for teaching in teachings %}
 
-            <a href="#"
+            <a href="{% url 'teaching_detail' teaching.id %}"
                class="list-group-item list-group-item-action">
 
-                <h5>{{ teaching.title }}</h5>
+                <div class="d-flex justify-content-between">
 
-                {% if teaching.summary %}
-                    <p class="mb-1">
-                        {{ teaching.summary|truncatewords:25 }}
-                    </p>
-                {% endif %}
+                    <div>
+                        <h6 class="mb-1">{{ teaching.title }}</h6>
 
-                <small>
-                    {{ teaching.published_at|date:"M d, Y" }}
-                </small>
+                        {% if teaching.series %}
+                            <small class="text-muted">
+                                {{ teaching.series.title }}
+                            </small>
+                        {% endif %}
+                    </div>
+
+                    <small class="text-muted">
+                        {{ teaching.published_at|date:"M d, Y" }}
+                    </small>
+
+                </div>
 
             </a>
 
@@ -36,7 +143,7 @@
 {% else %}
 
     <div class="alert alert-info">
-        No teachings have been published yet.
+        No teachings available yet.
     </div>
 
 {% endif %}

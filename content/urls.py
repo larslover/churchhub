@@ -10,4 +10,5 @@ urlpatterns = [
 
     # Series
     path("series/", views.series_list, name="series_list"),
+    path("teaching/<int:pk>/", views.teaching_detail, name="teaching_detail"),
 ]
