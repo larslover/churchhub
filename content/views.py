@@ -1,21 +1,19 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Topic, Series, Teaching
-
-
 def home(request):
     teachings = Teaching.objects.filter(
         is_published=True
     ).order_by("-published_at")
 
-    return render(
-        request,
-        "content/home.html",
-        {
-            "teachings": teachings
-        }
-    )
+    latest_teaching = teachings.first()
+    recent_teachings = teachings[:5]   # 👈 LIMIT HERE
+    topics = Topic.objects.all()
 
-
+    return render(request, "content/home.html", {
+        "latest_teaching": latest_teaching,
+        "teachings": recent_teachings,
+        "topics": topics,
+    })
 def topic_list(request):
     topics = Topic.objects.all()
 
@@ -27,22 +25,18 @@ def topic_list(request):
         }
     )
 
-
-def topic_detail(request, slug):
-    topic = get_object_or_404(Topic, slug=slug)
+def topic_detail(request, pk):
+    topic = get_object_or_404(Topic, pk=pk)
 
     teachings = topic.teachings.filter(
         is_published=True
     ).order_by("-published_at")
 
-    return render(
-        request,
-        "content/topic_detail.html",
-        {
-            "topic": topic,
-            "teachings": teachings,
-        }
-    )
+    return render(request, "content/topic_detail.html", {
+        "topic": topic,
+        "teachings": teachings,
+    })
+
 def teaching_detail(request, pk):
     teaching = get_object_or_404(Teaching, pk=pk)
     return render(request, "content/teaching_detail.html", {

@@ -6,7 +6,7 @@ urlpatterns = [
 
     # Topics
     path("topics/", views.topic_list, name="topic_list"),
-    path("topics/<slug:slug>/", views.topic_detail, name="topic_detail"),
+    path("topics/<int:pk>/", views.topic_detail, name="topic_detail"),
 
     # Series
     path("series/", views.series_list, name="series_list"),
