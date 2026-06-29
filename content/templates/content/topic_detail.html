@@ -1,3 +1,4 @@
+```django
 {% extends "base.html" %}
 
 {% block title %}{{ topic.name }}{% endblock %}
@@ -14,44 +15,72 @@
 
     {% for teaching in teachings %}
 
-        <div class="card mb-4 shadow-sm">
+        <div class="card shadow-sm mb-4">
 
             <div class="card-body">
 
                 <!-- Title -->
-                <h4 class="card-title mb-2">
+                <h3 class="card-title mb-3">
                     {{ teaching.title }}
-                </h4>
+                </h3>
 
-                <!-- Meta info -->
-                <div class="text-muted small mb-3">
+                <!-- Metadata -->
+                <div class="text-muted small mb-4">
 
                     {% if teaching.series %}
-                        <span>
-                            Series: {{ teaching.series.title }}
-                        </span>
-                        <br>
+                        <div>
+                            <strong>Series:</strong>
+                            {{ teaching.series.title }}
+                        </div>
                     {% endif %}
 
-                    <span>
-                        {{ teaching.published_at|date:"M d, Y" }}
-                    </span>
+                    <div>
+                        <strong>Published:</strong>
+                        {{ teaching.published_at|date:"F j, Y" }}
+                    </div>
 
                 </div>
 
                 <!-- Summary -->
                 {% if teaching.summary %}
-                    <p class="text-muted">
+                    <div class="alert alert-light border">
                         {{ teaching.summary }}
-                    </p>
+                    </div>
                 {% endif %}
+
+                <!-- Teaching Content -->
+                <div class="teaching-content mb-4">
+                    {{ teaching.content|linebreaks }}
+                </div>
 
                 <hr>
 
-                <!-- FULL CONTENT -->
-                <div class="teaching-content">
-                    {{ teaching.content|linebreaks }}
-                </div>
+                <!-- Scripture Reference -->
+                {% if teaching.scripture_reference %}
+                    <p class="mb-2">
+                        <strong>Scripture Reference:</strong>
+                        {{ teaching.scripture_reference }}
+                    </p>
+                {% endif %}
+
+                <!-- Topic -->
+                {% if teaching.topic %}
+                    <p class="mb-2">
+                        <strong>Topic:</strong>
+                        {{ teaching.topic.name }}
+                    </p>
+                {% endif %}
+
+                <!-- Tags -->
+                {% if teaching.tags.all %}
+                    <p class="mb-0">
+                        <strong>Tags:</strong>
+
+                        {% for tag in teaching.tags.all %}
+                            {{ tag.name }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </p>
+                {% endif %}
 
             </div>
 
@@ -68,3 +97,4 @@
 {% endif %}
 
 {% endblock %}
+```
