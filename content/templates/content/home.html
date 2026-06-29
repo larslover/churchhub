@@ -18,54 +18,6 @@
 
 
 
-<!-- =========================
-🆕 RECENT TEACHINGS (LIMITED)
-========================= -->
-<h4 class="mb-3">Recent Teachings</h4>
-
-{% if teachings %}
-
-    <div class="list-group mb-5">
-
-        {% for teaching in teachings|slice:":5" %}
-
-            <a href="{% url 'teaching_detail' teaching.id %}"
-               class="list-group-item list-group-item-action">
-
-                <div class="d-flex justify-content-between">
-
-                    <div>
-                        <div class="fw-semibold">
-                            {{ teaching.title }}
-                        </div>
-
-                        {% if teaching.series %}
-                            <small class="text-muted">
-                                {{ teaching.series.title }}
-                            </small>
-                        {% endif %}
-                    </div>
-
-                    <small class="text-muted">
-                        {{ teaching.published_at|date:"M d, Y" }}
-                    </small>
-
-                </div>
-
-            </a>
-
-        {% endfor %}
-
-    </div>
-
-{% else %}
-
-    <div class="alert alert-info mb-5">
-        No teachings available yet.
-    </div>
-
-{% endif %}
-
 
 <!-- =========================
 🎲 DISCOVER A TEACHING (RANDOM)
