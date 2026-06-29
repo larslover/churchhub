@@ -2,8 +2,149 @@
 
 {% block content %}
 
+<!-- =========================
+📖 INTRO / MISSION
+========================= -->
+<div class="mb-5">
+
+    <h1 class="mb-3">Biblical Teaching Library</h1>
+
+    <p class="text-muted">
+        A place to grow in Christ through Scripture-centered teaching,
+        guided by the Holy Spirit, and rooted in the Word of God.
+    </p>
+
+</div>
 
 
 
+<!-- =========================
+🆕 RECENT TEACHINGS (LIMITED)
+========================= -->
+<h4 class="mb-3">Recent Teachings</h4>
 
+{% if teachings %}
+
+    <div class="list-group mb-5">
+
+        {% for teaching in teachings|slice:":5" %}
+
+            <a href="{% url 'teaching_detail' teaching.id %}"
+               class="list-group-item list-group-item-action">
+
+                <div class="d-flex justify-content-between">
+
+                    <div>
+                        <div class="fw-semibold">
+                            {{ teaching.title }}
+                        </div>
+
+                        {% if teaching.series %}
+                            <small class="text-muted">
+                                {{ teaching.series.title }}
+                            </small>
+                        {% endif %}
+                    </div>
+
+                    <small class="text-muted">
+                        {{ teaching.published_at|date:"M d, Y" }}
+                    </small>
+
+                </div>
+
+            </a>
+
+        {% endfor %}
+
+    </div>
+
+{% else %}
+
+    <div class="alert alert-info mb-5">
+        No teachings available yet.
+    </div>
+
+{% endif %}
+
+
+<!-- =========================
+🎲 DISCOVER A TEACHING (RANDOM)
+========================= -->
+{% if random_teaching %}
+
+    <div class="card mb-5 shadow-sm">
+
+        <div class="card-body">
+
+            <h5 class="mb-2">You may also like</h5>
+
+            <h4 class="mb-2">
+                {{ random_teaching.title }}
+            </h4>
+
+            {% if random_teaching.summary %}
+                <p class="text-muted">
+                    {{ random_teaching.summary }}
+                </p>
+            {% endif %}
+
+            <a href="{% url 'teaching_detail' random_teaching.id %}"
+               class="btn btn-outline-primary btn-sm">
+                Explore Teaching
+            </a>
+
+        </div>
+
+    </div>
+
+{% endif %}
+<!-- =========================
+📊 LIBRARY STATS
+========================= -->
+<div class="card shadow-sm border-0 mb-5">
+
+    <div class="card-body">
+
+        <h5 class="mb-4">Library Overview</h5>
+
+        <div class="row text-center">
+
+            <div class="col-4">
+                <div class="p-2">
+                    <div class="display-6 fw-bold text-primary">
+                        {{ teachings_count }}
+                    </div>
+                    <div class="text-muted small">
+                        Teachings
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-4">
+                <div class="p-2">
+                    <div class="display-6 fw-bold text-success">
+                        {{ topics_count }}
+                    </div>
+                    <div class="text-muted small">
+                        Topics
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-4">
+                <div class="p-2">
+                    <div class="display-6 fw-bold text-warning">
+                        {{ series_count }}
+                    </div>
+                    <div class="text-muted small">
+                        Series
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 {% endblock %}

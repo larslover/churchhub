@@ -1,18 +1,26 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Topic, Series, Teaching
+from django.shortcuts import render, get_object_or_404
+from .models import Topic, Series, Teaching
+
+
 def home(request):
     teachings = Teaching.objects.filter(
         is_published=True
     ).order_by("-published_at")
 
     latest_teaching = teachings.first()
-    recent_teachings = teachings[:5]   # 👈 LIMIT HERE
-    topics = Topic.objects.all()
+    recent_teachings = teachings[:5]
 
     return render(request, "content/home.html", {
         "latest_teaching": latest_teaching,
         "teachings": recent_teachings,
-        "topics": topics,
+        "topics": Topic.objects.all(),
+
+        # (optional but needed for stats if you use them)
+        "teachings_count": teachings.count(),
+        "topics_count": Topic.objects.count(),
+        "series_count": Series.objects.count(),
     })
 def topic_list(request):
     topics = Topic.objects.all()
