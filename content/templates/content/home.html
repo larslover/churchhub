@@ -10,12 +10,45 @@
     <h1 class="mb-3">Biblical Teaching Library</h1>
 
     <p class="text-muted">
-        A place to grow in Christ through Scripture-centered teaching,
-        guided by the Holy Spirit, and rooted in the Word of God.
+   
     </p>
 
 </div>
+<!-- =========================
+🔍 SEARCH LIBRARY
+========================= -->
+<div class="card shadow-sm mb-5">
 
+    <div class="card-body">
+
+        <h5 class="mb-3">Search the Library</h5>
+
+        <form method="get" action="{% url 'teaching_list' %}">
+
+            <div class="input-group">
+
+                <input
+                    type="text"
+                    name="q"
+                    class="form-control"
+                    placeholder="Search teachings, topics, or series..."
+                >
+
+                <button class="btn btn-primary" type="submit">
+                    Search
+                </button>
+
+            </div>
+
+        </form>
+
+        <small class="text-muted">
+            Find teachings by title, topic, or series.
+        </small>
+
+    </div>
+
+</div>
 
 
 

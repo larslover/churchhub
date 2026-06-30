@@ -1,4 +1,3 @@
-```django
 {% extends "base.html" %}
 
 {% block title %}{{ topic.name }}{% endblock %}
@@ -25,12 +24,19 @@
                 </h3>
 
                 <!-- Metadata -->
-                <div class="text-muted small mb-4">
+                <div class="text-muted small mb-3">
 
                     {% if teaching.series %}
                         <div>
                             <strong>Series:</strong>
                             {{ teaching.series.title }}
+                        </div>
+                    {% endif %}
+
+                    {% if teaching.scripture_reference %}
+                        <div>
+                            <strong>Scripture:</strong>
+                            {{ teaching.scripture_reference }}
                         </div>
                     {% endif %}
 
@@ -43,44 +49,27 @@
 
                 <!-- Summary -->
                 {% if teaching.summary %}
-                    <div class="alert alert-light border">
+                    <p class="card-text">
                         {{ teaching.summary }}
-                    </div>
-                {% endif %}
-
-                <!-- Teaching Content -->
-                <div class="teaching-content mb-4">
-                    {{ teaching.content|linebreaks }}
-                </div>
-
-                <hr>
-
-                <!-- Scripture Reference -->
-                {% if teaching.scripture_reference %}
-                    <p class="mb-2">
-                        <strong>Scripture Reference:</strong>
-                        {{ teaching.scripture_reference }}
-                    </p>
-                {% endif %}
-
-                <!-- Topic -->
-                {% if teaching.topic %}
-                    <p class="mb-2">
-                        <strong>Topic:</strong>
-                        {{ teaching.topic.name }}
                     </p>
                 {% endif %}
 
                 <!-- Tags -->
-                {% if teaching.tags.all %}
-                    <p class="mb-0">
-                        <strong>Tags:</strong>
-
+                {% if teaching.tags.exists %}
+                    <div class="mb-3">
                         {% for tag in teaching.tags.all %}
-                            {{ tag.name }}{% if not forloop.last %}, {% endif %}
+                            <span class="badge bg-secondary">
+                                {{ tag.name }}
+                            </span>
                         {% endfor %}
-                    </p>
+                    </div>
                 {% endif %}
+
+                <!-- Read Button -->
+                <a href="{% url 'teaching_detail' teaching.pk %}"
+                   class="btn btn-success">
+                    Read Teaching
+                </a>
 
             </div>
 
@@ -97,4 +86,3 @@
 {% endif %}
 
 {% endblock %}
-```

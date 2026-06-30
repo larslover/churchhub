@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1 class="mb-4">Teachings</h1>
+
+{% for teaching in teachings %}
+
+    <div class="card mb-3 shadow-sm">
+        <div class="card-body">
+
+            <h5>
+                <a href="{% url 'teaching_detail' teaching.id %}">
+                    {{ teaching.title }}
+                </a>
+            </h5>
+
+            {% if teaching.summary %}
+                <p class="text-muted">
+                    {{ teaching.summary }}
+                </p>
+            {% endif %}
+
+        </div>
+    </div>
+
+{% empty %}
+
+    <div class="alert alert-info">
+        No teachings found.
+    </div>
+
+{% endfor %}
+
+{% endblock %}

@@ -4,39 +4,105 @@
 
 {% block content %}
 
-<div class="mb-4">
+<!-- Search -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
 
-    <h1 class="mb-2">
-        {{ teaching.title }}
-    </h1>
+        <form method="get" action="{% url 'teaching_list' %}">
+            <div class="input-group">
 
-    <!-- META -->
-    <div class="text-muted small mb-3">
+                <input
+                    type="text"
+                    class="form-control"
+                    name="q"
+                    placeholder="Search teachings, topics, or series...">
 
-        {% if teaching.series %}
-            <div>
-                Series: {{ teaching.series.title }}
+                <button class="btn btn-primary">
+                    <i class="bi bi-search"></i> Search
+                </button>
+
             </div>
+        </form>
+
+    </div>
+</div>
+
+
+<!-- Teaching Header -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+
+        <h1 class="mb-3">
+            {{ teaching.title }}
+        </h1>
+
+        {% if teaching.summary %}
+            <p class="lead text-muted">
+                {{ teaching.summary }}
+            </p>
+            <hr>
         {% endif %}
 
-        <div>
-            Published: {{ teaching.published_at|date:"M d, Y" }}
+        <div class="row">
+
+            <div class="col-md-6">
+
+                {% if teaching.series %}
+                    <p>
+                        <strong>Series:</strong>
+                        <a href="{% url 'series_detail' teaching.series.pk %}">
+                            {{ teaching.series.title }}
+                        </a>
+                    </p>
+                {% endif %}
+
+                {% if teaching.topic %}
+                    <p>
+                        <strong>Topic:</strong>
+                        <a href="{% url 'topic_detail' teaching.topic.pk %}">
+                            {{ teaching.topic.name }}
+                        </a>
+                    </p>
+                {% endif %}
+
+                {% if teaching.scripture_reference %}
+                    <p>
+                        <strong>Scripture:</strong>
+                        {{ teaching.scripture_reference }}
+                    </p>
+                {% endif %}
+
+            </div>
+
+            <div class="col-md-6">
+
+                <p>
+                    <strong>Published:</strong>
+                    {{ teaching.published_at|date:"F j, Y" }}
+                </p>
+
+                {% if teaching.tags.exists %}
+                    <p>
+                        <strong>Tags:</strong><br>
+
+                        {% for tag in teaching.tags.all %}
+                            <span class="badge bg-secondary">
+                                {{ tag.name }}
+                            </span>
+                        {% endfor %}
+                    </p>
+                {% endif %}
+
+            </div>
+
         </div>
 
     </div>
-
-    <!-- SUMMARY (optional intro) -->
-    {% if teaching.summary %}
-        <div class="alert alert-light border">
-            {{ teaching.summary }}
-        </div>
-    {% endif %}
-
 </div>
 
-<!-- MAIN CONTENT -->
-<div class="card shadow-sm">
 
+<!-- Teaching Content -->
+<div class="card shadow-sm mb-4">
     <div class="card-body">
 
         <div class="teaching-content">
@@ -44,19 +110,30 @@
         </div>
 
     </div>
-
 </div>
 
-<!-- NAVIGATION -->
-<div class="mt-4 d-flex justify-content-between">
 
-    <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm">
-        ← Back to Library
-    </a>
+<!-- Navigation -->
+<div class="d-flex flex-wrap gap-2 justify-content-between">
+
+    <div>
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-house"></i>
+            Home
+        </a>
+
+        {% if teaching.topic %}
+            <a href="{% url 'topic_detail' teaching.topic.pk %}"
+               class="btn btn-outline-success">
+                <i class="bi bi-bookmark"></i>
+                Back to Topic
+            </a>
+        {% endif %}
+    </div>
 
     {% if teaching.series %}
-        <a href="{% url 'series_detail' teaching.series.id %}"
-           class="btn btn-outline-primary btn-sm">
+        <a href="{% url 'series_detail' teaching.series.pk %}"
+           class="btn btn-primary">
             View Series
         </a>
     {% endif %}

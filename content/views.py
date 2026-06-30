@@ -1,6 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Topic, Series, Teaching
-from django.shortcuts import render, get_object_or_404
+from django.db.models import Q
 from .models import Topic, Series, Teaching
 
 
@@ -32,7 +31,27 @@ def topic_list(request):
             "topics": topics
         }
     )
+from .models import Teaching
 
+def teaching_list(request):
+
+    q = request.GET.get("q", "").strip()
+
+    teachings = Teaching.objects.filter(
+        is_published=True
+    ).order_by("-published_at")
+
+    if q:
+        teachings = teachings.filter(
+            Q(title__icontains=q) |
+            Q(summary__icontains=q) |
+            Q(content__icontains=q)
+        )
+
+    return render(request, "content/teaching_list.html", {
+        "teachings": teachings,
+        "q": q,
+    })
 def topic_detail(request, pk):
     topic = get_object_or_404(Topic, pk=pk)
 
