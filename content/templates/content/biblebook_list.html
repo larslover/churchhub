@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Bible Books{% endblock %}
+
+{% block content %}
+
+<!-- =========================
+📖 HEADER
+========================= -->
+<div class="mb-4">
+
+    <h1 class="mb-2">Bible Books</h1>
+
+    <p class="text-muted">
+        Explore teachings organized by the books of the Bible.
+    </p>
+
+</div>
+
+
+<!-- =========================
+📜 OLD TESTAMENT
+========================= -->
+<div class="card shadow-sm mb-4">
+
+    <div class="card-body">
+
+        <h4 class="mb-3">Old Testament</h4>
+
+        {% if old_testament %}
+
+            <div class="list-group">
+
+                {% for book in old_testament %}
+
+                    <a href="{% url 'biblebook_detail' book.pk %}"
+                       class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+
+                        <span>
+                            {{ book.name }}
+                        </span>
+
+                        <span class="badge bg-secondary">
+                            {{ book.teachings.count }}
+                        </span>
+
+                    </a>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <p class="text-muted">No Old Testament books available.</p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+📜 NEW TESTAMENT
+========================= -->
+<div class="card shadow-sm mb-4">
+
+    <div class="card-body">
+
+        <h4 class="mb-3">New Testament</h4>
+
+        {% if new_testament %}
+
+            <div class="list-group">
+
+                {% for book in new_testament %}
+
+                    <a href="{% url 'biblebook_detail' book.pk %}"
+                       class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+
+                        <span>
+                            {{ book.name }}
+                        </span>
+
+                        <span class="badge bg-secondary">
+                            {{ book.teachings.count }}
+                        </span>
+
+                    </a>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <p class="text-muted">No New Testament books available.</p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

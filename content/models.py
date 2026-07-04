@@ -1,12 +1,40 @@
-
 from django.db import models
 from django.utils.text import slugify
 
 
 # ===============================
+# BIBLE BOOKS
+# ===============================
+
+class BibleBook(models.Model):
+
+    TESTAMENT_CHOICES = [
+        ("OT", "Old Testament"),
+        ("NT", "New Testament"),
+    ]
+
+    name = models.CharField(max_length=100, unique=True)
+
+    testament = models.CharField(
+        max_length=2,
+        choices=TESTAMENT_CHOICES
+    )
+
+    order = models.PositiveIntegerField()
+
+    class Meta:
+        ordering = ["order"]
+
+    def __str__(self):
+        return self.name
+
+
+# ===============================
 # TOPICS
 # ===============================
+
 class Topic(models.Model):
+
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(unique=True, blank=True)
     description = models.TextField(blank=True)
@@ -27,7 +55,9 @@ class Topic(models.Model):
 # ===============================
 # SERIES
 # ===============================
+
 class Series(models.Model):
+
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, blank=True)
     description = models.TextField(blank=True)
@@ -49,7 +79,9 @@ class Series(models.Model):
 # ===============================
 # TAGS
 # ===============================
+
 class Tag(models.Model):
+
     name = models.CharField(max_length=50, unique=True)
 
     class Meta:
@@ -62,6 +94,7 @@ class Tag(models.Model):
 # ===============================
 # TEACHINGS
 # ===============================
+
 class Teaching(models.Model):
 
     title = models.CharField(max_length=255)
@@ -81,6 +114,14 @@ class Teaching(models.Model):
 
     series = models.ForeignKey(
         Series,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="teachings"
+    )
+
+    bible_book = models.ForeignKey(
+        BibleBook,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -114,7 +155,6 @@ class Teaching(models.Model):
         ordering = ["-published_at"]
 
     def save(self, *args, **kwargs):
-
         if not self.slug:
             self.slug = slugify(self.title)
 
@@ -127,6 +167,7 @@ class Teaching(models.Model):
 # ===============================
 # RESOURCES
 # ===============================
+
 class Resource(models.Model):
 
     teaching = models.ForeignKey(
@@ -150,4 +191,3 @@ class Resource(models.Model):
 
     def __str__(self):
         return self.title
-

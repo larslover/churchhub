@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}{{ bible_book.name }}{% endblock %}
+
+{% block content %}
+
+<!-- =========================
+📖 BIBLE BOOK HEADER
+========================= -->
+<div class="mb-4">
+
+    <h1 class="mb-2">{{ bible_book.name }}</h1>
+
+    <div class="text-muted">
+
+        <p class="mb-1">
+            <strong>Testament:</strong>
+            {{ bible_book.get_testament_display }}
+        </p>
+
+        <p class="mb-1">
+            <strong>Total Teachings:</strong>
+            {{ teachings|length }}
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+📚 TEACHINGS LIST
+========================= -->
+
+{% if teachings %}
+
+    {% for teaching in teachings %}
+
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-body">
+
+                <!-- Title -->
+                <h3 class="card-title mb-3">
+                    {{ teaching.title }}
+                </h3>
+
+                <!-- Meta -->
+                <div class="text-muted small mb-3">
+
+                    {% if teaching.series %}
+                        <div>
+                            <strong>Series:</strong>
+                            {{ teaching.series.title }}
+                        </div>
+                    {% endif %}
+
+                    {% if teaching.topic %}
+                        <div>
+                            <strong>Topic:</strong>
+                            {{ teaching.topic.name }}
+                        </div>
+                    {% endif %}
+
+                    <div>
+                        <strong>Published:</strong>
+                        {{ teaching.published_at|date:"F j, Y" }}
+                    </div>
+
+                    {% if teaching.scripture_reference %}
+                        <div>
+                            <strong>Scripture:</strong>
+                            {{ teaching.scripture_reference }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+                <!-- Summary -->
+                {% if teaching.summary %}
+                    <p class="text-muted">
+                        {{ teaching.summary }}
+                    </p>
+                {% endif %}
+
+                <!-- Tags -->
+                {% if teaching.tags.all %}
+                    <div class="mb-3">
+                        {% for tag in teaching.tags.all %}
+                            <span class="badge bg-secondary">
+                                {{ tag.name }}
+                            </span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Button -->
+                <a href="{% url 'teaching_detail' teaching.pk %}"
+                   class="btn btn-success btn-sm">
+                    Read Teaching
+                </a>
+
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+{% else %}
+
+    <div class="alert alert-info">
+        No teachings have been added for this Bible book yet.
+    </div>
+
+{% endif %}
+
+
+<!-- =========================
+NAVIGATION
+========================= -->
+<div class="mt-4">
+
+    <a href="{% url 'biblebook_list' %}"
+       class="btn btn-outline-secondary">
+        ← Back to Bible Books
+    </a>
+
+</div>
+
+{% endblock %}

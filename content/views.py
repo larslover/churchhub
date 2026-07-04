@@ -1,8 +1,41 @@
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
-from .models import Topic, Series, Teaching
+from .models import Topic, Series, Teaching, BibleBook
 
+def biblebook_list(request):
 
+    old_testament = BibleBook.objects.filter(
+        testament="OT"
+    ).order_by("order")
+
+    new_testament = BibleBook.objects.filter(
+        testament="NT"
+    ).order_by("order")
+
+    return render(
+        request,
+        "content/biblebook_list.html",
+        {
+            "old_testament": old_testament,
+            "new_testament": new_testament,
+        },
+    )
+def biblebook_detail(request, pk):
+
+    bible_book = get_object_or_404(BibleBook, pk=pk)
+
+    teachings = bible_book.teachings.filter(
+        is_published=True
+    ).order_by("-published_at")
+
+    return render(
+        request,
+        "content/biblebook_detail.html",
+        {
+            "bible_book": bible_book,
+            "teachings": teachings,
+        },
+    )
 def home(request):
     teachings = Teaching.objects.filter(
         is_published=True

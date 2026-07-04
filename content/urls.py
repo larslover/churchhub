@@ -11,4 +11,15 @@ urlpatterns = [
     path("topics/<int:pk>/", views.topic_detail, name="topic_detail"),
 
     path("series/", views.series_list, name="series_list"),
+    path(
+    "books/",
+    views.biblebook_list,
+    name="biblebook_list",
+),
+
+path(
+    "books/<int:pk>/",
+    views.biblebook_detail,
+    name="biblebook_detail",
+),
 ]
