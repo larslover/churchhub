@@ -46,39 +46,37 @@
     </div>
 
 </div>
-
-
-
 <!-- =========================
-🎲 DISCOVER A TEACHING (RANDOM)
+🎥 LATEST TEACHING
 ========================= -->
-{% if random_teaching %}
 
-    <div class="card mb-5 shadow-sm">
+{% if latest_teaching %}
+<div class="card shadow-sm border-0 mb-5">
 
-        <div class="card-body">
+    <div class="card-body">
 
-            <h5 class="mb-2">You may also like</h5>
+        <span class="badge bg-danger mb-2">
+            NEW
+        </span>
 
-            <h4 class="mb-2">
-                {{ random_teaching.title }}
-            </h4>
+        <h2 class="mb-2">
+            {{ latest_teaching.title }}
+        </h2>
 
-            {% if random_teaching.summary %}
-                <p class="text-muted">
-                    {{ random_teaching.summary }}
-                </p>
-            {% endif %}
+        {% if latest_teaching.summary %}
+        <p class="text-muted">
+            {{ latest_teaching.summary }}
+        </p>
+        {% endif %}
 
-            <a href="{% url 'teaching_detail' random_teaching.id %}"
-               class="btn btn-outline-primary btn-sm">
-                Explore Teaching
-            </a>
-
-        </div>
+        <a href="{% url 'teaching_detail' latest_teaching.id %}"
+           class="btn btn-primary">
+            Read Latest Teaching
+        </a>
 
     </div>
 
+</div>
 {% endif %}
 <!-- =========================
 📊 LIBRARY STATS
