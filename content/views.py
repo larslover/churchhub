@@ -7,6 +7,9 @@ from .models import Church
 from .models import Church
 
 
+from .models import Church
+
+
 def church_list(request):
     churches = Church.objects.filter(
         is_active=True
@@ -18,10 +21,15 @@ def church_list(request):
         "country"
     ).distinct().count()
 
+    latest_church = churches.order_by(
+        "-created_at"
+    ).first()
+
     return render(request, "content/church_list.html", {
         "churches": churches,
         "churches_count": churches_count,
         "countries_count": countries_count,
+        "latest_church": latest_church,
     })
 def biblebook_list(request):
 
