@@ -5,7 +5,20 @@ from django.utils.text import slugify
 # ===============================
 # BIBLE BOOKS
 # ===============================
+from django.db import models
 
+
+class Church(models.Model):
+    city = models.CharField(max_length=100)
+    country = models.CharField(max_length=100)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["country", "city"]
+        unique_together = ("city", "country")
+
+    def __str__(self):
+        return f"{self.city}, {self.country}"
 class BibleBook(models.Model):
 
     TESTAMENT_CHOICES = [

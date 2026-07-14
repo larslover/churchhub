@@ -2,6 +2,14 @@ from django.contrib import admin
 from .models import Topic, Series, Tag, Teaching, Resource
 
 
+from .models import Church
+
+
+@admin.register(Church)
+class ChurchAdmin(admin.ModelAdmin):
+    list_display = ("city", "country", "is_active")
+    list_filter = ("country", "is_active")
+    search_fields = ("city", "country")
 @admin.register(Teaching)
 class TeachingAdmin(admin.ModelAdmin):
     list_display = (

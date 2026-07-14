@@ -22,4 +22,9 @@ path(
     views.biblebook_detail,
     name="biblebook_detail",
 ),
+    path(
+        "churches/",
+        views.church_list,
+        name="church_list"
+    ),
 ]

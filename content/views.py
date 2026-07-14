@@ -1,7 +1,17 @@
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
 from .models import Topic, Series, Teaching, BibleBook
+from .models import Church
 
+
+def church_list(request):
+    churches = Church.objects.filter(
+        is_active=True
+    )
+
+    return render(request, "content/church_list.html", {
+        "churches": churches,
+    })
 def biblebook_list(request):
 
     old_testament = BibleBook.objects.filter(

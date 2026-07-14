@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}
+Church Fellowships
+{% endblock %}
+
+
+{% block content %}
+
+<h1 class="mb-4">
+    Church Fellowships
+</h1>
+
+
+<div class="row">
+
+{% for church in churches %}
+
+<div class="col-md-4 mb-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-body text-center">
+
+            <h4>
+                {{ church.city }}
+            </h4>
+
+            <p class="text-muted">
+                {{ church.country }}
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% empty %}
+
+<p>No church fellowships added yet.</p>
+
+{% endfor %}
+
+</div>
+
+
+{% endblock %}
