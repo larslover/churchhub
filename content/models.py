@@ -12,6 +12,8 @@ class Church(models.Model):
     city = models.CharField(max_length=100)
     country = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
 
     class Meta:
         ordering = ["country", "city"]

@@ -4,13 +4,24 @@ from .models import Topic, Series, Teaching, BibleBook
 from .models import Church
 
 
+from .models import Church
+
+
 def church_list(request):
     churches = Church.objects.filter(
         is_active=True
     )
 
+    churches_count = churches.count()
+
+    countries_count = churches.values(
+        "country"
+    ).distinct().count()
+
     return render(request, "content/church_list.html", {
         "churches": churches,
+        "churches_count": churches_count,
+        "countries_count": countries_count,
     })
 def biblebook_list(request):
 
