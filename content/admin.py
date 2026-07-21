@@ -49,6 +49,6 @@ class TeachingAdmin(admin.ModelAdmin):
 
 # Cleaned up the registration syntax error from your original file
 admin.site.register(Topic)
-admin.site.register(Series)
+
 admin.site.register(Tag)
-admin.site.register(Resource)
+
