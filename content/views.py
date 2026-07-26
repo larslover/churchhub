@@ -8,8 +8,20 @@ from .models import Church
 
 
 from .models import Church
+def church_detail(request, pk):
+    church = get_object_or_404(
+        Church,
+        pk=pk,
+        is_active=True,
+    )
 
-
+    return render(
+        request,
+        "content/church_detail.html",
+        {
+            "church": church,
+        },
+    )
 def church_list(request):
     churches = Church.objects.filter(
         is_active=True
@@ -65,24 +77,38 @@ def biblebook_detail(request, pk):
             "teachings": teachings,
         },
     )
+
+
+
 def home(request):
-    teachings = Teaching.objects.filter(
-        is_published=True
-    ).order_by("-published_at")
+    teachings = (
+        Teaching.objects
+        .filter(is_published=True)
+        .order_by("-published_at")
+    )
 
-    latest_teaching = teachings.first()
-    recent_teachings = teachings[:5]
+    churches = Church.objects.order_by("-id")  # or "-created_at" if you have that field
 
-    return render(request, "content/home.html", {
-        "latest_teaching": latest_teaching,
-        "teachings": recent_teachings,
+    context = {
+        # Latest items
+        "latest_teaching": teachings.first(),
+        "latest_church": churches.first(),
+
+        # Recent items (if needed elsewhere)
+        "teachings": teachings[:5],
+        "churches": churches[:5],
+
+        # Lists
         "topics": Topic.objects.all(),
 
-        # (optional but needed for stats if you use them)
+        # Statistics
         "teachings_count": teachings.count(),
         "topics_count": Topic.objects.count(),
+        "churches_count": churches.count(),
         "series_count": Series.objects.count(),
-    })
+    }
+
+    return render(request, "content/home.html", context)
 def topic_list(request):
     topics = Topic.objects.all()
 

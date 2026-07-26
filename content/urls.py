@@ -27,4 +27,9 @@ path(
         views.church_list,
         name="church_list"
     ),
+    path(
+    "churches/<int:pk>/",
+    views.church_detail,
+    name="church_detail",
+),
 ]
