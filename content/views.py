@@ -6,7 +6,11 @@ from .models import Church
 
 from .models import Church
 
-
+def contact(request):
+    return render(
+        request,
+        "content/contact.html",
+    )
 from .models import Church
 def church_detail(request, pk):
     church = get_object_or_404(
