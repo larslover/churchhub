@@ -37,9 +37,5 @@ path(
     views.church_detail,
     name="church_detail",
 ),
-path(
-    "teachings/",
-    views.TeachingListView.as_view(),
-    name="teaching_list",
-),
+
 ]
