@@ -1,35 +1,40 @@
 {% extends "base.html" %}
 
+{% block title %}All Teachings{% endblock %}
+
 {% block content %}
 
-<h1 class="mb-4">Teachings</h1>
+<h1 class="mb-4">All Teachings</h1>
+
+<p class="text-muted">
+    {{ teachings|length }} teaching{{ teachings|pluralize }} in the library.
+</p>
+
+<div class="list-group">
 
 {% for teaching in teachings %}
 
-    <div class="card mb-3 shadow-sm">
-        <div class="card-body">
+    <a href="{% url 'teaching_detail' teaching.pk %}"
+       class="list-group-item list-group-item-action">
 
-            <h5>
-                <a href="{% url 'teaching_detail' teaching.id %}">
-                    {{ teaching.title }}
-                </a>
-            </h5>
+        <h5 class="mb-1">{{ teaching.title }}</h5>
 
-            {% if teaching.summary %}
-                <p class="text-muted">
-                    {{ teaching.summary }}
-                </p>
-            {% endif %}
+        {% if teaching.summary %}
+            <small class="text-muted">
+                {{ teaching.summary|truncatewords:20 }}
+            </small>
+        {% endif %}
 
-        </div>
-    </div>
+    </a>
 
 {% empty %}
 
     <div class="alert alert-info">
-        No teachings found.
+        No teachings have been published yet.
     </div>
 
 {% endfor %}
+
+</div>
 
 {% endblock %}

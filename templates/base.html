@@ -97,40 +97,42 @@
 
             <ul class="navbar-nav ms-auto">
 
-
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'contact' %}">
-                        Contact
+                    <a class="nav-link" href="{% url 'teaching_list' %}">
+                        <i class="bi bi-journal-text me-1"></i>
+                        All Teachings
                     </a>
                 </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'church_list' %}">
-                        Churches
-                    </a>
-                </li>
-
+            
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'topic_list' %}">
+                        <i class="bi bi-tags me-1"></i>
                         Topics
                     </a>
                 </li>
+            
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'biblebook_list' %}">
+                        <i class="bi bi-book me-1"></i>
                         Bible Books
                     </a>
                 </li>
-                
-                {% comment %}
+            
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'series_list' %}">
-                        Series
+                    <a class="nav-link" href="{% url 'church_list' %}">
+                        <i class="bi bi-geo-alt me-1"></i>
+                        Churches
                     </a>
                 </li>
-                {% endcomment %}
-              
+            
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'contact' %}">
+                        <i class="bi bi-envelope me-1"></i>
+                        Contact
+                    </a>
+                </li>
+            
             </ul>
-
         </div>
     </div>
 </nav>
