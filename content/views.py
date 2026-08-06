@@ -6,15 +6,7 @@ from .models import Church
 
 from .models import Church
 from django.views.generic import ListView
-class TeachingListView(ListView):
-    model = Teaching
-    template_name = "content/teaching_list.html"
-    context_object_name = "teachings"
 
-    def get_queryset(self):
-        return Teaching.objects.filter(
-            is_published=True
-        ).order_by("title")
 def contact(request):
     return render(
         request,
@@ -140,7 +132,7 @@ def teaching_list(request):
 
     teachings = Teaching.objects.filter(
         is_published=True
-    ).order_by("-published_at")
+    ).order_by("title")
 
     if q:
         teachings = teachings.filter(
