@@ -16,6 +16,66 @@
 </div>
 
 <!-- =========================
+⛪ LIFE AMONG THE CHURCHES
+========================= -->
+{% if latest_updates %}
+
+<div class="mb-5">
+
+    <h2 class="mb-4">Life Among the Churches</h2>
+
+    <div class="row">
+
+        {% for update in latest_updates %}
+
+        <div class="col-md-4 mb-4">
+
+            <div class="card h-100 shadow-sm border-0">
+
+                {% if update.image %}
+                <img
+                    src="{{ update.image.url }}"
+                    class="card-img-top"
+                    style="height: 220px; object-fit: cover;"
+                    alt="{{ update.title }}"
+                >
+                {% endif %}
+
+                <div class="card-body">
+
+                    <div class="small text-muted mb-2">
+                        {{ update.church.city }},
+                        {{ update.church.country }}
+                    </div>
+
+                    <h4 class="card-title">
+                        {{ update.title }}
+                    </h4>
+
+                    {% if update.summary %}
+                    <p class="text-muted">
+                        {{ update.summary }}
+                    </p>
+                    {% endif %}
+
+                    <div class="small text-muted">
+                        {{ update.date|date:"F j, Y" }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endif %}
+<!-- =========================
 🔍 SEARCH LIBRARY
 ========================= -->
 <div class="card shadow-sm mb-5">
