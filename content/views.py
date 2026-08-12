@@ -1,8 +1,14 @@
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
-from .models import Topic, Series, Teaching, BibleBook
-from .models import Church
 
+from .models import (
+    Topic,
+    Series,
+    Teaching,
+    BibleBook,
+    Church,
+    ChurchUpdate,
+)
 
 from .models import Church
 from django.views.generic import ListView
@@ -84,22 +90,32 @@ def biblebook_detail(request, pk):
     )
 
 
-
 def home(request):
+
     teachings = (
         Teaching.objects
         .filter(is_published=True)
         .order_by("-published_at")
     )
 
-    churches = Church.objects.order_by("-id")  # or "-created_at" if you have that field
+    churches = Church.objects.order_by("-id")
+
+    church_updates = (
+        ChurchUpdate.objects
+        .filter(is_published=True)
+        .select_related("church")
+        .order_by("-date")
+    )
 
     context = {
         # Latest items
         "latest_teaching": teachings.first(),
         "latest_church": churches.first(),
 
-        # Recent items (if needed elsewhere)
+        # Church updates
+        "latest_updates": church_updates[:3],
+
+        # Recent items
         "teachings": teachings[:5],
         "churches": churches[:5],
 
@@ -113,7 +129,11 @@ def home(request):
         "series_count": Series.objects.count(),
     }
 
-    return render(request, "content/home.html", context)
+    return render(
+        request,
+        "content/home.html",
+        context,
+    )
 def topic_list(request):
     topics = Topic.objects.all()
 
