@@ -206,3 +206,48 @@ class Resource(models.Model):
 
     def __str__(self):
         return self.title
+# ===============================
+# CHURCH UPDATES
+# ===============================
+
+class ChurchUpdate(models.Model):
+
+    church = models.ForeignKey(
+        Church,
+        on_delete=models.CASCADE,
+        related_name="updates"
+    )
+
+    title = models.CharField(
+        max_length=255
+    )
+
+    summary = models.TextField(
+        blank=True
+    )
+
+    content = models.TextField(
+        blank=True
+    )
+
+    image = models.ImageField(
+        upload_to="church_updates/",
+        blank=True,
+        null=True
+    )
+
+    date = models.DateField()
+
+    is_published = models.BooleanField(
+        default=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+        ordering = ["-date"]
+
+    def __str__(self):
+        return f"{self.church} - {self.title}"

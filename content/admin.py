@@ -45,7 +45,33 @@ class TeachingAdmin(admin.ModelAdmin):
     prepopulated_fields = {
         "slug": ("title",)
     }
+from django.contrib import admin
+from .models import ChurchUpdate
 
+
+@admin.register(ChurchUpdate)
+class ChurchUpdateAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "title",
+        "church",
+        "date",
+        "is_published",
+    )
+
+    list_filter = (
+        "church",
+        "is_published",
+        "date",
+    )
+
+    search_fields = (
+        "title",
+        "summary",
+        "content",
+    )
+
+    prepopulated_fields = {}
 
 # Cleaned up the registration syntax error from your original file
 admin.site.register(Topic)
