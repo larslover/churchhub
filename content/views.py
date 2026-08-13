@@ -106,6 +106,11 @@ def home(request):
         .select_related("church")
         .order_by("-date")
     )
+    print("HOME UPDATES:", list(church_updates.values(
+    "id",
+    "title",
+    "is_published",
+)))
 
     context = {
         # Latest items
