@@ -7,7 +7,6 @@ from django.utils.text import slugify
 # ===============================
 from django.db import models
 
-
 class Church(models.Model):
     city = models.CharField(max_length=100)
     country = models.CharField(max_length=100)
@@ -117,7 +116,6 @@ class Teaching(models.Model):
 
     summary = models.TextField(blank=True)
 
-    content = models.TextField()
 
     topic = models.ForeignKey(
         Topic,
@@ -251,3 +249,33 @@ class ChurchUpdate(models.Model):
 
     def __str__(self):
         return f"{self.church} - {self.title}"
+
+class Language(models.Model):
+    name = models.CharField(max_length=100)
+    code = models.CharField(max_length=10, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class TeachingAudio(models.Model):
+    teaching = models.ForeignKey(
+        Teaching,
+        on_delete=models.CASCADE,
+        related_name="audio_versions",
+    )
+
+    language = models.ForeignKey(
+        Language,
+        on_delete=models.PROTECT,
+        related_name="teaching_audio",
+    )
+
+    audio = models.FileField(
+        upload_to="teachings/audio/",
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.teaching.title} - {self.language.name}"

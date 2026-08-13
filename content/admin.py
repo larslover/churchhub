@@ -1,7 +1,22 @@
 from django.contrib import admin
-# Added BibleBook to the imports
-from .models import Topic, Series, Tag, Teaching, Resource, Church, BibleBook
 
+from .models import (
+    Topic,
+    Series,
+    Tag,
+    Teaching,
+    TeachingAudio,
+    Language,
+    Resource,
+    Church,
+    BibleBook,
+    ChurchUpdate,
+)
+
+
+# ===============================
+# CHURCH
+# ===============================
 
 @admin.register(Church)
 class ChurchAdmin(admin.ModelAdmin):
@@ -10,7 +25,10 @@ class ChurchAdmin(admin.ModelAdmin):
     search_fields = ("city", "country")
 
 
-# NEW: Register BibleBook so you can manage books in the admin panel
+# ===============================
+# BIBLE BOOK
+# ===============================
+
 @admin.register(BibleBook)
 class BibleBookAdmin(admin.ModelAdmin):
     list_display = ("name", "testament", "order")
@@ -18,8 +36,32 @@ class BibleBookAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
 
+# ===============================
+# LANGUAGE
+# ===============================
+
+@admin.register(Language)
+class LanguageAdmin(admin.ModelAdmin):
+    list_display = ("name", "code")
+    search_fields = ("name", "code")
+
+
+# ===============================
+# TEACHING AUDIO INLINE
+# ===============================
+
+class TeachingAudioInline(admin.TabularInline):
+    model = TeachingAudio
+    extra = 1
+
+
+# ===============================
+# TEACHING
+# ===============================
+
 @admin.register(Teaching)
 class TeachingAdmin(admin.ModelAdmin):
+
     list_display = (
         "title",
         "topic",
@@ -28,12 +70,11 @@ class TeachingAdmin(admin.ModelAdmin):
         "published_at",
     )
 
-    # Added "bible_book" here so you can filter teachings by book
     list_filter = (
         "is_published",
         "topic",
         "series",
-        "bible_book", 
+        "bible_book",
     )
 
     search_fields = (
@@ -45,9 +86,15 @@ class TeachingAdmin(admin.ModelAdmin):
     prepopulated_fields = {
         "slug": ("title",)
     }
-from django.contrib import admin
-from .models import ChurchUpdate
 
+    inlines = [
+        TeachingAudioInline,
+    ]
+
+
+# ===============================
+# CHURCH UPDATES
+# ===============================
 
 @admin.register(ChurchUpdate)
 class ChurchUpdateAdmin(admin.ModelAdmin):
@@ -71,10 +118,11 @@ class ChurchUpdateAdmin(admin.ModelAdmin):
         "content",
     )
 
-    prepopulated_fields = {}
 
-# Cleaned up the registration syntax error from your original file
+# ===============================
+# OTHER MODELS
+# ===============================
+
 admin.site.register(Topic)
-
 admin.site.register(Tag)
-
+admin.site.register(Resource)

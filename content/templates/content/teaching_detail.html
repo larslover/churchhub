@@ -15,10 +15,12 @@
                     type="text"
                     class="form-control"
                     name="q"
-                    placeholder="Search teachings, topics, or series...">
+                    placeholder="Search teachings, topics, or series..."
+                >
 
-                <button class="btn btn-primary">
-                    <i class="bi bi-search"></i> Search
+                <button class="btn btn-primary" type="submit">
+                    <i class="bi bi-search"></i>
+                    Search
                 </button>
 
             </div>
@@ -36,13 +38,60 @@
             {{ teaching.title }}
         </h1>
 
+
         {% if teaching.summary %}
             <p class="lead text-muted">
                 {{ teaching.summary }}
             </p>
+
             <hr>
         {% endif %}
 
+
+        <!-- =========================
+             AUDIO VERSIONS
+        ========================== -->
+
+        {% if teaching.audio_versions.all %}
+
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body">
+
+                    <h5 class="mb-3">
+                        <i class="bi bi-headphones me-2"></i>
+                        Listen to this teaching
+                    </h5>
+
+
+                    {% for audio in teaching.audio_versions.all %}
+
+                        <div class="mb-4">
+
+                            <div class="fw-semibold mb-2">
+                                <i class="bi bi-volume-up me-1"></i>
+                                {{ audio.language.name }}
+                            </div>
+
+                            <audio controls class="w-100">
+                                <source
+                                    src="{{ audio.audio.url }}"
+                                    type="audio/mpeg"
+                                >
+
+                                Your browser does not support audio playback.
+                            </audio>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+            </div>
+
+        {% endif %}
+
+
+        <!-- Teaching Information -->
         <div class="row">
 
             <div class="col-md-6">
@@ -50,20 +99,32 @@
                 {% if teaching.series %}
                     <p>
                         <strong>Series:</strong>
+
                         <a href="{% url 'series_detail' teaching.series.pk %}">
                             {{ teaching.series.title }}
                         </a>
                     </p>
                 {% endif %}
 
+
                 {% if teaching.topic %}
                     <p>
                         <strong>Topic:</strong>
+
                         <a href="{% url 'topic_detail' teaching.topic.pk %}">
                             {{ teaching.topic.name }}
                         </a>
                     </p>
                 {% endif %}
+
+
+                {% if teaching.bible_book %}
+                    <p>
+                        <strong>Bible Book:</strong>
+                        {{ teaching.bible_book.name }}
+                    </p>
+                {% endif %}
+
 
                 {% if teaching.scripture_reference %}
                     <p>
@@ -74,6 +135,7 @@
 
             </div>
 
+
             <div class="col-md-6">
 
                 <p>
@@ -81,16 +143,22 @@
                     {{ teaching.published_at|date:"F j, Y" }}
                 </p>
 
+
                 {% if teaching.tags.exists %}
+
                     <p>
                         <strong>Tags:</strong><br>
 
                         {% for tag in teaching.tags.all %}
-                            <span class="badge bg-secondary">
+
+                            <span class="badge bg-secondary me-1">
                                 {{ tag.name }}
                             </span>
+
                         {% endfor %}
+
                     </p>
+
                 {% endif %}
 
             </div>
@@ -103,6 +171,7 @@
 
 <!-- Teaching Content -->
 <div class="card shadow-sm mb-4">
+
     <div class="card-body">
 
         <div class="teaching-content">
@@ -110,6 +179,7 @@
         </div>
 
     </div>
+
 </div>
 
 
@@ -117,25 +187,40 @@
 <div class="d-flex flex-wrap gap-2 justify-content-between">
 
     <div>
-        <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+
+        <a href="{% url 'home' %}"
+           class="btn btn-outline-secondary">
+
             <i class="bi bi-house"></i>
             Home
+
         </a>
+
 
         {% if teaching.topic %}
+
             <a href="{% url 'topic_detail' teaching.topic.pk %}"
                class="btn btn-outline-success">
+
                 <i class="bi bi-bookmark"></i>
                 Back to Topic
+
             </a>
+
         {% endif %}
+
     </div>
 
+
     {% if teaching.series %}
+
         <a href="{% url 'series_detail' teaching.series.pk %}"
            class="btn btn-primary">
+
             View Series
+
         </a>
+
     {% endif %}
 
 </div>
