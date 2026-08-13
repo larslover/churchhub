@@ -113,6 +113,7 @@ class Teaching(models.Model):
 
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, blank=True)
+    content = models.TextField(blank=True)
 
     summary = models.TextField(blank=True)
 
