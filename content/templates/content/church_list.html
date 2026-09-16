@@ -24,7 +24,7 @@ Church Fellowships
 
         <div class="row text-center">
 
-            <div class="col-md-4 col-4">
+            <div class="col-md-3 col-6 mb-3 mb-md-0">
 
                 <div class="display-6 fw-bold text-primary">
                     {{ churches_count }}
@@ -36,7 +36,7 @@ Church Fellowships
 
             </div>
 
-            <div class="col-md-4 col-4">
+            <div class="col-md-3 col-6 mb-3 mb-md-0">
 
                 <div class="display-6 fw-bold text-success">
                     {{ countries_count }}
@@ -48,7 +48,7 @@ Church Fellowships
 
             </div>
 
-            <div class="col-md-4 col-4">
+            <div class="col-md-3 col-6">
 
                 <div class="display-6 fw-bold text-warning">
                     {{ total_members }}
@@ -56,6 +56,18 @@ Church Fellowships
 
                 <div class="text-muted small">
                     Members
+                </div>
+
+            </div>
+
+            <div class="col-md-3 col-6">
+
+                <div class="display-6 fw-bold text-info">
+                    {{ total_baptisms }}
+                </div>
+
+                <div class="text-muted small">
+                    Baptized in {{ current_year }}
                 </div>
 
             </div>
@@ -117,6 +129,14 @@ Church Fellowships
 
                 <span class="badge bg-success fs-6">
                     {{ church.member_count }} members
+                </span>
+
+            </div>
+
+            <div class="mt-2">
+
+                <span class="badge bg-info fs-6">
+                    {{ church.baptisms_this_year }} baptized in {{ current_year }}
                 </span>
 
             </div>

@@ -11,6 +11,7 @@ from .models import (
     Church,
     BibleBook,
     ChurchUpdate,
+    Baptism,
 )
 
 
@@ -127,7 +128,28 @@ class ChurchUpdateAdmin(admin.ModelAdmin):
         "summary",
         "content",
     )
+@admin.register(Baptism)
+class BaptismAdmin(admin.ModelAdmin):
+    list_display = (
+        "church",
+        "date",
+        "number_baptized",
+    )
 
+    list_filter = (
+        "church",
+        "date",
+    )
+
+    search_fields = (
+        "church__city",
+        "church__country",
+        "notes",
+    )
+
+    ordering = (
+        "-date",
+    )
 
 # ===============================
 # OTHER MODELS

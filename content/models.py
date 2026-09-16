@@ -7,6 +7,7 @@ from django.utils.text import slugify
 # ===============================
 from django.db import models
 
+
 class Church(models.Model):
     city = models.CharField(max_length=100)
     country = models.CharField(max_length=100)
@@ -286,3 +287,30 @@ class TeachingAudio(models.Model):
 
     def __str__(self):
         return f"{self.teaching.title} - {self.language.name}"
+
+class Baptism(models.Model):
+    church = models.ForeignKey(
+        Church,
+        on_delete=models.CASCADE,
+        related_name="baptisms",
+    )
+
+    date = models.DateField()
+
+    number_baptized = models.PositiveIntegerField(
+        default=1,
+        help_text="Number of people baptized at this event"
+    )
+
+    notes = models.TextField(
+        blank=True,
+        help_text="Optional notes about this baptism event"
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-date"]
+
+    def __str__(self):
+        return f"{self.church} - {self.date} ({self.number_baptized})"

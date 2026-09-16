@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q, Sum
-
+from django.utils import timezone
 from .models import (
     Topic,
     Series,
@@ -8,6 +8,7 @@ from .models import (
     BibleBook,
     Church,
     ChurchUpdate,
+    Baptism,
 )
 
 from .models import Church
@@ -33,6 +34,8 @@ def church_detail(request, pk):
             "church": church,
         },
     )
+
+
 def church_list(request):
     churches = Church.objects.filter(
         is_active=True
@@ -48,6 +51,25 @@ def church_list(request):
         total=Sum("member_count")
     )["total"] or 0
 
+    current_year = timezone.now().year
+
+    total_baptisms = Baptism.objects.filter(
+        church__is_active=True,
+        date__year=current_year,
+    ).aggregate(
+        total=Sum("number_baptized")
+    )["total"] or 0
+
+    for church in churches:
+        church.baptisms_this_year = (
+            Baptism.objects.filter(
+                church=church,
+                date__year=current_year,
+            ).aggregate(
+                total=Sum("number_baptized")
+            )["total"] or 0
+        )
+
     latest_church = churches.order_by(
         "-created_at"
     ).first()
@@ -60,10 +82,11 @@ def church_list(request):
             "churches_count": churches_count,
             "countries_count": countries_count,
             "total_members": total_members,
+            "total_baptisms": total_baptisms,
+            "current_year": current_year,
             "latest_church": latest_church,
         },
     )
-
 
 def biblebook_list(request):
 
