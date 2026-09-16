@@ -17,14 +17,24 @@ from .models import (
 # ===============================
 # CHURCH
 # ===============================
-
 @admin.register(Church)
 class ChurchAdmin(admin.ModelAdmin):
-    list_display = ("city", "country", "is_active")
-    list_filter = ("country", "is_active")
-    search_fields = ("city", "country")
+    list_display = (
+        "city",
+        "country",
+        "member_count",
+        "is_active",
+    )
 
+    list_filter = (
+        "country",
+        "is_active",
+    )
 
+    search_fields = (
+        "city",
+        "country",
+    )
 # ===============================
 # BIBLE BOOK
 # ===============================

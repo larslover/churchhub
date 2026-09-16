@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.db.models import Q
+from django.db.models import Q, Sum
 
 from .models import (
     Topic,
@@ -44,16 +44,27 @@ def church_list(request):
         "country"
     ).distinct().count()
 
+    total_members = churches.aggregate(
+        total=Sum("member_count")
+    )["total"] or 0
+
     latest_church = churches.order_by(
         "-created_at"
     ).first()
 
-    return render(request, "content/church_list.html", {
-        "churches": churches,
-        "churches_count": churches_count,
-        "countries_count": countries_count,
-        "latest_church": latest_church,
-    })
+    return render(
+        request,
+        "content/church_list.html",
+        {
+            "churches": churches,
+            "churches_count": churches_count,
+            "countries_count": countries_count,
+            "total_members": total_members,
+            "latest_church": latest_church,
+        },
+    )
+
+
 def biblebook_list(request):
 
     old_testament = BibleBook.objects.filter(
