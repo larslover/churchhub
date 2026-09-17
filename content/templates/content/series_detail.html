@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}{{ series.title }}{% endblock %}
+
+{% block content %}
+
+<div class="mb-5">
+
+    <a href="{% url 'series_list' %}"
+       class="text-decoration-none">
+
+        ← All Series
+
+    </a>
+
+    <h1 class="display-5 fw-bold mt-3">
+        {{ series.title }}
+    </h1>
+
+    {% if series.description %}
+
+        <p class="lead text-muted mt-3">
+            {{ series.description }}
+        </p>
+
+    {% endif %}
+
+</div>
+
+
+<div class="row">
+
+    <div class="col-lg-8">
+
+        <h2 class="h4 fw-bold mb-4">
+            Lessons
+        </h2>
+
+
+        <div class="list-group">
+
+        {% for teaching in teachings %}
+
+            <a href="{% url 'teaching_detail' teaching.pk %}"
+               class="list-group-item list-group-item-action py-4">
+
+                <div class="d-flex align-items-start">
+
+                    {% if teaching.series_order %}
+
+                        <div class="me-4">
+
+                            <div class="rounded-circle bg-primary text-white
+                                        d-flex align-items-center justify-content-center"
+                                 style="width: 42px; height: 42px;">
+
+                                <strong>
+                                    {{ teaching.series_order }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <div>
+
+                        <h3 class="h5 fw-bold mb-1">
+                            {{ teaching.title }}
+                        </h3>
+
+                        {% if teaching.summary %}
+
+                            <p class="text-muted mb-0">
+                                {{ teaching.summary|truncatewords:25 }}
+                            </p>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        {% empty %}
+
+            <div class="alert alert-info">
+                No published teachings have been added to this series yet.
+            </div>
+
+        {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,27 +1,79 @@
 {% extends "base.html" %}
 
-{% block title %}Series{% endblock %}
+{% block title %}Teaching Series{% endblock %}
 
 {% block content %}
 
-<h1>Series</h1>
+<div class="mb-5">
 
-{% if series %}
+    <span class="text-uppercase small fw-bold text-primary">
+        Teaching Library
+    </span>
 
-    <ul class="list-group">
-        {% for item in series %}
-            <li class="list-group-item">
-                {{ item.title }}
-            </li>
-        {% endfor %}
-    </ul>
+    <h1 class="display-5 fw-bold mt-2">
+        Teaching Series
+    </h1>
 
-{% else %}
+    <p class="lead text-muted">
+        Follow teachings arranged together around a particular
+        subject, theme or journey.
+    </p>
 
-    <div class="alert alert-info">
-        No series have been added yet.
+</div>
+
+
+<div class="row g-4">
+
+{% for item in series %}
+
+    <div class="col-md-6 col-lg-4">
+
+        <div class="card h-100 shadow-sm border-0">
+
+            <div class="card-body p-4">
+
+                <h3 class="h4 fw-bold mb-3">
+                    {{ item.title }}
+                </h3>
+
+                {% if item.description %}
+
+                    <p class="text-muted">
+                        {{ item.description|truncatewords:30 }}
+                    </p>
+
+                {% endif %}
+
+                <p class="small text-muted mb-4">
+                    {{ item.teachings.count }}
+                    teaching{{ item.teachings.count|pluralize }}
+                </p>
+
+                <a href="{% url 'series_detail' item.slug %}"
+                   class="btn btn-outline-primary">
+
+                    View Series
+
+                </a>
+
+            </div>
+
+        </div>
+
     </div>
 
-{% endif %}
+{% empty %}
+
+    <div class="col-12">
+
+        <div class="alert alert-info">
+            No teaching series have been created yet.
+        </div>
+
+    </div>
+
+{% endfor %}
+
+</div>
 
 {% endblock %}

@@ -15,7 +15,17 @@ urlpatterns = [
     path("topics/", views.topic_list, name="topic_list"),
     path("topics/<int:pk>/", views.topic_detail, name="topic_detail"),
 
-    path("series/", views.series_list, name="series_list"),
+   path(
+    "series/",
+    views.series_list,
+    name="series_list",
+),
+
+path(
+    "series/<slug:slug>/",
+    views.series_detail,
+    name="series_detail",
+),
     path(
     "books/",
     views.biblebook_list,

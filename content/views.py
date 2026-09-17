@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q, Sum
+
 from django.utils import timezone
 from .models import (
     Topic,
@@ -13,7 +14,45 @@ from .models import (
 
 from .models import Church
 from django.views.generic import ListView
+def series_list(request):
 
+    series = (
+        Series.objects
+        .filter(teachings__is_published=True)
+        .distinct()
+        .order_by("title")
+    )
+
+    return render(
+        request,
+        "content/series_list.html",
+        {
+            "series": series,
+        },
+    )
+
+
+def series_detail(request, slug):
+
+    series = get_object_or_404(
+        Series,
+        slug=slug,
+    )
+
+    teachings = (
+        series.teachings
+        .filter(is_published=True)
+        .order_by("series_order", "published_at")
+    )
+
+    return render(
+        request,
+        "content/series_detail.html",
+        {
+            "series": series,
+            "teachings": teachings,
+        },
+    )
 def contact(request):
     return render(
         request,
