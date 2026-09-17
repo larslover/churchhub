@@ -1,58 +1,73 @@
 {% extends "base.html" %}
 
+{% block title %}
+Faith in God
+{% endblock %}
+
 {% block content %}
 
-<!-- =========================
-📖 INTRO
-========================= -->
-<div class="mb-5">
+<!-- =====================================================
+     HERO
+===================================================== -->
 
+<section class="py-5 mb-5">
+    <div class="container">
 
+        <div class="row align-items-center g-5">
 
+            <div class="col-lg-7">
 
-</div>
+                <div class="mb-3">
+                    <span class="badge rounded-pill bg-success px-3 py-2">
+                        FAITH IN GOD
+                    </span>
+                </div>
 
-<!-- =========================
-⛪ LIFE AMONG THE CHURCHES
-========================= -->
-{% if latest_updates %}
+                <h1 class="display-2 fw-bold mb-4">
+                    Following Jesus.<br>
+                    Making disciples.<br>
+                    Multiplying churches.
+                </h1>
 
+                <p class="lead text-muted mb-4">
+                    Faith in God is a movement of people following Jesus,
+                    making disciples and seeing healthy churches multiply
+                    across cultures and nations.
+                </p>
 
+                <div class="d-flex flex-wrap gap-2">
 
-        {% for update in latest_updates %}
+                    <a href="{% url 'church_list' %}"
+                       class="btn btn-success btn-lg px-4">
+                        Discover Our Churches
+                    </a>
 
-        <div class="col-md-4 mb-4">
+                    <a href="{% url 'teaching_list' %}"
+                       class="btn btn-outline-dark btn-lg px-4">
+                        Explore Teaching
+                    </a>
 
-            <div class="card h-100 shadow-sm border-0">
+                </div>
 
-                {% if update.image %}
-                <img
-                    src="{{ update.image.url }}"
-                    class="card-img-top img-fluid"
-                    alt="{{ update.title }}"
-                >
-                {% endif %}
+            </div>
 
-                <div class="card-body">
+            <div class="col-lg-5">
 
-                    <div class="small text-muted mb-2">
-                        {{ update.church.city }},
-                        {{ update.church.country }}
-                    </div>
+                <div class="bg-light rounded-4 p-5">
 
-                    <h4 class="card-title">
-                        {{ update.title }}
-                    </h4>
-
-                    {% if update.summary %}
-                    <p class="text-muted">
-                        {{ update.summary }}
+                    <p class="text-uppercase small fw-bold text-muted mb-3">
+                        Our heartbeat
                     </p>
-                    {% endif %}
 
-                    <div class="small text-muted">
-                        {{ update.date|date:"F j, Y" }}
-                    </div>
+                    <h2 class="fw-bold mb-3">
+                        Make disciples who make disciples.
+                    </h2>
+
+                    <p class="text-muted mb-0">
+                        We want to see ordinary believers equipped to follow
+                        Jesus faithfully, disciple others and help establish
+                        multiplying communities of faith.
+                    </p>
 
                 </div>
 
@@ -60,104 +75,463 @@
 
         </div>
 
-        {% endfor %}
-
     </div>
+</section>
 
-</div>
 
-{% endif %}
-<!-- =========================
-🔍 SEARCH LIBRARY
-========================= -->
-<div class="card shadow-sm mb-5">
+<!-- =====================================================
+     INTRODUCTION
+===================================================== -->
 
-    <div class="card-body">
+<section class="py-5 bg-light mb-5">
 
-        <h5 class="mb-3">Search the Library</h5>
+    <div class="container">
 
-        <form method="get" action="{% url 'teaching_list' %}">
+        <div class="row justify-content-center">
 
-            <div class="input-group">
+            <div class="col-lg-8 text-center">
 
-                <input
-                    type="text"
-                    name="q"
-                    class="form-control"
-                    placeholder="Search teachings, topics..."
-                >
+                <span class="text-uppercase small fw-bold text-success">
+                    Who We Are
+                </span>
 
-                <button class="btn btn-primary" type="submit">
-                    Search
-                </button>
+                <h2 class="display-5 fw-bold mt-2 mb-4">
+                    A movement centered on Jesus
+                </h2>
+
+                <p class="lead text-muted">
+                    Faith in God exists to help people know Jesus, grow as
+                    disciples and participate in God's mission. We believe
+                    discipleship is not simply a program, but a way of life
+                    that is passed from one generation to another.
+                </p>
 
             </div>
 
-        </form>
+        </div>
 
     </div>
 
-</div>
+</section>
 
-<!-- =========================
-📖 LATEST TEACHING
-========================= -->
+
+<!-- =====================================================
+     THREE PILLARS
+===================================================== -->
+
+<section class="py-5 mb-5">
+
+    <div class="container">
+
+        <div class="row g-4">
+
+            <div class="col-md-4">
+
+                <div class="h-100 p-4">
+
+                    <div class="display-5 mb-3">
+                        01
+                    </div>
+
+                    <h3 class="fw-bold">
+                        Discipleship
+                    </h3>
+
+                    <p class="text-muted">
+                        Following Jesus means learning from Him and becoming
+                        more like Him. We seek to help people grow in faith,
+                        character and obedience.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="h-100 p-4">
+
+                    <div class="display-5 mb-3">
+                        02
+                    </div>
+
+                    <h3 class="fw-bold">
+                        Multiplication
+                    </h3>
+
+                    <p class="text-muted">
+                        Disciples make disciples. We want the life and teaching
+                        we receive to be passed on to others who can pass it
+                        on again.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="h-100 p-4">
+
+                    <div class="display-5 mb-3">
+                        03
+                    </div>
+
+                    <h3 class="fw-bold">
+                        Churches
+                    </h3>
+
+                    <p class="text-muted">
+                        Disciples gather into local fellowships where people
+                        worship Jesus, encourage one another and participate
+                        in His mission.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     GLOBAL STATISTICS
+===================================================== -->
+
+<section class="py-5 bg-dark text-white mb-5">
+
+    <div class="container">
+
+        <div class="text-center mb-5">
+
+            <span class="text-uppercase small fw-bold">
+                Around the world
+            </span>
+
+            <h2 class="display-5 fw-bold mt-2">
+                Faith in God today
+            </h2>
+
+        </div>
+
+
+        <div class="row text-center g-4">
+
+            <div class="col-6 col-md-3">
+
+                <div class="display-4 fw-bold">
+                    {{ churches_count }}
+                </div>
+
+                <div class="text-white-50">
+                    Church Fellowships
+                </div>
+
+            </div>
+
+
+            <div class="col-6 col-md-3">
+
+                <div class="display-4 fw-bold">
+                    {{ countries_count }}
+                </div>
+
+                <div class="text-white-50">
+                    Countries
+                </div>
+
+            </div>
+
+
+            <div class="col-6 col-md-3">
+
+                <div class="display-4 fw-bold">
+                    {{ total_members }}
+                </div>
+
+                <div class="text-white-50">
+                    Members
+                </div>
+
+            </div>
+
+
+            <div class="col-6 col-md-3">
+
+                <div class="display-4 fw-bold">
+                    {{ total_baptisms }}
+                </div>
+
+                <div class="text-white-50">
+                    Baptized in {{ current_year }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="text-center mt-5">
+
+            <a href="{% url 'church_list' %}"
+               class="btn btn-outline-light px-4">
+                See Our Churches
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     LIFE AMONG THE CHURCHES
+===================================================== -->
+
+{% if latest_updates %}
+
+<section class="py-5 mb-5">
+
+    <div class="container">
+
+        <div class="d-flex justify-content-between align-items-end mb-4">
+
+            <div>
+
+                <span class="text-uppercase small fw-bold text-success">
+                    Life among the churches
+                </span>
+
+                <h2 class="display-6 fw-bold mb-0">
+                    What is happening?
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="row g-4">
+
+            {% for update in latest_updates %}
+
+            <div class="col-md-4">
+
+                <article class="card h-100 border-0 shadow-sm">
+
+                    {% if update.image %}
+
+                    <img
+                        src="{{ update.image.url }}"
+                        class="card-img-top"
+                        alt="{{ update.title }}"
+                    >
+
+                    {% endif %}
+
+                    <div class="card-body p-4">
+
+                        <div class="small text-muted mb-2">
+                            {{ update.church.city }},
+                            {{ update.church.country }}
+                        </div>
+
+                        <h3 class="h4 fw-bold">
+                            {{ update.title }}
+                        </h3>
+
+                        {% if update.summary %}
+
+                        <p class="text-muted">
+                            {{ update.summary }}
+                        </p>
+
+                        {% endif %}
+
+                        <div class="small text-muted mt-3">
+                            {{ update.date|date:"F j, Y" }}
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endif %}
+
+
+<!-- =====================================================
+     LATEST TEACHING
+===================================================== -->
+
 {% if latest_teaching %}
-<div class="card shadow-sm border-0 mb-5">
 
-    <div class="card-body">
+<section class="py-5 bg-light mb-5">
 
-        <span class="badge bg-primary mb-2">
-            NEW TEACHING
-        </span>
+    <div class="container">
 
-        <h2 class="mb-2">
-            {{ latest_teaching.title }}
-        </h2>
+        <div class="row align-items-center g-5">
 
-        {% if latest_teaching.summary %}
-        <p class="text-muted">
-            {{ latest_teaching.summary }}
-        </p>
-        {% endif %}
+            <div class="col-lg-7">
 
-        <a href="{% url 'teaching_detail' latest_teaching.pk %}"
-           class="btn btn-primary">
-            Read Teaching
-        </a>
+                <span class="badge bg-primary mb-3">
+                    FROM THE TEACHING LIBRARY
+                </span>
 
-    </div>
+                <h2 class="display-5 fw-bold mb-3">
+                    {{ latest_teaching.title }}
+                </h2>
 
-</div>
-{% endif %}
+                {% if latest_teaching.summary %}
 
-<!-- =========================
-⛪ LATEST CHURCH
-========================= -->
-{% if latest_church %}
-<div class="card shadow-sm border-0 mb-5">
+                <p class="lead text-muted">
+                    {{ latest_teaching.summary }}
+                </p>
 
-    <div class="card-body">
+                {% endif %}
 
-        <span class="badge bg-success mb-2">
-            NEW CHURCH
-        </span>
+                <a href="{% url 'teaching_detail' latest_teaching.pk %}"
+                   class="btn btn-primary">
+                    Read Teaching
+                </a>
 
-        <h2 class="mb-2">
-            {{ latest_church.city }}
-        </h2>
+            </div>
 
-        <p class="text-muted">
-            {{ latest_church.country }}
-        </p>
+            <div class="col-lg-5">
 
-        <a href="{% url 'church_list' %}"
-           class="btn btn-success">
-            Browse Churches
-        </a>
+                <div class="p-4 bg-white rounded-4 shadow-sm">
+
+                    <div class="small text-uppercase text-muted fw-bold mb-2">
+                        Teaching Library
+                    </div>
+
+                    <p class="mb-0 text-muted">
+                        Explore teachings by topic, Bible book or series.
+                        Use the library to study, teach and share.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
 
-</div>
+</section>
+
 {% endif %}
+
+
+<!-- =====================================================
+     SEARCH
+===================================================== -->
+
+<section class="py-5 mb-5">
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-8 text-center">
+
+                <span class="text-uppercase small fw-bold text-muted">
+                    Teaching Library
+                </span>
+
+                <h2 class="fw-bold mt-2">
+                    Looking for something specific?
+                </h2>
+
+                <p class="text-muted mb-4">
+                    Search teachings, topics and resources.
+                </p>
+
+
+                <form method="get"
+                      action="{% url 'teaching_list' %}">
+
+                    <div class="input-group input-group-lg">
+
+                        <input
+                            type="text"
+                            name="q"
+                            class="form-control"
+                            placeholder="Search teachings, topics..."
+                        >
+
+                        <button
+                            class="btn btn-primary"
+                            type="submit">
+                            Search
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     FINAL CTA
+===================================================== -->
+
+<section class="py-5 mb-5">
+
+    <div class="container">
+
+        <div class="rounded-4 bg-success text-white p-5 text-center">
+
+            <h2 class="display-6 fw-bold mb-3">
+                Explore Faith in God
+            </h2>
+
+            <p class="lead mb-4">
+                Discover our churches, teachings and the story of what
+                God is doing among us.
+            </p>
+
+            <div class="d-flex justify-content-center flex-wrap gap-2">
+
+                <a href="{% url 'church_list' %}"
+                   class="btn btn-light btn-lg px-4">
+                    Our Churches
+                </a>
+
+                <a href="{% url 'teaching_list' %}"
+                   class="btn btn-outline-light btn-lg px-4">
+                    Teaching Library
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
 {% endblock %}
