@@ -115,15 +115,22 @@ class Tag(models.Model):
 # ===============================
 # TEACHINGS
 # ===============================
-
 class Teaching(models.Model):
 
     title = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True, blank=True)
-    content = models.TextField(blank=True) 
 
-    summary = models.TextField(blank=True)
+    slug = models.SlugField(
+        unique=True,
+        blank=True
+    )
 
+    content = models.TextField(
+        blank=True
+    )
+
+    summary = models.TextField(
+        blank=True
+    )
 
     topic = models.ForeignKey(
         Topic,
@@ -139,6 +146,12 @@ class Teaching(models.Model):
         null=True,
         blank=True,
         related_name="teachings"
+    )
+
+    series_order = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        help_text="Order of this teaching within its series."
     )
 
     bible_book = models.ForeignKey(
@@ -167,15 +180,23 @@ class Teaching(models.Model):
         null=True
     )
 
-    is_published = models.BooleanField(default=True)
+    is_published = models.BooleanField(
+        default=True
+    )
 
-    published_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    published_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
 
     class Meta:
         ordering = ["-published_at"]
 
     def save(self, *args, **kwargs):
+
         if not self.slug:
             self.slug = slugify(self.title)
 
@@ -183,8 +204,6 @@ class Teaching(models.Model):
 
     def __str__(self):
         return self.title
-
-
 # ===============================
 # RESOURCES
 # ===============================

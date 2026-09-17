@@ -18,8 +18,10 @@ from .models import (
 # ===============================
 # CHURCH
 # ===============================
+
 @admin.register(Church)
 class ChurchAdmin(admin.ModelAdmin):
+
     list_display = (
         "city",
         "country",
@@ -36,15 +38,28 @@ class ChurchAdmin(admin.ModelAdmin):
         "city",
         "country",
     )
+
+
 # ===============================
 # BIBLE BOOK
 # ===============================
 
 @admin.register(BibleBook)
 class BibleBookAdmin(admin.ModelAdmin):
-    list_display = ("name", "testament", "order")
-    list_filter = ("testament",)
-    search_fields = ("name",)
+
+    list_display = (
+        "name",
+        "testament",
+        "order",
+    )
+
+    list_filter = (
+        "testament",
+    )
+
+    search_fields = (
+        "name",
+    )
 
 
 # ===============================
@@ -53,8 +68,44 @@ class BibleBookAdmin(admin.ModelAdmin):
 
 @admin.register(Language)
 class LanguageAdmin(admin.ModelAdmin):
-    list_display = ("name", "code")
-    search_fields = ("name", "code")
+
+    list_display = (
+        "name",
+        "code",
+    )
+
+    search_fields = (
+        "name",
+        "code",
+    )
+
+
+# ===============================
+# SERIES
+# ===============================
+
+@admin.register(Series)
+class SeriesAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "title",
+        "slug",
+        "teaching_count",
+    )
+
+    search_fields = (
+        "title",
+        "description",
+    )
+
+    prepopulated_fields = {
+        "slug": ("title",)
+    }
+
+    def teaching_count(self, obj):
+        return obj.teachings.count()
+
+    teaching_count.short_description = "Teachings"
 
 
 # ===============================
@@ -62,6 +113,7 @@ class LanguageAdmin(admin.ModelAdmin):
 # ===============================
 
 class TeachingAudioInline(admin.TabularInline):
+
     model = TeachingAudio
     extra = 1
 
@@ -77,6 +129,7 @@ class TeachingAdmin(admin.ModelAdmin):
         "title",
         "topic",
         "series",
+        "series_order",
         "is_published",
         "published_at",
     )
@@ -97,6 +150,12 @@ class TeachingAdmin(admin.ModelAdmin):
     prepopulated_fields = {
         "slug": ("title",)
     }
+
+    ordering = (
+        "series",
+        "series_order",
+        "-published_at",
+    )
 
     inlines = [
         TeachingAudioInline,
@@ -128,8 +187,15 @@ class ChurchUpdateAdmin(admin.ModelAdmin):
         "summary",
         "content",
     )
+
+
+# ===============================
+# BAPTISMS
+# ===============================
+
 @admin.register(Baptism)
 class BaptismAdmin(admin.ModelAdmin):
+
     list_display = (
         "church",
         "date",
@@ -150,6 +216,7 @@ class BaptismAdmin(admin.ModelAdmin):
     ordering = (
         "-date",
     )
+
 
 # ===============================
 # OTHER MODELS
