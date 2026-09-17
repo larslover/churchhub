@@ -123,7 +123,6 @@ def biblebook_detail(request, pk):
         },
     )
 
-
 def home(request):
 
     teachings = (
@@ -132,7 +131,9 @@ def home(request):
         .order_by("-published_at")
     )
 
-    churches = Church.objects.order_by("-id")
+    churches = Church.objects.filter(
+        is_active=True
+    ).order_by("-id")
 
     church_updates = (
         ChurchUpdate.objects
@@ -140,13 +141,32 @@ def home(request):
         .select_related("church")
         .order_by("-date")
     )
-    print("HOME UPDATES:", list(church_updates.values(
-    "id",
-    "title",
-    "is_published",
-)))
+
+    current_year = timezone.now().year
+
+    # =========================
+    # CHURCH STATISTICS
+    # =========================
+
+    churches_count = churches.count()
+
+    countries_count = churches.values(
+        "country"
+    ).distinct().count()
+
+    total_members = churches.aggregate(
+        total=Sum("member_count")
+    )["total"] or 0
+
+    total_baptisms = Baptism.objects.filter(
+        church__is_active=True,
+        date__year=current_year,
+    ).aggregate(
+        total=Sum("number_baptized")
+    )["total"] or 0
 
     context = {
+
         # Latest items
         "latest_teaching": teachings.first(),
         "latest_church": churches.first(),
@@ -164,7 +184,11 @@ def home(request):
         # Statistics
         "teachings_count": teachings.count(),
         "topics_count": Topic.objects.count(),
-        "churches_count": churches.count(),
+        "churches_count": churches_count,
+        "countries_count": countries_count,
+        "total_members": total_members,
+        "total_baptisms": total_baptisms,
+        "current_year": current_year,
         "series_count": Series.objects.count(),
     }
 
@@ -173,6 +197,8 @@ def home(request):
         "content/home.html",
         context,
     )
+
+
 def topic_list(request):
     topics = Topic.objects.all()
 
