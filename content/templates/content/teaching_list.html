@@ -1,14 +1,98 @@
 {% extends "base.html" %}
 
-{% block title %}All Teachings{% endblock %}
+{% block title %}Teaching Library{% endblock %}
 
 {% block content %}
 
-<h1 class="mb-4">All Teachings</h1>
+<div class="mb-5">
 
-<p class="text-muted">
-    {{ teachings|length }} teaching{{ teachings|pluralize }} in the library.
-</p>
+    <span class="text-uppercase small fw-bold text-primary">
+        Faith in God
+    </span>
+
+    <h1 class="display-5 fw-bold mt-2">
+        Teaching Library
+    </h1>
+
+    <p class="lead text-muted">
+        Explore teachings from the Faith in God movement.
+    </p>
+
+</div>
+
+
+<!-- Search -->
+
+<div class="card shadow-sm border-0 mb-5">
+
+    <div class="card-body p-4">
+
+        <form method="get"
+              action="{% url 'teaching_list' %}">
+
+            <label for="teaching-search"
+                   class="form-label fw-bold">
+                Search the library
+            </label>
+
+            <div class="input-group input-group-lg">
+
+                <input
+                    id="teaching-search"
+                    type="text"
+                    name="q"
+                    value="{{ q }}"
+                    class="form-control"
+                    placeholder="Search teachings, topics..."
+                >
+
+                <button
+                    class="btn btn-primary"
+                    type="submit">
+                    Search
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- Results -->
+
+<div class="mb-4">
+
+    {% if q %}
+
+        <h2 class="h4 mb-1">
+            Search results
+        </h2>
+
+        <p class="text-muted mb-0">
+            {{ teachings|length }}
+            result{{ teachings|pluralize }}
+            for "<strong>{{ q }}</strong>".
+        </p>
+
+    {% else %}
+
+        <h2 class="h4 mb-1">
+            All Teachings
+        </h2>
+
+        <p class="text-muted mb-0">
+            {{ teachings|length }}
+            teaching{{ teachings|pluralize }}
+            in the library.
+        </p>
+
+    {% endif %}
+
+</div>
+
 
 <div class="list-group">
 
@@ -17,12 +101,16 @@
     <a href="{% url 'teaching_detail' teaching.pk %}"
        class="list-group-item list-group-item-action">
 
-        <h5 class="mb-1">{{ teaching.title }}</h5>
+        <h5 class="mb-1">
+            {{ teaching.title }}
+        </h5>
 
         {% if teaching.summary %}
+
             <small class="text-muted">
                 {{ teaching.summary|truncatewords:20 }}
             </small>
+
         {% endif %}
 
     </a>
@@ -30,7 +118,14 @@
 {% empty %}
 
     <div class="alert alert-info">
-        No teachings have been published yet.
+
+        {% if q %}
+            No teachings were found matching
+            "<strong>{{ q }}</strong>".
+        {% else %}
+            No teachings have been published yet.
+        {% endif %}
+
     </div>
 
 {% endfor %}
