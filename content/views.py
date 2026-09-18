@@ -74,7 +74,6 @@ def church_detail(request, pk):
         },
     )
 
-
 def church_list(request):
     churches = Church.objects.filter(
         is_active=True
@@ -89,6 +88,12 @@ def church_list(request):
     total_members = churches.aggregate(
         total=Sum("member_count")
     )["total"] or 0
+
+    average_membership = (
+        round(total_members / churches_count, 1)
+        if churches_count
+        else 0
+    )
 
     current_year = timezone.now().year
 
@@ -121,12 +126,12 @@ def church_list(request):
             "churches_count": churches_count,
             "countries_count": countries_count,
             "total_members": total_members,
+            "average_membership": average_membership,
             "total_baptisms": total_baptisms,
             "current_year": current_year,
             "latest_church": latest_church,
         },
     )
-
 def biblebook_list(request):
 
     old_testament = BibleBook.objects.filter(
@@ -197,6 +202,12 @@ def home(request):
         total=Sum("member_count")
     )["total"] or 0
 
+    average_membership = (
+        round(total_members / churches_count, 1)
+        if churches_count
+        else 0
+    )
+
     total_baptisms = Baptism.objects.filter(
         church__is_active=True,
         date__year=current_year,
@@ -226,6 +237,7 @@ def home(request):
         "churches_count": churches_count,
         "countries_count": countries_count,
         "total_members": total_members,
+        "average_membership": average_membership,
         "total_baptisms": total_baptisms,
         "current_year": current_year,
         "series_count": Series.objects.count(),
@@ -236,7 +248,6 @@ def home(request):
         "content/home.html",
         context,
     )
-
 
 def topic_list(request):
     topics = Topic.objects.all()

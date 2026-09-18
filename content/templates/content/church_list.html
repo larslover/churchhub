@@ -24,7 +24,7 @@ Church Fellowships
 
         <div class="row text-center">
 
-            <div class="col-md-3 col-6 mb-3 mb-md-0">
+            <div class="col-md mb-3 mb-md-0">
 
                 <div class="display-6 fw-bold text-primary">
                     {{ churches_count }}
@@ -36,7 +36,8 @@ Church Fellowships
 
             </div>
 
-            <div class="col-md-3 col-6 mb-3 mb-md-0">
+
+            <div class="col-md mb-3 mb-md-0">
 
                 <div class="display-6 fw-bold text-success">
                     {{ countries_count }}
@@ -48,7 +49,8 @@ Church Fellowships
 
             </div>
 
-            <div class="col-md-3 col-6">
+
+            <div class="col-md mb-3 mb-md-0">
 
                 <div class="display-6 fw-bold text-warning">
                     {{ total_members }}
@@ -60,9 +62,23 @@ Church Fellowships
 
             </div>
 
-            <div class="col-md-3 col-6">
+
+            <div class="col-md mb-3 mb-md-0">
 
                 <div class="display-6 fw-bold text-info">
+                    {{ average_membership }}
+                </div>
+
+                <div class="text-muted small">
+                    Average Members / Church
+                </div>
+
+            </div>
+
+
+            <div class="col-md">
+
+                <div class="display-6 fw-bold text-danger">
                     {{ total_baptisms }}
                 </div>
 
@@ -77,6 +93,7 @@ Church Fellowships
     </div>
 
 </div>
+
 
 {% if latest_church %}
 
@@ -106,6 +123,7 @@ Church Fellowships
 </div>
 
 {% endif %}
+
 
 <div class="row">
 
