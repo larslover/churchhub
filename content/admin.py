@@ -12,6 +12,7 @@ from .models import (
     BibleBook,
     ChurchUpdate,
     Baptism,
+    EllenbarrieUpdate,
 )
 
 
@@ -218,6 +219,47 @@ class BaptismAdmin(admin.ModelAdmin):
     )
 
 
+
+
+# =====================================================
+# ELLENBARRIE
+# =====================================================
+
+@admin.register(EllenbarrieUpdate)
+class EllenbarrieUpdateAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "title",
+        "date_posted",
+        "is_published",
+        "is_featured",
+        "author",
+    )
+
+    list_filter = (
+        "is_published",
+        "is_featured",
+        "date_posted",
+    )
+
+    search_fields = (
+        "title",
+        "content",
+    )
+
+    readonly_fields = (
+        "date_posted",
+    )
+
+    fields = (
+        "title",
+        "content",
+        "image",
+        "author",
+        "is_published",
+        "is_featured",
+        "date_posted",
+    )
 # ===============================
 # OTHER MODELS
 # ===============================

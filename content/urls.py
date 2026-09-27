@@ -47,5 +47,16 @@ path(
     views.church_detail,
     name="church_detail",
 ),
+path(
+    "ellenbarrie/",
+    views.ellenbarrie,
+    name="ellenbarrie",
+),
+
+path(
+    "ellenbarrie/<int:pk>/",
+    views.ellenbarrie_detail,
+    name="ellenbarrie_detail",
+),
 
 ]

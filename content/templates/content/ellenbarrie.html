@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}
+Ellenbarrie
+{% endblock %}
+
+{% block content %}
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
+<section class="py-5">
+
+    <div class="container">
+
+        <div class="row align-items-center g-5">
+
+            <div class="col-lg-7">
+
+                <span class="badge rounded-pill bg-success px-3 py-2 mb-3">
+                    ELLENBARRIE
+                </span>
+
+                <h1 class="display-3 fw-bold mb-4">
+                    Ellenbarrie Children's Home
+                </h1>
+
+                <p class="lead text-muted">
+                    A place where children can grow, learn and experience
+                    the love of God in a safe and caring environment.
+                </p>
+
+            </div>
+
+            <div class="col-lg-5">
+
+                <div class="bg-light rounded-4 p-5">
+
+                    <h2 class="fw-bold mb-3">
+                        About Ellenbarrie
+                    </h2>
+
+                    <p class="text-muted mb-0">
+                        Ellenbarrie is part of our ministry and exists to
+                        care for and support children, helping them grow
+                        in faith, character and knowledge.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     FEATURED UPDATE
+===================================================== -->
+
+{% if featured_update %}
+
+<section class="py-5 bg-light">
+
+    <div class="container">
+
+        <div class="mb-4">
+
+            <span class="text-uppercase small fw-bold text-success">
+                Featured
+            </span>
+
+            <h2 class="display-6 fw-bold mt-2">
+                {{ featured_update.title }}
+            </h2>
+
+        </div>
+
+        <div class="row g-4 align-items-center">
+
+            {% if featured_update.image %}
+
+            <div class="col-lg-6">
+
+                <img
+                    src="{{ featured_update.image.url }}"
+                    class="img-fluid rounded-4 shadow-sm"
+                    alt="{{ featured_update.title }}"
+                >
+
+            </div>
+
+            {% endif %}
+
+            <div class="{% if featured_update.image %}col-lg-6{% else %}col-lg-8{% endif %}">
+
+                <p class="text-muted">
+                    {{ featured_update.content|truncatewords:50 }}
+                </p>
+
+                <div class="small text-muted mb-3">
+                    {{ featured_update.date_posted|date:"F j, Y" }}
+                </div>
+
+                <a
+                    href="{% url 'ellenbarrie_detail' featured_update.pk %}"
+                    class="btn btn-success"
+                >
+                    Read More
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endif %}
+
+
+<!-- =====================================================
+     LATEST NEWS
+===================================================== -->
+
+<section class="py-5">
+
+    <div class="container">
+
+        <div class="mb-5">
+
+            <span class="text-uppercase small fw-bold text-success">
+                News & Updates
+            </span>
+
+            <h2 class="display-6 fw-bold mt-2">
+                What's happening at Ellenbarrie
+            </h2>
+
+        </div>
+
+
+        {% if updates %}
+
+        <div class="row g-4">
+
+            {% for update in updates %}
+
+            <div class="col-md-6 col-lg-4">
+
+                <article class="card h-100 border-0 shadow-sm">
+
+                    {% if update.image %}
+
+                    <img
+                        src="{{ update.image.url }}"
+                        class="card-img-top"
+                        alt="{{ update.title }}"
+                    >
+
+                    {% endif %}
+
+                    <div class="card-body p-4">
+
+                        <div class="small text-muted mb-2">
+                            {{ update.date_posted|date:"F j, Y" }}
+                        </div>
+
+                        <h3 class="h4 fw-bold">
+                            {{ update.title }}
+                        </h3>
+
+                        <p class="text-muted">
+                            {{ update.content|truncatewords:30 }}
+                        </p>
+
+                        <a
+                            href="{% url 'ellenbarrie_detail' update.pk %}"
+                            class="btn btn-outline-success"
+                        >
+                            Read More
+                        </a>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div class="text-center py-5">
+
+            <h3 class="fw-bold">
+                No updates yet
+            </h3>
+
+            <p class="text-muted">
+                Check back soon for news from Ellenbarrie.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

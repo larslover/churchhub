@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
-
+from django.conf import settings
 
 # ===============================
 # BIBLE BOOKS
@@ -333,3 +333,39 @@ class Baptism(models.Model):
 
     def __str__(self):
         return f"{self.church} - {self.date} ({self.number_baptized})"
+
+class EllenbarrieUpdate(models.Model):
+    title = models.CharField(max_length=255)
+
+    content = models.TextField()
+
+    image = models.ImageField(
+        upload_to="ellenbarrie/updates/",
+        blank=True,
+        null=True
+    )
+
+    date_posted = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    author = models.ForeignKey(
+    settings.AUTH_USER_MODEL,
+    on_delete=models.SET_NULL,
+    null=True,
+    blank=True
+)
+
+    is_published = models.BooleanField(
+        default=True
+    )
+
+    is_featured = models.BooleanField(
+        default=False
+    )
+
+    class Meta:
+        ordering = ["-date_posted"]
+
+    def __str__(self):
+        return self.title

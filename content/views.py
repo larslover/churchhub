@@ -308,3 +308,48 @@ def series_list(request):
             "series": series
         }
     )
+
+from django.shortcuts import render, get_object_or_404
+
+from .models import (
+    EllenbarrieUpdate,
+)
+
+
+# =====================================================
+# ELLENBARRIE
+# =====================================================
+
+def ellenbarrie(request):
+    updates = EllenbarrieUpdate.objects.filter(
+        is_published=True
+    )
+
+    featured_update = updates.filter(
+        is_featured=True
+    ).first()
+
+    return render(
+        request,
+        "content/ellenbarrie.html",
+        {
+            "updates": updates,
+            "featured_update": featured_update,
+        }
+    )
+
+
+def ellenbarrie_detail(request, pk):
+    update = get_object_or_404(
+        EllenbarrieUpdate,
+        pk=pk,
+        is_published=True
+    )
+
+    return render(
+        request,
+        "content/ellenbarrie_detail.html",
+        {
+            "update": update,
+        }
+    )
