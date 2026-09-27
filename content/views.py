@@ -10,6 +10,8 @@ from .models import (
     Church,
     ChurchUpdate,
     Baptism,
+    Ellenbarrie,
+    EllenbarrieUpdate,
 )
 
 from .models import Church
@@ -321,6 +323,8 @@ from .models import (
 # =====================================================
 
 def ellenbarrie(request):
+    ellenbarrie = Ellenbarrie.objects.first()
+
     updates = EllenbarrieUpdate.objects.filter(
         is_published=True
     )
@@ -333,11 +337,11 @@ def ellenbarrie(request):
         request,
         "content/ellenbarrie.html",
         {
+            "ellenbarrie": ellenbarrie,
             "updates": updates,
             "featured_update": featured_update,
         }
     )
-
 
 def ellenbarrie_detail(request, pk):
     update = get_object_or_404(
