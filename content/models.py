@@ -369,3 +369,22 @@ class EllenbarrieUpdate(models.Model):
 
     def __str__(self):
         return self.title
+
+class Ellenbarrie(models.Model):
+    title = models.CharField(
+        max_length=255,
+        default="Ellenbarrie Children's Home"
+    )
+
+    description = models.TextField(
+        blank=True
+    )
+
+    hero_image = models.ImageField(
+        upload_to="ellenbarrie/",
+        blank=True,
+        null=True
+    )
+
+    def __str__(self):
+        return self.title

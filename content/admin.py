@@ -12,6 +12,7 @@ from .models import (
     BibleBook,
     ChurchUpdate,
     Baptism,
+    Ellenbarrie,
     EllenbarrieUpdate,
 )
 
@@ -219,10 +220,31 @@ class BaptismAdmin(admin.ModelAdmin):
     )
 
 
+# =====================================================
+# ELLENBARRIE
+# =====================================================
+
+@admin.register(Ellenbarrie)
+class EllenbarrieAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "title",
+    )
+
+    search_fields = (
+        "title",
+        "description",
+    )
+
+    fields = (
+        "title",
+        "description",
+        "hero_image",
+    )
 
 
 # =====================================================
-# ELLENBARRIE
+# ELLENBARRIE UPDATES
 # =====================================================
 
 @admin.register(EllenbarrieUpdate)

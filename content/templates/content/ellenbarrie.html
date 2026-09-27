@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-Ellenbarrie
+{{ ellenbarrie.title }}
 {% endblock %}
 
 {% block content %}
@@ -23,33 +23,33 @@ Ellenbarrie
                 </span>
 
                 <h1 class="display-3 fw-bold mb-4">
-                    Ellenbarrie Children's Home
+                    {{ ellenbarrie.title }}
                 </h1>
 
-                <p class="lead text-muted">
-                    A place where children can grow, learn and experience
-                    the love of God in a safe and caring environment.
+                {% if ellenbarrie.description %}
+
+                <p class="lead text-muted mb-0">
+                    {{ ellenbarrie.description }}
                 </p>
 
+                {% endif %}
+
             </div>
+
+
+            {% if ellenbarrie.hero_image %}
 
             <div class="col-lg-5">
 
-                <div class="bg-light rounded-4 p-5">
-
-                    <h2 class="fw-bold mb-3">
-                        About Ellenbarrie
-                    </h2>
-
-                    <p class="text-muted mb-0">
-                        Ellenbarrie is part of our ministry and exists to
-                        care for and support children, helping them grow
-                        in faith, character and knowledge.
-                    </p>
-
-                </div>
+                <img
+                    src="{{ ellenbarrie.hero_image.url }}"
+                    class="img-fluid rounded-4 shadow-sm"
+                    alt="{{ ellenbarrie.title }}"
+                >
 
             </div>
+
+            {% endif %}
 
         </div>
 
