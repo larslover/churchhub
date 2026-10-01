@@ -262,13 +262,13 @@ def topic_list(request):
         }
     )
 from .models import Teaching
-
 def teaching_list(request):
 
     q = request.GET.get("q", "").strip()
 
     teachings = Teaching.objects.filter(
-        is_published=True
+        is_published=True,
+        bible_book__isnull=True,
     ).order_by("title")
 
     if q:
@@ -282,6 +282,8 @@ def teaching_list(request):
         "teachings": teachings,
         "q": q,
     })
+
+
 def topic_detail(request, pk):
     topic = get_object_or_404(Topic, pk=pk)
 
