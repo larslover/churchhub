@@ -103,7 +103,48 @@ Faith in God
 
                 {% endif %}
 
+<!-- SHARE DEVOTION -->
 
+<div class="mt-4">
+
+    <div class="d-flex flex-wrap gap-2">
+
+        <!-- WhatsApp -->
+        <a
+            href="https://wa.me/?text={{ request.scheme }}://{{ request.get_host }}{% url 'devotion_detail' todays_devotion.slug %}%0A%0A{{ todays_devotion.title|urlencode }}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-success"
+        >
+            <i class="bi bi-whatsapp"></i>
+            Share on WhatsApp
+        </a>
+
+        <!-- Copy Link -->
+        <button
+            type="button"
+            class="btn btn-outline-secondary"
+            onclick="copyHomeDevotionLink()"
+        >
+            <i class="bi bi-link-45deg"></i>
+            Copy Link
+        </button>
+
+    </div>
+
+    <input
+        type="text"
+        id="homeDevotionLink"
+        value="{{ request.scheme }}://{{ request.get_host }}{% url 'devotion_detail' todays_devotion.slug %}"
+        class="form-control mt-3"
+        readonly
+    >
+
+    <small class="text-muted">
+        Share this devotion with your friends and WhatsApp groups.
+    </small>
+
+</div>
                 <div class="mt-4">
 
                     <a
