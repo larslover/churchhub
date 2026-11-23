@@ -392,9 +392,7 @@ def devotion_list(request):
         }
     )
 
-
 def devotion_detail(request, slug):
-
     devotion = get_object_or_404(
         DailyDevotion,
         slug=slug,
@@ -402,10 +400,16 @@ def devotion_detail(request, slug):
         devotion_date__lte=timezone.localdate()
     )
 
+    share_url = request.build_absolute_uri()
+
+    context = {
+        "devotion": devotion,
+        "share_url": share_url,
+        "share_text": f"{devotion.title}\n\nRead this daily devotion:\n{share_url}",
+    }
+
     return render(
         request,
         "content/devotion_detail.html",
-        {
-            "devotion": devotion,
-        }
+        context
     )

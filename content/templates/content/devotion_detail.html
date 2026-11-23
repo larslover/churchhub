@@ -142,5 +142,59 @@
     </div>
 
 </section>
+<!-- Share Devotion -->
+
+<div class="border-top pt-4 mt-4">
+
+  <h5 class="mb-3">Share this Devotion</h5>
+
+  <div class="d-flex flex-wrap gap-2">
+
+      <!-- WhatsApp Share -->
+      <a
+          href="https://wa.me/?text={{ share_text|urlencode }}"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn-success"
+      >
+          <i class="bi bi-whatsapp"></i>
+          Share on WhatsApp
+      </a>
+
+      <!-- Copy Link -->
+      <button
+          type="button"
+          class="btn btn-outline-secondary"
+          onclick="copyDevotionLink()"
+      >
+          <i class="bi bi-link-45deg"></i>
+          Copy Link
+      </button>
+
+  </div>
+
+  <input
+      type="text"
+      id="devotionShareLink"
+      value="{{ share_url }}"
+      class="form-control mt-3"
+      readonly
+  >
+
+  <small class="text-muted">
+      Copy this link and share it with friends or WhatsApp groups.
+  </small>
+
+</div>
+
+<script>
+function copyDevotionLink() {
+  const link = document.getElementById("devotionShareLink");
+
+  navigator.clipboard.writeText(link.value).then(function () {
+      alert("Devotion link copied!");
+  });
+}
+</script>
 
 {% endblock %}
