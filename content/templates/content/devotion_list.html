@@ -1,0 +1,115 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+Daily Devotions | Faith in God
+{% endblock %}
+
+{% block content %}
+
+<section class="py-5">
+
+    <div class="container">
+
+        <!-- HEADER -->
+
+        <div class="mb-5">
+
+            <span class="text-uppercase small fw-bold text-success">
+                Grow in God's Word
+            </span>
+
+            <h1 class="display-5 fw-bold mb-2">
+                Daily Devotions
+            </h1>
+
+            <p class="text-muted">
+                Short reflections from God's Word to encourage you each day.
+            </p>
+
+        </div>
+
+
+        <!-- DEVOTIONS -->
+
+        {% if devotions %}
+
+        <div class="row g-4">
+
+            {% for devotion in devotions %}
+
+            <div class="col-md-6 col-lg-4">
+
+                <article class="card h-100 border-0 shadow-sm">
+
+                    {% if devotion.featured_image %}
+
+                    <img
+                        src="{{ devotion.featured_image.url }}"
+                        class="card-img-top"
+                        style="height: 220px; object-fit: cover;"
+                        alt="{{ devotion.title }}"
+                    >
+
+                    {% endif %}
+
+                    <div class="card-body p-4">
+
+                        <div class="small text-muted mb-2">
+                            {{ devotion.devotion_date|date:"F j, Y" }}
+                        </div>
+
+                        <h2 class="h4 fw-bold mb-3">
+                            {{ devotion.title }}
+                        </h2>
+
+                        {% if devotion.scripture_reference %}
+
+                        <div class="text-success fw-semibold small mb-3">
+                            {{ devotion.scripture_reference }}
+                        </div>
+
+                        {% endif %}
+
+                        <p class="text-muted">
+                            {{ devotion.reflection|truncatewords:25 }}
+                        </p>
+
+                        <a
+                            href="{% url 'devotion_detail' devotion.slug %}"
+                            class="text-success fw-semibold text-decoration-none"
+                        >
+                            Read Devotion →
+                        </a>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div class="text-center py-5">
+
+            <h3 class="h4 fw-bold">
+                No devotions available yet
+            </h3>
+
+            <p class="text-muted">
+                Please check back again soon.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

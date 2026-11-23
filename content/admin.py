@@ -282,6 +282,39 @@ class EllenbarrieUpdateAdmin(admin.ModelAdmin):
         "is_featured",
         "date_posted",
     )
+from django.contrib import admin
+from .models import DailyDevotion
+
+
+@admin.register(DailyDevotion)
+class DailyDevotionAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "title",
+        "devotion_date",
+        "bible_book",
+        "is_published",
+    )
+
+    list_filter = (
+        "is_published",
+        "devotion_date",
+        "bible_book",
+    )
+
+    search_fields = (
+        "title",
+        "scripture_reference",
+        "reflection",
+    )
+
+    prepopulated_fields = {
+        "slug": ("title",)
+    }
+
+    ordering = ("-devotion_date",)
+
+    date_hierarchy = "devotion_date"
 # ===============================
 # OTHER MODELS
 # ===============================

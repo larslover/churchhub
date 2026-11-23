@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 
 {% block title %}
@@ -6,74 +7,111 @@ Faith in God
 
 {% block content %}
 
-<!-- =====================================================
-     HERO
-===================================================== -->
 
-<section class="py-5 mb-5">
+<!-- DAILY DEVOTION -->
+
+{% if todays_devotion %}
+
+<section class="py-5">
 
     <div class="container">
 
-        <div class="row align-items-center g-5">
+        <div class="mb-4">
 
-            <div class="col-lg-7">
+            <span class="text-uppercase small fw-bold text-success">
+                Daily Devotion
+            </span>
 
-                <div class="mb-3">
-                    <span class="badge rounded-pill bg-success px-3 py-2">
-                        FAITH IN GOD
-                    </span>
-                </div>
+            <div class="d-flex justify-content-between align-items-center">
 
-                <h1 class="display-2 fw-bold mb-4">
-                    Following Jesus.<br>
-                    Making disciples.<br>
-                    Multiplying churches.
-                </h1>
+                <h2 class="h3 fw-bold mb-0">
+                    Today's Word
+                </h2>
 
-                <div class="d-flex flex-wrap gap-2">
-
-                    <a
-                        href="{% url 'church_list' %}"
-                        class="btn btn-success btn-lg px-4"
-                    >
-                        Discover Our Churches
-                    </a>
-
-                    <a
-                        href="{% url 'teaching_list' %}"
-                        class="btn btn-outline-dark btn-lg px-4"
-                    >
-                        Explore Teaching
-                    </a>
-
-                    <a
-                        href="{% url 'ellenbarrie' %}"
-                        class="btn btn-outline-success btn-lg px-4"
-                    >
-                        Ellenbarrie
-                    </a>
-
-                </div>
+                <span class="small text-muted">
+                    {{ todays_devotion.devotion_date|date:"F j, Y" }}
+                </span>
 
             </div>
 
-            <div class="col-lg-5">
+        </div>
 
-                <div class="bg-light rounded-4 p-5">
 
-                    <p class="text-uppercase small fw-bold text-muted mb-3">
-                        Our heartbeat
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+
+            {% if todays_devotion.featured_image %}
+
+            <img
+                src="{{ todays_devotion.featured_image.url }}"
+                class="w-100"
+                style="max-height: 350px; object-fit: cover;"
+                alt="{{ todays_devotion.title }}"
+            >
+
+            {% endif %}
+
+
+            <div class="card-body p-4 p-lg-5">
+
+                <h2 class="fw-bold mb-3">
+                    {{ todays_devotion.title }}
+                </h2>
+
+
+                {% if todays_devotion.scripture_reference %}
+
+                <h3 class="h5 text-success fw-bold mb-3">
+                    {{ todays_devotion.scripture_reference }}
+                </h3>
+
+                {% endif %}
+
+
+                {% if todays_devotion.scripture_text %}
+
+                <blockquote class="border-start border-success border-4 ps-4 py-2 mb-4">
+
+                    <p class="fs-5 mb-0">
+                        {{ todays_devotion.scripture_text|linebreaksbr }}
                     </p>
 
-                    <h2 class="fw-bold mb-3">
-                        Preach, teach and make disciples!
-                    </h2>
+                </blockquote>
 
-                    <p class="text-muted mb-0">
-                        We want to preach to win souls, teach sound doctrines
-                        to establish the saints in Christ, and make disciples
-                        that will go out and do ministry.
-                    </p>
+                {% endif %}
+
+
+                <div class="text-secondary lh-lg mb-4">
+
+                    {{ todays_devotion.reflection|linebreaks }}
+
+                </div>
+
+
+                {% if todays_devotion.prayer %}
+
+                <div class="bg-light rounded-4 p-4">
+
+                    <h3 class="h5 fw-bold mb-3">
+                        A Prayer
+                    </h3>
+
+                    <div class="text-secondary lh-lg mb-0">
+                        {{ todays_devotion.prayer|linebreaks }}
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+
+                <div class="mt-4">
+
+                    <a
+                        href="{% url 'devotion_list' %}"
+                        class="text-success text-decoration-none fw-semibold"
+                    >
+                        Previous Devotions →
+                    </a>
 
                 </div>
 
@@ -85,114 +123,74 @@ Faith in God
 
 </section>
 
+{% endif %}
 
-<!-- =====================================================
-     GLOBAL STATISTICS
-===================================================== -->
 
-<section class="py-5 bg-dark text-white mb-5">
+<!-- GLOBAL STATISTICS -->
+
+<section class="py-5 bg-dark text-white">
 
     <div class="container">
 
-        <div class="text-center mb-5">
-
-            <span class="text-uppercase small fw-bold">
-                Around the world
-            </span>
-
-            <h2 class="display-5 fw-bold mt-2">
-                Faith in God today
-            </h2>
-
-        </div>
-
-
         <div class="row text-center g-4">
-
-            <!-- CHURCHES -->
 
             <div class="col-6 col-md">
 
-                <div class="display-4 fw-bold">
+                <div class="h2 fw-bold">
                     {{ churches_count }}
                 </div>
 
-                <div class="text-white-50">
-                    Church Fellowships
+                <div class="small text-white-50">
+                    Churches
                 </div>
 
             </div>
 
-
-            <!-- COUNTRIES -->
-
             <div class="col-6 col-md">
 
-                <div class="display-4 fw-bold">
+                <div class="h2 fw-bold">
                     {{ countries_count }}
                 </div>
 
-                <div class="text-white-50">
+                <div class="small text-white-50">
                     Countries
                 </div>
 
             </div>
 
-
-            <!-- MEMBERS -->
-
             <div class="col-6 col-md">
 
-                <div class="display-4 fw-bold">
+                <div class="h2 fw-bold">
                     {{ total_members }}
                 </div>
 
-                <div class="text-white-50">
+                <div class="small text-white-50">
                     Members
                 </div>
 
             </div>
 
-
-            <!-- AVERAGE MEMBERSHIP -->
-
             <div class="col-6 col-md">
 
-                <div class="display-4 fw-bold">
-                    {{ average_membership }}
-                </div>
-
-                <div class="text-white-50">
-                    Average Members / Church
-                </div>
-
-            </div>
-
-
-            <!-- BAPTISMS -->
-
-            <div class="col-12 col-md">
-
-                <div class="display-4 fw-bold">
+                <div class="h2 fw-bold">
                     {{ total_baptisms }}
                 </div>
 
-                <div class="text-white-50">
-                    Baptized in {{ current_year }}
+                <div class="small text-white-50">
+                    Baptisms {{ current_year }}
                 </div>
 
             </div>
 
         </div>
 
-
-        <div class="text-center mt-5">
+        <div class="text-center mt-4">
 
             <a
                 href="{% url 'church_list' %}"
-                class="btn btn-outline-light px-4"
+                class="btn btn-outline-light btn-sm px-4"
             >
-                See Our Churches
+                Explore Churches
             </a>
 
         </div>
@@ -202,28 +200,21 @@ Faith in God
 </section>
 
 
-<!-- =====================================================
-     LIFE AMONG THE CHURCHES
-===================================================== -->
+<!-- LATEST CHURCH UPDATES -->
 
 {% if latest_updates %}
 
-<section class="py-5 mb-5">
+<section class="py-5">
 
     <div class="container">
 
-        <div class="d-flex justify-content-between align-items-end mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
 
-            <div>
-
-                <span class="text-uppercase small fw-bold text-success">
-                    What's happening this month?
-                </span>
-
-            </div>
+            <h2 class="h3 fw-bold mb-0">
+                Latest Updates
+            </h2>
 
         </div>
-
 
         <div class="row g-4">
 
@@ -238,6 +229,7 @@ Faith in God
                     <img
                         src="{{ update.image.url }}"
                         class="card-img-top"
+                        style="height: 220px; object-fit: cover;"
                         alt="{{ update.title }}"
                     >
 
@@ -250,19 +242,19 @@ Faith in God
                             {{ update.church.country }}
                         </div>
 
-                        <h3 class="h4 fw-bold">
+                        <h3 class="h5 fw-bold">
                             {{ update.title }}
                         </h3>
 
                         {% if update.summary %}
 
-                        <p class="text-muted">
-                            {{ update.summary }}
+                        <p class="text-muted mb-2">
+                            {{ update.summary|truncatewords:25 }}
                         </p>
 
                         {% endif %}
 
-                        <div class="small text-muted mt-3">
+                        <div class="small text-muted">
                             {{ update.date|date:"F j, Y" }}
                         </div>
 

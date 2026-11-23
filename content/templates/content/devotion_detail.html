@@ -1,0 +1,146 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+{{ devotion.title }} | Daily Devotion
+{% endblock %}
+
+{% block content %}
+
+<section class="py-5">
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-8">
+
+                <!-- BACK LINK -->
+
+                <div class="mb-4">
+
+                    <a
+                        href="{% url 'devotion_list' %}"
+                        class="text-success text-decoration-none fw-semibold"
+                    >
+                        ← All Devotions
+                    </a>
+
+                </div>
+
+
+                <!-- DATE -->
+
+                <div class="small text-muted mb-3">
+                    {{ devotion.devotion_date|date:"l, F j, Y" }}
+                </div>
+
+
+                <!-- TITLE -->
+
+                <h1 class="display-5 fw-bold mb-4">
+                    {{ devotion.title }}
+                </h1>
+
+
+                <!-- FEATURED IMAGE -->
+
+                {% if devotion.featured_image %}
+
+                <div class="mb-4">
+
+                    <img
+                        src="{{ devotion.featured_image.url }}"
+                        class="img-fluid rounded-4 w-100"
+                        alt="{{ devotion.title }}"
+                    >
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- SCRIPTURE -->
+
+                {% if devotion.scripture_reference %}
+
+                <div class="mb-3">
+
+                    <h2 class="h5 fw-bold text-success">
+                        {{ devotion.scripture_reference }}
+                    </h2>
+
+                </div>
+
+                {% endif %}
+
+
+                {% if devotion.scripture_text %}
+
+                <blockquote class="border-start border-success border-4 ps-4 py-2 mb-4">
+
+                    <p class="fs-5 mb-0">
+                        {{ devotion.scripture_text|linebreaksbr }}
+                    </p>
+
+                </blockquote>
+
+                {% endif %}
+
+
+                <!-- REFLECTION -->
+
+                <div class="mb-4">
+
+                    <h2 class="h4 fw-bold mb-3">
+                        Reflection
+                    </h2>
+
+                    <div class="text-secondary lh-lg">
+                        {{ devotion.reflection|linebreaks }}
+                    </div>
+
+                </div>
+
+
+                <!-- PRAYER -->
+
+                {% if devotion.prayer %}
+
+                <div class="bg-light rounded-4 p-4 mt-5">
+
+                    <h2 class="h5 fw-bold mb-3">
+                        A Prayer
+                    </h2>
+
+                    <div class="text-secondary lh-lg">
+                        {{ devotion.prayer|linebreaks }}
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- FOOTER -->
+
+                <div class="border-top mt-5 pt-4">
+
+                    <a
+                        href="{% url 'devotion_list' %}"
+                        class="btn btn-outline-success"
+                    >
+                        Browse All Devotions
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

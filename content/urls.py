@@ -58,5 +58,15 @@ path(
     views.ellenbarrie_detail,
     name="ellenbarrie_detail",
 ),
+path(
+    "devotions/",
+    views.devotion_list,
+    name="devotion_list"
+),
 
+path(
+    "devotions/<slug:slug>/",
+    views.devotion_detail,
+    name="devotion_detail"
+),
 ]

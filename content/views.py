@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q, Sum
-
 from django.utils import timezone
+from .models import DailyDevotion
+
 from .models import (
     Topic,
     Series,
@@ -188,6 +189,15 @@ def home(request):
         .order_by("-date")
     )
 
+    # =========================
+    # DAILY DEVOTION
+    # =========================
+
+    todays_devotion = DailyDevotion.objects.filter(
+    is_published=True,
+    devotion_date__lte=timezone.localdate()
+    ).order_by("-devotion_date").first()
+
     current_year = timezone.now().year
 
     # =========================
@@ -218,6 +228,9 @@ def home(request):
     )["total"] or 0
 
     context = {
+
+        # Daily devotion
+        "todays_devotion": todays_devotion,
 
         # Latest items
         "latest_teaching": teachings.first(),
@@ -357,5 +370,42 @@ def ellenbarrie_detail(request, pk):
         "content/ellenbarrie_detail.html",
         {
             "update": update,
+        }
+    )
+
+# =========================
+# DAILY DEVOTIONS
+# =========================
+
+def devotion_list(request):
+
+    devotions = DailyDevotion.objects.filter(
+        is_published=True,
+        devotion_date__lte=timezone.localdate()
+    ).order_by("-devotion_date")
+
+    return render(
+        request,
+        "content/devotion_list.html",
+        {
+            "devotions": devotions,
+        }
+    )
+
+
+def devotion_detail(request, slug):
+
+    devotion = get_object_or_404(
+        DailyDevotion,
+        slug=slug,
+        is_published=True,
+        devotion_date__lte=timezone.localdate()
+    )
+
+    return render(
+        request,
+        "content/devotion_detail.html",
+        {
+            "devotion": devotion,
         }
     )

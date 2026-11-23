@@ -388,3 +388,79 @@ class Ellenbarrie(models.Model):
 
     def __str__(self):
         return self.title
+    
+class DailyDevotion(models.Model):
+
+    title = models.CharField(max_length=255)
+
+    slug = models.SlugField(
+        unique=True,
+        blank=True
+    )
+
+    devotion_date = models.DateField(
+        unique=True
+    )
+
+    bible_book = models.ForeignKey(
+        BibleBook,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="devotions"
+    )
+
+    scripture_reference = models.CharField(
+        max_length=255,
+        blank=True
+    )
+
+    scripture_text = models.TextField(
+        blank=True,
+        help_text="Write or paste the Bible passage here."
+    )
+
+    reflection = models.TextField(
+        help_text="A short daily encouragement."
+    )
+
+    prayer = models.TextField(
+        blank=True
+    )
+
+    featured_image = models.ImageField(
+        upload_to="devotions/",
+        blank=True,
+        null=True
+    )
+
+    is_published = models.BooleanField(
+        default=False
+    )
+
+    published_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    class Meta:
+        ordering = ["-devotion_date"]
+        verbose_name_plural = "Daily Devotions"
+
+    def save(self, *args, **kwargs):
+
+        if not self.slug:
+            self.slug = slugify(self.title)
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.devotion_date} - {self.title}"
